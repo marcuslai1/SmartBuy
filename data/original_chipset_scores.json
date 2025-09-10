@@ -1,0 +1,197 @@
+[
+  {
+    "Chipset": "Apple A15 Bionic",
+    "Brand": "Apple",
+    "Score": 7
+  },
+  {
+    "Chipset": "Apple A16 Bionic",
+    "Brand": "Apple",
+    "Score": 8
+  },
+  {
+    "Chipset": "Apple A18",
+    "Brand": "Apple",
+    "Score": 8
+  },
+  {
+    "Chipset": "Apple A18 Pro",
+    "Brand": "Apple",
+    "Score": 10
+  },
+  {
+    "Chipset": "Google Tensor G3",
+    "Brand": "Google",
+    "Score": 4
+  },
+  {
+    "Chipset": "Google Tensor G4",
+    "Brand": "Google",
+    "Score": 4
+  },
+  {
+    "Chipset": "MediaTek Dimensity 6020",
+    "Brand": "MediaTek",
+    "Score": 6
+  },
+  {
+    "Chipset": "MediaTek Dimensity 6300",
+    "Brand": "MediaTek",
+    "Score": 6
+  },
+  {
+    "Chipset": "MediaTek Dimensity 7025",
+    "Brand": "MediaTek",
+    "Score": 6
+  },
+  {
+    "Chipset": "MediaTek Dimensity 7050",
+    "Brand": "MediaTek",
+    "Score": 7
+  },
+  {
+    "Chipset": "MediaTek Dimensity 7200",
+    "Brand": "MediaTek",
+    "Score": 7
+  },
+  {
+    "Chipset": "MediaTek Dimensity 7300",
+    "Brand": "MediaTek",
+    "Score": 7
+  },
+  {
+    "Chipset": "MediaTek Dimensity 7350 Pro",
+    "Brand": "MediaTek",
+    "Score": 7
+  },
+  {
+    "Chipset": "MediaTek Dimensity 8300 Ultra",
+    "Brand": "MediaTek",
+    "Score": 8
+  },
+  {
+    "Chipset": "MediaTek Dimensity 8350",
+    "Brand": "MediaTek",
+    "Score": 8
+  },
+  {
+    "Chipset": "MediaTek Dimensity 8400 Max",
+    "Brand": "MediaTek",
+    "Score": 8
+  },
+  {
+    "Chipset": "MediaTek Dimensity 9400",
+    "Brand": "MediaTek",
+    "Score": 10
+  },
+  {
+    "Chipset": "MediaTek Dimensity 9400e",
+    "Brand": "MediaTek",
+    "Score": 10
+  },
+  {
+    "Chipset": "MediaTek Helio G81 Ultra",
+    "Brand": "MediaTek",
+    "Score": 4
+  },
+  {
+    "Chipset": "MediaTek Helio G85",
+    "Brand": "MediaTek",
+    "Score": 4
+  },
+  {
+    "Chipset": "MediaTek Helio G91 Ultra",
+    "Brand": "MediaTek",
+    "Score": 4
+  },
+  {
+    "Chipset": "MediaTek Helio G92",
+    "Brand": "MediaTek",
+    "Score": 4
+  },
+  {
+    "Chipset": "Qualcomm Snapdragon 4 Gen 2",
+    "Brand": "Qualcomm",
+    "Score": 5
+  },
+  {
+    "Chipset": "Qualcomm Snapdragon 6 Gen 1",
+    "Brand": "Qualcomm",
+    "Score": 6
+  },
+  {
+    "Chipset": "Qualcomm Snapdragon 6 Gen 3",
+    "Brand": "Qualcomm",
+    "Score": 6
+  },
+  {
+    "Chipset": "Qualcomm Snapdragon 6 Gen 4",
+    "Brand": "Qualcomm",
+    "Score": 6
+  },
+  {
+    "Chipset": "Qualcomm Snapdragon 6s Gen 3",
+    "Brand": "Qualcomm",
+    "Score": 6
+  },
+  {
+    "Chipset": "Qualcomm Snapdragon 7 Gen 3",
+    "Brand": "Qualcomm",
+    "Score": 7
+  },
+  {
+    "Chipset": "Qualcomm Snapdragon 7 Plus Gen 3",
+    "Brand": "Qualcomm",
+    "Score": 7
+  },
+  {
+    "Chipset": "Qualcomm Snapdragon 7s Gen 2",
+    "Brand": "Qualcomm",
+    "Score": 7
+  },
+  {
+    "Chipset": "Qualcomm Snapdragon 7s Gen 3",
+    "Brand": "Qualcomm",
+    "Score": 7
+  },
+  {
+    "Chipset": "Qualcomm Snapdragon 8 Gen 2",
+    "Brand": "Qualcomm",
+    "Score": 8
+  },
+  {
+    "Chipset": "Qualcomm Snapdragon 8 Gen 3",
+    "Brand": "Qualcomm",
+    "Score": 9
+  },
+  {
+    "Chipset": "Qualcomm Snapdragon 8 Elite",
+    "Brand": "Qualcomm",
+    "Score": 10
+  },
+  {
+    "Chipset": "Qualcomm Snapdragon 8s Gen 3",
+    "Brand": "Qualcomm",
+    "Score": 8
+  },
+  {
+    "Chipset": "Samsung Exynos 1380",
+    "Brand": "Samsung",
+    "Score": 5
+  },
+  {
+    "Chipset": "Samsung Exynos 1580",
+    "Brand": "Samsung",
+    "Score": 5
+  },
+  {
+    "Chipset": "Samsung Exynos 2400e",
+    "Brand": "Samsung",
+    "Score": 6
+  },
+  {
+    "Chipset": "Unisoc T7250",
+    "Brand": "Unisoc",
+    "Score": 3
+  }
+]
