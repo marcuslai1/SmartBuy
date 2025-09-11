@@ -3,6 +3,10 @@
 ## Backend Setup
 From the project root:
 ```bash
+# Create and activate a virtual env
+python -m venv venv
+venv\Scripts\activate
+# Install Dependencies
 pip install -r requirements.txt
 python manage.py runserver
 
