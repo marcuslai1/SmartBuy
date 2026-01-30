@@ -11,3 +11,6 @@ dist/
 build/
 *.env
 dump.rdb
+
+.claude/
+scripts/
