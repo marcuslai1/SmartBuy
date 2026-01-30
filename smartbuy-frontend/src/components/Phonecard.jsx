@@ -1,38 +1,44 @@
-// phones/components/PhoneCard.jsx
+/**
+ * PhoneCard - Individual phone result card
+ *
+ * Displays phone details, scores, quick specs, and provides
+ * access to detailed spec breakdown modal.
+ */
 import { useMemo, useState, useEffect, useRef, useLayoutEffect } from "react";
 import { createPortal } from "react-dom";
+import { Plus, Check, Info } from "lucide-react";
 
-function PhoneCard({ phone, isTopPick, mode: modeProp }) {
-  // basic numeric values
+function PhoneCard({ phone, isTopPick, mode: modeProp, onCompare, isComparing }) {
+  // Basic numeric values
   const spec = Number(phone.raw_score).toFixed(1);
   const value = Number(phone.smartbuy_score).toFixed(2);
   const price = Number(phone.price_sgd).toFixed(2);
 
-  // ranks
+  // Ranks
   const finalRank = phone.rank_final;
   const rawRank = phone.rank_raw;
   const valueRank = phone.rank_value;
   const totalCount = phone.rank_total;
 
-  // mode (budget/midrange/flagship)
+  // Mode (budget/midrange/flagship)
   const mode = (modeProp || "midrange").toLowerCase();
 
-  // colours for score badges
+  // Colours for score badges
   const scoreColour =
     spec >= 7
       ? "bg-emerald-500/15 text-emerald-300 border-emerald-400/20"
       : spec >= 6
-      ? "bg-amber-500/15  text-amber-300  border-amber-400/20"
-      : "bg-zinc-500/15   text-zinc-300   border-zinc-400/20";
+      ? "bg-amber-500/15 text-amber-300 border-amber-400/20"
+      : "bg-zinc-500/15 text-zinc-300 border-zinc-400/20";
 
   const smartbuyColour =
     value >= 1.5
       ? "bg-emerald-500/15 text-emerald-300 border-emerald-400/20"
       : value >= 1.1
-      ? "bg-amber-500/15  text-amber-300  border-amber-400/20"
-      : "bg-zinc-500/15   text-zinc-300   border-zinc-400/20";
+      ? "bg-amber-500/15 text-amber-300 border-amber-400/20"
+      : "bg-zinc-500/15 text-zinc-300 border-zinc-400/20";
 
-  // format helpers
+  // Format helpers
   const fmt = {
     hz: (n) => (n ? `${n}Hz` : ""),
     res: (w, h) => (w && h ? `${w}×${h}` : ""),
@@ -41,6 +47,19 @@ function PhoneCard({ phone, isTopPick, mode: modeProp }) {
     mah: (n) => (n ? `${Number(n)} mAh` : ""),
     w: (n) => (n ? `${Number(n)}W` : ""),
     chip: (s) => (s || "").toString(),
+    chipShort: (s) => {
+      if (!s) return "";
+      // Extract short chipset name (e.g., "Snapdragon 8 Gen 3" -> "SD 8 Gen 3")
+      const str = s.toString();
+      return str
+        .replace("Snapdragon", "SD")
+        .replace("Dimensity", "Dim")
+        .replace("MediaTek", "MTK")
+        .replace("Exynos", "Exyn")
+        .split(" ")
+        .slice(0, 4)
+        .join(" ");
+    },
     extras: (p) => {
       const bits = [];
       if (p?.has_5g) bits.push("5G");
@@ -73,7 +92,8 @@ function PhoneCard({ phone, isTopPick, mode: modeProp }) {
     durability: (p) => p?.glass_type || "-",
     protection: (p) => p?.ip_rating || "-",
   };
-// target recommendations
+
+  // Target recommendations
   const RECS = {
     budget: {
       soc: { target: "Mid 6+ tier" },
@@ -114,8 +134,7 @@ function PhoneCard({ phone, isTopPick, mode: modeProp }) {
   };
   const recs = RECS[mode] || RECS.midrange;
 
-
-  // build rows for spec breakdown
+  // Build rows for spec breakdown
   const breakdown = phone?.score_breakdown || null;
   const allRows = useMemo(() => {
     if (!breakdown) return [];
@@ -140,13 +159,13 @@ function PhoneCard({ phone, isTopPick, mode: modeProp }) {
     ].filter((r) => Number.isFinite(r.value));
   }, [breakdown, phone, recs]);
 
-  // split rows
+  // Split rows
   const CORE_KEYS = ["camera", "display", "soc", "ram", "storage"];
   const BUILD_KEYS = ["battery", "charging", "durability", "protection", "extras"];
   const coreRows = allRows.filter((r) => CORE_KEYS.includes(r.key));
   const buildRows = allRows.filter((r) => BUILD_KEYS.includes(r.key));
 
-  // modal state + refs
+  // Modal state + refs
   const [open, setOpen] = useState(false);
   const btnRef = useRef(null);
   const panelRef = useRef(null);
@@ -156,7 +175,7 @@ function PhoneCard({ phone, isTopPick, mode: modeProp }) {
     origin: "bottom right",
   });
 
-  // close on Escape
+  // Close on Escape
   useEffect(() => {
     if (!open) return;
     const onKey = (e) => {
@@ -166,7 +185,7 @@ function PhoneCard({ phone, isTopPick, mode: modeProp }) {
     return () => window.removeEventListener("keydown", onKey);
   }, [open]);
 
-  // close on outside click
+  // Close on outside click
   useEffect(() => {
     if (!open) return;
     const onDoc = (e) => {
@@ -178,7 +197,7 @@ function PhoneCard({ phone, isTopPick, mode: modeProp }) {
     return () => document.removeEventListener("mousedown", onDoc);
   }, [open]);
 
-  // compute panel position
+  // Compute panel position
   const reposition = () => {
     const btn = btnRef.current,
       panel = panelRef.current;
@@ -200,7 +219,7 @@ function PhoneCard({ phone, isTopPick, mode: modeProp }) {
     setPanelPos({ top, left, origin });
   };
 
-  // reposition on open/resize/scroll
+  // Reposition on open/resize/scroll
   useLayoutEffect(() => {
     if (!open) return;
     reposition();
@@ -216,17 +235,38 @@ function PhoneCard({ phone, isTopPick, mode: modeProp }) {
 
   const warranty = phone.warranty ? `${phone.warranty}y` : null;
 
+  // Quick specs for card surface
+  const quickSpecs = useMemo(() => {
+    const specs = [];
+    if (phone.chipset) {
+      specs.push({ label: fmt.chipShort(phone.chipset), key: "chip" });
+    }
+    if (phone.ram_gb) {
+      specs.push({ label: `${phone.ram_gb}GB`, key: "ram" });
+    }
+    if (phone.battery_mah) {
+      specs.push({ label: `${phone.battery_mah}mAh`, key: "batt" });
+    }
+    if (phone.refresh_hz) {
+      specs.push({ label: `${phone.refresh_hz}Hz`, key: "hz" });
+    }
+    return specs.slice(0, 4); // Max 4 quick specs
+  }, [phone]);
+
   return (
     <div
       className={[
         "relative z-0 group rounded-2xl",
-        "border border-white/10 bg-white/[0.03] backdrop-blur-sm",
+        "border bg-white/[0.03] backdrop-blur-sm",
         "shadow-sm hover:shadow-xl hover:shadow-blue-500/10",
         "hover:-translate-y-[2px] transition-all duration-200",
-        "min-h-[260px] overflow-visible hover:z-30 focus-within:z-30",
+        "min-h-[280px] overflow-visible hover:z-30 focus-within:z-30",
+        isComparing
+          ? "border-emerald-400/40 ring-1 ring-emerald-400/20"
+          : "border-white/10",
       ].join(" ")}
     >
-      {/* header bar */}
+      {/* Header bar */}
       <div className="rounded-[inherit] overflow-hidden">
         <div className="flex items-center justify-between px-3 py-2 bg-white/[0.02] border-b border-white/10">
           <div className="flex items-center gap-1.5">
@@ -248,13 +288,27 @@ function PhoneCard({ phone, isTopPick, mode: modeProp }) {
           ) : null}
         </div>
 
-        {/* body content */}
+        {/* Body content */}
         <div className="p-4">
           <h2 className="text-[16px] leading-snug font-semibold text-white/95 line-clamp-2">
             {phone.model}
           </h2>
 
-          {/* price link */}
+          {/* Quick specs - visible on card */}
+          {quickSpecs.length > 0 && (
+            <div className="mt-2 flex flex-wrap gap-1.5">
+              {quickSpecs.map((s) => (
+                <span
+                  key={s.key}
+                  className="px-2 py-0.5 text-[10px] rounded bg-white/5 text-zinc-300 border border-white/10"
+                >
+                  {s.label}
+                </span>
+              ))}
+            </div>
+          )}
+
+          {/* Price link */}
           <a
             href={phone.price_url}
             target="_blank"
@@ -281,35 +335,67 @@ function PhoneCard({ phone, isTopPick, mode: modeProp }) {
             </svg>
           </a>
 
-          {/* scores */}
+          {/* Scores */}
           <div className="mt-3 flex items-center gap-2">
-            <span className={`inline-block px-2 py-1 text-[11px] font-semibold rounded border ${scoreColour}`}>
-              Spec Score {spec}/10
+            <span
+              className={`inline-block px-2 py-1 text-[11px] font-semibold rounded border ${scoreColour}`}
+            >
+              Spec {spec}/10
             </span>
-            <span className={`inline-block px-2 py-1 text-[11px] font-semibold rounded border ${smartbuyColour}`}>
-              SmartBuy {value} pts/$100
+            <span
+              className={`inline-block px-2 py-1 text-[11px] font-semibold rounded border ${smartbuyColour}`}
+            >
+              Value {value}
             </span>
           </div>
         </div>
       </div>
 
-      {/* button to open spec panel */}
-      {allRows.length > 0 && (
-        <button
-          type="button"
-          ref={btnRef}
-          aria-haspopup="dialog"
-          aria-expanded={open ? "true" : "false"}
-          aria-label="Show spec breakdown"
-          onClick={() => setOpen((v) => !v)}
-          className="absolute bottom-2 right-2 z-40 inline-flex items-center justify-center w-7 h-7 rounded-full bg-blue-600/90 text-white text-xs shadow hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 focus:ring-offset-black"
-        >
-          i
-        </button>
-      )}
+      {/* Action buttons */}
+      <div className="absolute bottom-2 right-2 z-40 flex items-center gap-1.5">
+        {/* Compare button */}
+        {onCompare && (
+          <button
+            type="button"
+            onClick={() => onCompare(phone)}
+            disabled={isComparing}
+            className={[
+              "inline-flex items-center justify-center w-7 h-7 rounded-full text-white text-xs shadow transition-all",
+              "focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 focus:ring-offset-black",
+              isComparing
+                ? "bg-emerald-600 cursor-default"
+                : "bg-zinc-600/90 hover:bg-zinc-500",
+            ].join(" ")}
+            aria-label={isComparing ? "Added to compare" : "Add to compare"}
+            title={isComparing ? "Added to compare" : "Add to compare"}
+          >
+            {isComparing ? (
+              <Check className="w-3.5 h-3.5" />
+            ) : (
+              <Plus className="w-3.5 h-3.5" />
+            )}
+          </button>
+        )}
 
-      {/* overlay + panel */}
-      {open && allRows.length > 0 &&
+        {/* Info button to open spec panel */}
+        {allRows.length > 0 && (
+          <button
+            type="button"
+            ref={btnRef}
+            aria-haspopup="dialog"
+            aria-expanded={open ? "true" : "false"}
+            aria-label="Show spec breakdown"
+            onClick={() => setOpen((v) => !v)}
+            className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-blue-600/90 text-white text-xs shadow hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 focus:ring-offset-black"
+          >
+            <Info className="w-3.5 h-3.5" />
+          </button>
+        )}
+      </div>
+
+      {/* Overlay + panel */}
+      {open &&
+        allRows.length > 0 &&
         createPortal(
           <>
             <div
@@ -354,7 +440,7 @@ function SpecPanel({ panelRef, panelPos, coreRows, buildRows, rawRank, valueRank
         "text-zinc-100",
       ].join(" ")}
     >
-      {/* custom scrollbar */}
+      {/* Custom scrollbar */}
       <style>{`
         .spec-panel::-webkit-scrollbar{ width:8px; height:8px; }
         .spec-panel::-webkit-scrollbar-track{ background:transparent; }
@@ -363,7 +449,7 @@ function SpecPanel({ panelRef, panelPos, coreRows, buildRows, rawRank, valueRank
         .spec-panel::-webkit-scrollbar-thumb:active{ background:#9aa0ad; }
       `}</style>
 
-      {/* header */}
+      {/* Header */}
       <div className="sticky top-0 z-10 -mx-4 px-4 pt-2 pb-2 bg-black/30 border-b border-white/10">
         <div className="flex items-center justify-between">
           <p className="text-xs font-semibold text-zinc-200">Spec breakdown</p>
@@ -385,10 +471,10 @@ function SpecPanel({ panelRef, panelPos, coreRows, buildRows, rawRank, valueRank
         ) : null}
       </div>
 
-      {/* bottom gradient */}
+      {/* Bottom gradient */}
       <div className="pointer-events-none sticky bottom-0 h-6 -mb-4 bg-gradient-to-t from-black/40 to-transparent" />
 
-      {/* sections */}
+      {/* Sections */}
       <GroupTitle title="Core specs" className="mt-3" />
       <div>
         {coreRows.map((r) => (
@@ -413,10 +499,7 @@ function SpecPanel({ panelRef, panelPos, coreRows, buildRows, rawRank, valueRank
 function GroupTitle({ title, className = "" }) {
   return (
     <div
-      className={[
-        "text-[11px] uppercase tracking-wide text-zinc-300/80 px-0",
-        className,
-      ].join(" ")}
+      className={["text-[11px] uppercase tracking-wide text-zinc-300/80 px-0", className].join(" ")}
     >
       {title}
     </div>
@@ -427,7 +510,7 @@ const WHAT = {
   camera: "Photo/video quality; OIS helps steady shots and low light.",
   display: "Screen type, smoothness (Hz), resolution and sharpness (ppi).",
   soc: "Processor & graphics; affects speed, gaming and camera.",
-  ram: "How smoothly you can switch between apps; more RAM keeps them ready so they don’t lag or start over.",
+  ram: "How smoothly you can switch between apps; more RAM keeps them ready so they don't lag or start over.",
   storage: "Space for apps, photos and videos.",
   battery: "Battery size; larger usually lasts longer.",
   charging: "Charging power; higher is generally faster.",
@@ -513,7 +596,7 @@ const THRESH = {
   extras: { poor: 3.5, good: 7.0, great: 8.5 },
 };
 
-// map score to status
+// Map score to status
 function statusForScore(score, t) {
   if (score <= (t.poor ?? 3.5)) return "poor";
   if (score < (t.good ?? 7.0)) return "needs";
@@ -522,31 +605,55 @@ function statusForScore(score, t) {
 }
 
 function ScoreRow({ section, label, value, meta }) {
-  // normalize
+  // Normalize
   const safe = Math.max(0, Math.min(10, Number(value)));
   const width = `${safe * 10}%`;
 
-  // thresholds + status
+  // Thresholds + status
   const t = THRESH[section] || { poor: 3.5, good: 7.0, great: 8.5 };
   const status = statusForScore(safe, t);
 
-  // extra info
+  // Extra info
   const what = WHAT[section] || "";
   const line = (LINES[section] && LINES[section][status]) || "";
 
-  // colour palette
+  // Colour palette
   const palette =
     status === "great"
-      ? { dot: "bg-emerald-400", chipBg: "bg-emerald-500/10", chipText: "text-emerald-300", chipBorder: "border-emerald-400/20", bar: "bg-emerald-400" }
+      ? {
+          dot: "bg-emerald-400",
+          chipBg: "bg-emerald-500/10",
+          chipText: "text-emerald-300",
+          chipBorder: "border-emerald-400/20",
+          bar: "bg-emerald-400",
+        }
       : status === "good"
-      ? { dot: "bg-sky-400", chipBg: "bg-sky-500/10", chipText: "text-sky-300", chipBorder: "border-sky-400/20", bar: "bg-sky-400" }
+      ? {
+          dot: "bg-sky-400",
+          chipBg: "bg-sky-500/10",
+          chipText: "text-sky-300",
+          chipBorder: "border-sky-400/20",
+          bar: "bg-sky-400",
+        }
       : status === "needs"
-      ? { dot: "bg-amber-400", chipBg: "bg-amber-500/10", chipText: "text-amber-300", chipBorder: "border-amber-400/20", bar: "bg-amber-400" }
-      : { dot: "bg-zinc-400", chipBg: "bg-white/10", chipText: "text-zinc-300", chipBorder: "border-white/15", bar: "bg-zinc-400" };
+      ? {
+          dot: "bg-amber-400",
+          chipBg: "bg-amber-500/10",
+          chipText: "text-amber-300",
+          chipBorder: "border-amber-400/20",
+          bar: "bg-amber-400",
+        }
+      : {
+          dot: "bg-zinc-400",
+          chipBg: "bg-white/10",
+          chipText: "text-zinc-300",
+          chipBorder: "border-white/15",
+          bar: "bg-zinc-400",
+        };
 
   return (
     <div className="grid grid-cols-[188px_1fr_72px] items-center gap-x-3 gap-y-1 py-2.5 border-t border-white/10 first:border-t-0">
-      {/* label + meta */}
+      {/* Label + meta */}
       <div className="col-start-1">
         <div className="flex items-center gap-1">
           <span className={`inline-block w-1.5 h-1.5 rounded-full ${palette.dot}`} aria-hidden="true" />
@@ -557,7 +664,7 @@ function ScoreRow({ section, label, value, meta }) {
         {line ? <div className="text-[11px] text-zinc-400 leading-snug mt-1">{line}</div> : null}
       </div>
 
-      {/* bar */}
+      {/* Bar */}
       <div
         className="col-start-2 self-center"
         role="progressbar"
@@ -570,10 +677,12 @@ function ScoreRow({ section, label, value, meta }) {
         </div>
       </div>
 
-      {/* numeric + status chip */}
+      {/* Numeric + status chip */}
       <div className="col-start-3 justify-self-end text-right">
         <div className="text-[12px] tabular-nums text-white/90">{safe.toFixed(1)}</div>
-        <div className={`mt-1 inline-block px-1.5 py-0.5 text-[10px] rounded border ${palette.chipBorder} ${palette.chipText} ${palette.chipBg}`}>
+        <div
+          className={`mt-1 inline-block px-1.5 py-0.5 text-[10px] rounded border ${palette.chipBorder} ${palette.chipText} ${palette.chipBg}`}
+        >
           {status === "great" ? "Great" : status === "good" ? "Good" : status === "needs" ? "Needs work" : "Poor"}
         </div>
       </div>
