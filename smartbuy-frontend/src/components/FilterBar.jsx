@@ -1,11 +1,12 @@
 /**
- * FilterBar - Filter controls for phone search
+ * FilterBar - Premium filter controls for phone search
  *
- * Provides mode, brand, price, and search filters.
+ * Provides mode, brand, price, and search filters with refined glass-morphism design.
  */
-import { useEffect, useId, useRef, useState } from "react";
+import { useEffect, useId, useRef, useState, useCallback } from "react";
+import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { Search, ChevronDown, Check } from "lucide-react";
+import { Search, ChevronDown, Check, SlidersHorizontal, Sparkles } from "lucide-react";
 import SearchInput from "./SearchInput";
 
 const BRANDS = [
@@ -17,76 +18,89 @@ const PRICE_CAPS = [100, 200, 300, 400, 500, 600, 700, 800, 1000, 1200, 1500, 18
 const formatCap = (n) => `≤ $${Number(n).toLocaleString()}`;
 const MAX_PRICE_LABELS = ["Any", ...PRICE_CAPS.map(formatCap)];
 
-// Shared input styles for fields
-const baseField =
-  "w-full rounded-xl border border-white/10 bg-white/5 text-white/90 " +
-  "px-3 py-2.5 outline-none focus:ring-2 focus:ring-blue-400/50 focus:border-blue-400/50 " +
-  "hover:bg-white/[0.07] hover:border-white/15 transition-all duration-200 " +
-  "placeholder:text-zinc-500";
-
-// Simple fade-up animation
-const fadeUp = (delay = 0) => ({
-  initial: { y: 24, opacity: 0 },
-  animate: { y: 0, opacity: 1, transition: { duration: 0.6, delay } },
-  exit: { y: -12, opacity: 0, transition: { duration: 0.3 } },
-});
-
-// Staggered container for animating children
-const containerStagger = { animate: { transition: { staggerChildren: 0.06 } } };
-
-// Close dropdown if clicking away
-function useClickAway(ref, onAway) {
-  useEffect(() => {
-    const onClick = (e) => {
-      if (!ref.current) return;
-      if (!ref.current.contains(e.target)) onAway?.();
-    };
-    const onKey = (e) => {
-      if (e.key === "Escape") onAway?.();
-    };
-    document.addEventListener("mousedown", onClick);
-    document.addEventListener("keydown", onKey);
-    return () => {
-      document.removeEventListener("mousedown", onClick);
-      document.removeEventListener("keydown", onKey);
-    };
-  }, [onAway, ref]);
-}
-
 // Single option row inside the dropdown
 function Option({ active, selected, children }) {
   return (
     <div
       className={[
-        "flex items-center justify-between px-3 py-2 rounded-lg cursor-pointer transition-colors",
-        active ? "bg-white/10" : "",
+        "flex items-center justify-between px-3 py-2.5 rounded-lg cursor-pointer transition-all duration-150",
+        active ? "bg-white/10" : "hover:bg-white/5",
         selected ? "text-white font-medium" : "text-zinc-300",
       ].join(" ")}
       role="option"
       aria-selected={selected}
     >
       <span className="truncate">{children}</span>
-      {selected ? <Check className="shrink-0 text-blue-400" size={16} /> : null}
+      {selected && (
+        <motion.div
+          initial={{ scale: 0 }}
+          animate={{ scale: 1 }}
+          className="shrink-0 w-5 h-5 rounded-full bg-blue-500 flex items-center justify-center"
+        >
+          <Check className="w-3 h-3 text-white" strokeWidth={3} />
+        </motion.div>
+      )}
     </div>
   );
 }
 
-// Full Select widget with dropdown list
+// Premium Select widget with dropdown list (portal-based to avoid clipping)
 function Select({ value, onChange, options, label, id, className }) {
   const [open, setOpen] = useState(false);
   const [activeIdx, setActiveIdx] = useState(() =>
-    Math.max(0, options.findIndex((o) => o === value))
+    Math.max(0, options.findIndex((o) => o.toLowerCase() === (value ?? "").toLowerCase()))
   );
-  const rootRef = useRef(null);
+  const [dropdownStyle, setDropdownStyle] = useState({});
+  const buttonRef = useRef(null);
   const listRef = useRef(null);
 
-  useClickAway(rootRef, () => setOpen(false));
+  // Calculate dropdown position based on button
+  const updatePosition = useCallback(() => {
+    if (!buttonRef.current) return;
+    const rect = buttonRef.current.getBoundingClientRect();
+    setDropdownStyle({
+      position: "fixed",
+      top: rect.bottom + 8,
+      left: rect.left,
+      width: rect.width,
+    });
+  }, []);
 
-  // Keyboard navigation (arrows, enter, home/end)
+  // Update position when opening and on scroll/resize
+  useEffect(() => {
+    if (!open) return;
+    updatePosition();
+    window.addEventListener("scroll", updatePosition, true);
+    window.addEventListener("resize", updatePosition);
+    return () => {
+      window.removeEventListener("scroll", updatePosition, true);
+      window.removeEventListener("resize", updatePosition);
+    };
+  }, [open, updatePosition]);
+
+  // Close on click outside
+  useEffect(() => {
+    if (!open) return;
+    const handleClick = (e) => {
+      if (buttonRef.current?.contains(e.target)) return;
+      if (listRef.current?.contains(e.target)) return;
+      setOpen(false);
+    };
+    const handleKey = (e) => {
+      if (e.key === "Escape") setOpen(false);
+    };
+    document.addEventListener("mousedown", handleClick);
+    document.addEventListener("keydown", handleKey);
+    return () => {
+      document.removeEventListener("mousedown", handleClick);
+      document.removeEventListener("keydown", handleKey);
+    };
+  }, [open]);
+
+  // Keyboard navigation
   useEffect(() => {
     if (!open) return;
     const handler = (e) => {
-      if (!open) return;
       if (["ArrowDown", "ArrowUp", "Home", "End"].includes(e.key)) {
         e.preventDefault();
         setActiveIdx((idx) => {
@@ -108,9 +122,11 @@ function Select({ value, onChange, options, label, id, className }) {
     return () => document.removeEventListener("keydown", handler);
   }, [open, options, activeIdx, onChange]);
 
-  // Sync active index with current value
+  // Sync active index with current value (case-insensitive)
   useEffect(() => {
-    const idx = options.findIndex((o) => o === value);
+    const idx = options.findIndex(
+      (o) => o.toLowerCase() === (value ?? "").toLowerCase()
+    );
     if (idx >= 0) setActiveIdx(idx);
   }, [value, options]);
 
@@ -121,76 +137,90 @@ function Select({ value, onChange, options, label, id, className }) {
     el?.scrollIntoView({ block: "nearest" });
   }, [open, activeIdx]);
 
-  const display = value ?? options[0];
+  // Find the matching option (case-insensitive) to display with correct capitalization
+  const matchedOption = options.find(
+    (opt) => opt.toLowerCase() === (value ?? "").toLowerCase()
+  );
+  const display = matchedOption ?? value ?? options[0];
 
   return (
-    <div ref={rootRef} className="relative">
+    <div className="relative">
       {/* Select button */}
       <button
+        ref={buttonRef}
         id={id}
         type="button"
         aria-haspopup="listbox"
         aria-expanded={open}
         className={[
-          baseField,
+          "w-full rounded-xl border bg-white/[0.04] text-white/90",
+          "px-4 py-3 outline-none transition-all duration-200",
           "flex items-center justify-between gap-2",
+          open
+            ? "border-blue-400/50 ring-2 ring-blue-400/20 bg-white/[0.06]"
+            : "border-white/10 hover:bg-white/[0.07] hover:border-white/20",
+          "focus-visible:ring-2 focus-visible:ring-blue-400/50 focus-visible:border-blue-400/50",
           className || "",
         ].join(" ")}
         onClick={() => setOpen((s) => !s)}
       >
-        <span className="truncate">{display}</span>
+        <span className="truncate font-medium">{display}</span>
         <ChevronDown
-          size={16}
+          size={18}
           className={`text-zinc-400 transition-transform duration-200 ${open ? "rotate-180" : ""}`}
         />
       </button>
 
-      {/* Dropdown list */}
-      <AnimatePresence>
-        {open && (
-          <motion.div
-            initial={{ opacity: 0, y: 8, scale: 0.95 }}
-            animate={{ opacity: 1, y: 0, scale: 1, transition: { duration: 0.15 } }}
-            exit={{ opacity: 0, y: 6, scale: 0.95, transition: { duration: 0.12 } }}
-            className={[
-              "absolute z-[60] mt-2 w-full overflow-hidden rounded-xl border border-white/10",
-              "bg-zinc-900/95 backdrop-blur-xl shadow-2xl shadow-black/30",
-            ].join(" ")}
-            role="listbox"
-            aria-labelledby={id}
-          >
-            <div ref={listRef} className="max-h-[12rem] overflow-y-auto py-1.5 px-1.5">
-              {options.map((opt, i) => {
-                const selected = opt === value;
-                const active = i === activeIdx;
-                return (
-                  <div
-                    key={opt}
-                    data-idx={i}
-                    onMouseEnter={() => setActiveIdx(i)}
-                    onMouseDown={(e) => {
-                      // prevent focus blur from closing early
-                      e.preventDefault();
-                      onChange(opt);
-                      setOpen(false);
-                    }}
-                  >
-                    <Option active={active} selected={selected}>
-                      {opt}
-                    </Option>
-                  </div>
-                );
-              })}
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {/* Dropdown list - rendered in portal */}
+      {createPortal(
+        <AnimatePresence>
+          {open && (
+            <motion.div
+              ref={listRef}
+              initial={{ opacity: 0, y: -4 }}
+              animate={{ opacity: 1, y: 0, transition: { duration: 0.15, ease: [0.25, 0.4, 0.25, 1] } }}
+              exit={{ opacity: 0, y: -4, transition: { duration: 0.1 } }}
+              style={dropdownStyle}
+              className={[
+                "z-[9999] overflow-hidden rounded-xl",
+                "border border-white/15 bg-zinc-900/98 backdrop-blur-xl",
+                "shadow-2xl shadow-black/50",
+              ].join(" ")}
+              role="listbox"
+              aria-labelledby={id}
+            >
+              <div className="max-h-[14rem] overflow-y-auto py-2 px-2 scrollbar-thin">
+                {options.map((opt, i) => {
+                  const selected = opt.toLowerCase() === (value ?? "").toLowerCase();
+                  const active = i === activeIdx;
+                  return (
+                    <div
+                      key={opt}
+                      data-idx={i}
+                      onMouseEnter={() => setActiveIdx(i)}
+                      onMouseDown={(e) => {
+                        e.preventDefault();
+                        onChange(opt);
+                        setOpen(false);
+                      }}
+                    >
+                      <Option active={active} selected={selected}>
+                        {opt}
+                      </Option>
+                    </div>
+                  );
+                })}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>,
+        document.body
+      )}
     </div>
   );
 }
 
 /* FilterBar layout */
-
 function FilterBar({
   mode,
   setMode,
@@ -228,52 +258,78 @@ function FilterBar({
     setMaxPrice(clamp(num || 2400));
   };
 
+  const container = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: { staggerChildren: 0.05, delayChildren: 0.1 }
+    },
+  };
+
+  const item = {
+    hidden: { y: 16, opacity: 0 },
+    show: { y: 0, opacity: 1, transition: { duration: 0.4, ease: [0.25, 0.4, 0.25, 1] } },
+  };
+
   return (
-    <section className="px-6 py-8" aria-labelledby={id.heading}>
-      <div className="mx-auto max-w-5xl">
-        {/* Glass wrapper card */}
+    <section className="relative px-4 sm:px-6 py-12" aria-labelledby={id.heading}>
+      {/* Ambient background glows */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-0 left-1/4 w-[300px] h-[300px] bg-blue-500/8 rounded-full blur-[100px]" />
+        <div className="absolute bottom-0 right-1/4 w-[250px] h-[250px] bg-purple-500/8 rounded-full blur-[80px]" />
+      </div>
+
+      <motion.div
+        className="relative z-10 mx-auto max-w-5xl"
+        variants={container}
+        initial="hidden"
+        animate="show"
+      >
+        {/* Premium glass card */}
         <motion.div
-          variants={containerStagger}
-          initial="initial"
-          animate="animate"
-          exit="exit"
+          variants={item}
           className={[
-            "group relative rounded-2xl p-6 transition-all duration-300",
-            "border border-white/10 bg-white/[0.03] backdrop-blur-sm",
-            "hover:shadow-xl hover:shadow-blue-500/10",
-            "overflow-visible isolate",
+            "relative rounded-2xl overflow-hidden",
+            "border border-white/10 bg-white/[0.03] backdrop-blur-md",
+            "shadow-xl shadow-black/20",
           ].join(" ")}
         >
-          {/* Subtle hover overlay */}
-          <div
-            aria-hidden="true"
-            className="pointer-events-none absolute inset-0 rounded-2xl opacity-0 transition-opacity
-                       group-hover:opacity-100 group-hover:bg-blue-500/[0.02]"
-          />
+          {/* Top gradient accent */}
+          <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-blue-400/50 to-transparent" />
 
-          <div className="relative z-10">
-            {/* Heading */}
-            <motion.div {...fadeUp(0.05)} className="mb-6 text-center sm:text-left">
-              <h2
-                id={id.heading}
-                className="text-3xl sm:text-4xl font-extrabold tracking-tight text-white"
-              >
-                <span className="bg-gradient-to-r from-blue-400 to-blue-500 bg-clip-text text-transparent">
-                  SmartBuy
-                </span>
-              </h2>
-              <p className="text-base sm:text-lg text-zinc-300 mt-1">
-                Find the perfect phone for your needs.
-              </p>
+          <div className="p-6 sm:p-8">
+            {/* Header */}
+            <motion.div variants={item} className="flex items-center gap-4 mb-8">
+              <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 shadow-lg shadow-blue-500/25">
+                <SlidersHorizontal className="w-6 h-6 text-white" />
+              </div>
+              <div>
+                <h2
+                  id={id.heading}
+                  className="text-2xl sm:text-3xl font-bold text-white tracking-tight"
+                >
+                  Find Your{" "}
+                  <span className="bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">
+                    Perfect Phone
+                  </span>
+                </h2>
+                <p className="text-sm sm:text-base text-zinc-400 mt-0.5">
+                  Filter by your preferences and discover the best value
+                </p>
+              </div>
             </motion.div>
 
-            <motion.hr {...fadeUp(0.1)} className="my-5 border-t border-white/10" />
+            {/* Divider */}
+            <motion.div variants={item} className="flex items-center gap-4 mb-6">
+              <div className="flex-1 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+            </motion.div>
 
             {/* Controls grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-5">
               {/* Search */}
-              <motion.div className="flex flex-col lg:col-span-2" {...fadeUp(0.12)}>
-                <label className="text-sm font-medium mb-1.5 text-zinc-300">
+              <motion.div variants={item} className="flex flex-col lg:col-span-2">
+                <label className="text-sm font-medium mb-2 text-zinc-300 flex items-center gap-2">
+                  <Search size={14} className="text-zinc-500" />
                   Search
                 </label>
                 <SearchInput
@@ -285,8 +341,9 @@ function FilterBar({
               </motion.div>
 
               {/* Mode */}
-              <motion.div className="flex flex-col" {...fadeUp(0.14)}>
-                <label htmlFor={id.mode} className="text-sm font-medium mb-1.5 text-zinc-300">
+              <motion.div variants={item} className="flex flex-col">
+                <label htmlFor={id.mode} className="text-sm font-medium mb-2 text-zinc-300 flex items-center gap-2">
+                  <Sparkles size={14} className="text-zinc-500" />
                   Mode
                 </label>
                 <Select
@@ -298,8 +355,8 @@ function FilterBar({
               </motion.div>
 
               {/* Brand */}
-              <motion.div className="flex flex-col" {...fadeUp(0.18)}>
-                <label htmlFor={id.brand} className="text-sm font-medium mb-1.5 text-zinc-300">
+              <motion.div variants={item} className="flex flex-col">
+                <label htmlFor={id.brand} className="text-sm font-medium mb-2 text-zinc-300">
                   Brand
                 </label>
                 <Select
@@ -311,8 +368,8 @@ function FilterBar({
               </motion.div>
 
               {/* Max Price */}
-              <motion.div className="flex flex-col lg:col-span-2" {...fadeUp(0.22)}>
-                <label htmlFor={id.maxPrice} className="text-sm font-medium mb-1.5 text-zinc-300">
+              <motion.div variants={item} className="flex flex-col lg:col-span-2">
+                <label htmlFor={id.maxPrice} className="text-sm font-medium mb-2 text-zinc-300">
                   Max Price (SGD)
                 </label>
                 <Select
@@ -325,23 +382,33 @@ function FilterBar({
             </div>
 
             {/* Search action */}
-            <motion.div className="mt-6 flex justify-end" {...fadeUp(0.26)}>
+            <motion.div variants={item} className="mt-8 flex justify-end">
               <motion.button
                 onClick={onSearch}
-                className="inline-flex items-center gap-2.5 rounded-xl bg-blue-600 text-white font-semibold
-                           px-6 py-3 shadow-lg shadow-blue-500/20
-                           hover:bg-blue-500 hover:shadow-blue-500/30 transition-all duration-200
-                           focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 focus:ring-offset-black"
+                className={[
+                  "group relative inline-flex items-center gap-2.5 rounded-xl px-8 py-3.5",
+                  "bg-gradient-to-r from-blue-600 to-blue-500 text-white font-semibold",
+                  "shadow-lg shadow-blue-500/25 overflow-hidden",
+                  "hover:shadow-xl hover:shadow-blue-500/30",
+                  "focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 focus-visible:ring-offset-2 focus-visible:ring-offset-black",
+                  "transition-all duration-200",
+                ].join(" ")}
                 whileTap={{ scale: 0.98 }}
-                whileHover={{ y: -2 }}
+                whileHover={{ scale: 1.02 }}
               >
-                <Search size={18} strokeWidth={2.5} />
-                Search Phones
+                {/* Shimmer effect */}
+                <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+
+                <Search size={18} strokeWidth={2.5} className="relative z-10" />
+                <span className="relative z-10">Search Phones</span>
               </motion.button>
             </motion.div>
           </div>
+
+          {/* Bottom gradient accent */}
+          <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/5 to-transparent" />
         </motion.div>
-      </div>
+      </motion.div>
     </section>
   );
 }

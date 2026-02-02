@@ -1,57 +1,97 @@
 /**
- * PhoneCard - Individual phone result card
+ * PhoneCard - Clean phone result card with visual score rings
  *
- * Displays phone details, scores, quick specs, and provides
- * access to detailed spec breakdown modal.
+ * Displays phone details, circular score visualization, quick specs,
+ * and provides access to detailed spec breakdown modal.
  */
-import { useMemo, useState, useEffect, useRef, useLayoutEffect } from "react";
+import { useMemo, useState, useEffect, useRef, useCallback } from "react";
 import { createPortal } from "react-dom";
-import { Plus, Check, Info } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Plus, Check, Info, ExternalLink, Award, TrendingUp, Cpu, Battery, MonitorSmartphone, X } from "lucide-react";
+
+// Circular progress ring component
+function ScoreRing({ score, maxScore = 10, size = 52, strokeWidth = 4, color = "blue", label }) {
+  const normalizedScore = Math.min(Math.max(score, 0), maxScore);
+  const percentage = (normalizedScore / maxScore) * 100;
+  const radius = (size - strokeWidth) / 2;
+  const circumference = radius * 2 * Math.PI;
+  const strokeDashoffset = circumference - (percentage / 100) * circumference;
+
+  const colors = {
+    blue: "#3b82f6",
+    emerald: "#10b981",
+    amber: "#f59e0b",
+    zinc: "#71717a",
+  };
+
+  return (
+    <div className="flex flex-col items-center">
+      <div className="relative">
+        <svg width={size} height={size} className="transform -rotate-90">
+          <circle
+            cx={size / 2}
+            cy={size / 2}
+            r={radius}
+            fill="none"
+            stroke="currentColor"
+            strokeWidth={strokeWidth}
+            className="text-white/10"
+          />
+          <motion.circle
+            cx={size / 2}
+            cy={size / 2}
+            r={radius}
+            fill="none"
+            stroke={colors[color] || colors.blue}
+            strokeWidth={strokeWidth}
+            strokeLinecap="round"
+            strokeDasharray={circumference}
+            initial={{ strokeDashoffset: circumference }}
+            animate={{ strokeDashoffset }}
+            transition={{ duration: 0.8, ease: "easeOut", delay: 0.2 }}
+          />
+        </svg>
+        <div className="absolute inset-0 flex items-center justify-center">
+          <span className="text-sm font-bold text-white">{score.toFixed(1)}</span>
+        </div>
+      </div>
+      {label && (
+        <span className="mt-1 text-[10px] font-medium text-zinc-400 uppercase tracking-wide">{label}</span>
+      )}
+    </div>
+  );
+}
 
 function PhoneCard({ phone, isTopPick, mode: modeProp, onCompare, isComparing }) {
-  // Basic numeric values
   const spec = Number(phone.raw_score).toFixed(1);
   const value = Number(phone.smartbuy_score).toFixed(2);
   const price = Number(phone.price_sgd).toFixed(2);
 
-  // Ranks
   const finalRank = phone.rank_final;
+  const totalCount = phone.rank_total;
   const rawRank = phone.rank_raw;
   const valueRank = phone.rank_value;
-  const totalCount = phone.rank_total;
-
-  // Mode (budget/midrange/flagship)
   const mode = (modeProp || "midrange").toLowerCase();
 
-  // Colours for score badges
-  const scoreColour =
-    spec >= 7
-      ? "bg-emerald-500/15 text-emerald-300 border-emerald-400/20"
-      : spec >= 6
-      ? "bg-amber-500/15 text-amber-300 border-amber-400/20"
-      : "bg-zinc-500/15 text-zinc-300 border-zinc-400/20";
+  const getScoreColor = (s) => {
+    const score = Number(s);
+    if (score >= 7) return "emerald";
+    if (score >= 5.5) return "amber";
+    return "zinc";
+  };
 
-  const smartbuyColour =
-    value >= 1.5
-      ? "bg-emerald-500/15 text-emerald-300 border-emerald-400/20"
-      : value >= 1.1
-      ? "bg-amber-500/15 text-amber-300 border-amber-400/20"
-      : "bg-zinc-500/15 text-zinc-300 border-zinc-400/20";
+  const getValueColor = (v) => {
+    const val = Number(v);
+    if (val >= 1.4) return "emerald";
+    if (val >= 1.0) return "amber";
+    return "zinc";
+  };
 
   // Format helpers
   const fmt = {
-    hz: (n) => (n ? `${n}Hz` : ""),
-    res: (w, h) => (w && h ? `${w}×${h}` : ""),
-    ppi: (n) => (n ? `${n}ppi` : ""),
-    gb: (n) => (n || n === 0 ? `${Number(n)}GB` : ""),
-    mah: (n) => (n ? `${Number(n)} mAh` : ""),
-    w: (n) => (n ? `${Number(n)}W` : ""),
-    chip: (s) => (s || "").toString(),
     chipShort: (s) => {
       if (!s) return "";
-      // Extract short chipset name (e.g., "Snapdragon 8 Gen 3" -> "SD 8 Gen 3")
-      const str = s.toString();
-      return str
+      return s.toString()
         .replace("Snapdragon", "SD")
         .replace("Dimensity", "Dim")
         .replace("MediaTek", "MTK")
@@ -60,6 +100,13 @@ function PhoneCard({ phone, isTopPick, mode: modeProp, onCompare, isComparing })
         .slice(0, 4)
         .join(" ");
     },
+    chip: (s) => (s || "").toString(),
+    gb: (n) => (n || n === 0 ? `${Number(n)}GB` : ""),
+    mah: (n) => (n ? `${Number(n)} mAh` : ""),
+    w: (n) => (n ? `${Number(n)}W` : ""),
+    hz: (n) => (n ? `${n}Hz` : ""),
+    res: (w, h) => (w && h ? `${w}×${h}` : ""),
+    ppi: (n) => (n ? `${n}ppi` : ""),
     extras: (p) => {
       const bits = [];
       if (p?.has_5g) bits.push("5G");
@@ -72,79 +119,27 @@ function PhoneCard({ phone, isTopPick, mode: modeProp, onCompare, isComparing })
       const add = [];
       if (p?.has_ois) add.push("OIS");
       if (p?.front_mp) add.push(`Front ${p.front_mp} MP`);
-      return [rear, add.length ? `(${add.join(", ")})` : ""]
-        .filter(Boolean)
-        .join(" ");
+      return [rear, add.length ? `(${add.join(", ")})` : ""].filter(Boolean).join(" ");
     },
     display: (p) => {
-      const type = p?.display_type
-        ? p.display_type.replace(/_/g, " ").toUpperCase()
-        : "";
-      return [
-        type,
-        fmt.hz(p?.refresh_hz ?? p?.refresh_rate),
-        fmt.res(p?.res_w, p?.res_h),
-        fmt.ppi(p?.ppi ?? p?.pixel_density),
-      ]
-        .filter(Boolean)
-        .join(" • ");
+      const type = p?.display_type ? p.display_type.replace(/_/g, " ").toUpperCase() : "";
+      return [type, fmt.hz(p?.refresh_hz ?? p?.refresh_rate), fmt.ppi(p?.ppi ?? p?.pixel_density)].filter(Boolean).join(" • ");
     },
     durability: (p) => p?.glass_type || "-",
     protection: (p) => p?.ip_rating || "-",
   };
 
-  // Target recommendations
   const RECS = {
-    budget: {
-      soc: { target: "Mid 6+ tier" },
-      ram: { target: "≥ 8GB" },
-      storage: { target: "≥ 128GB" },
-      display: { target: "OLED • 90-120Hz • ≥390ppi" },
-      camera: { target: "Score ≥ 5.5 + OIS" },
-      battery: { target: "≥ 4500 mAh" },
-      charging: { target: "≥ 30W" },
-      durability: { target: "Gorilla 5 / Ceramic" },
-      protection: { target: "IP53+" },
-      extras: { target: "5G • NFC • Stereo" },
-    },
-    midrange: {
-      soc: { target: "7-8 tier" },
-      ram: { target: "≥ 12GB" },
-      storage: { target: "≥ 256GB" },
-      display: { target: "OLED • 120Hz • ≥390ppi" },
-      camera: { target: "Score ≥ 6.5 + OIS + UW" },
-      battery: { target: "≥ 5000 mAh" },
-      charging: { target: "≥ 45W" },
-      durability: { target: "Victus / Ceramic Shield" },
-      protection: { target: "IP67/68" },
-      extras: { target: "5G • NFC • Stereo" },
-    },
-    flagship: {
-      soc: { target: "8-9+ tier" },
-      ram: { target: "≥ 12-16GB" },
-      storage: { target: "≥ 256-512GB" },
-      display: { target: "OLED • 120Hz+ • ≥450ppi" },
-      camera: { target: "Score ≥ 7.0 + OIS + UW" },
-      battery: { target: "≥ 5000 mAh" },
-      charging: { target: "≥ 60W / wireless" },
-      durability: { target: "Victus 2 / Ceramic" },
-      protection: { target: "IP68" },
-      extras: { target: "5G • NFC • Stereo" },
-    },
+    budget: { soc: { target: "Mid 6+ tier" }, ram: { target: "≥ 8GB" }, storage: { target: "≥ 128GB" }, display: { target: "OLED • 90-120Hz" }, camera: { target: "Score ≥ 5.5 + OIS" }, battery: { target: "≥ 4500 mAh" }, charging: { target: "≥ 30W" }, durability: { target: "Gorilla 5+" }, protection: { target: "IP53+" }, extras: { target: "5G • NFC" } },
+    midrange: { soc: { target: "7-8 tier" }, ram: { target: "≥ 12GB" }, storage: { target: "≥ 256GB" }, display: { target: "OLED • 120Hz" }, camera: { target: "Score ≥ 6.5 + OIS" }, battery: { target: "≥ 5000 mAh" }, charging: { target: "≥ 45W" }, durability: { target: "Victus+" }, protection: { target: "IP67/68" }, extras: { target: "5G • NFC • Stereo" } },
+    flagship: { soc: { target: "8-9+ tier" }, ram: { target: "≥ 12-16GB" }, storage: { target: "≥ 256-512GB" }, display: { target: "OLED • 120Hz+" }, camera: { target: "Score ≥ 7.0 + OIS" }, battery: { target: "≥ 5000 mAh" }, charging: { target: "≥ 60W" }, durability: { target: "Victus 2" }, protection: { target: "IP68" }, extras: { target: "5G • NFC • Stereo" } },
   };
   const recs = RECS[mode] || RECS.midrange;
 
-  // Build rows for spec breakdown
   const breakdown = phone?.score_breakdown || null;
   const allRows = useMemo(() => {
     if (!breakdown) return [];
-    const build = (key, label, meta) => ({
-      key,
-      label,
-      meta,
-      value: Number(breakdown[key]),
-      rec: recs[key]?.target || null,
-    });
+    const build = (key, label, meta) => ({ key, label, meta, value: Number(breakdown[key]), rec: recs[key]?.target || null });
     return [
       build("camera", "Camera", fmt.camera(phone)),
       build("display", "Display", fmt.display(phone)),
@@ -159,533 +154,313 @@ function PhoneCard({ phone, isTopPick, mode: modeProp, onCompare, isComparing })
     ].filter((r) => Number.isFinite(r.value));
   }, [breakdown, phone, recs]);
 
-  // Split rows
   const CORE_KEYS = ["camera", "display", "soc", "ram", "storage"];
   const BUILD_KEYS = ["battery", "charging", "durability", "protection", "extras"];
   const coreRows = allRows.filter((r) => CORE_KEYS.includes(r.key));
   const buildRows = allRows.filter((r) => BUILD_KEYS.includes(r.key));
 
-  // Modal state + refs
   const [open, setOpen] = useState(false);
   const btnRef = useRef(null);
-  const panelRef = useRef(null);
-  const [panelPos, setPanelPos] = useState({
-    top: 0,
-    left: 0,
-    origin: "bottom right",
-  });
 
   // Close on Escape
   useEffect(() => {
     if (!open) return;
-    const onKey = (e) => {
-      if (e.key === "Escape") setOpen(false);
-    };
+    const onKey = (e) => { if (e.key === "Escape") setOpen(false); };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, [open]);
 
-  // Close on outside click
-  useEffect(() => {
-    if (!open) return;
-    const onDoc = (e) => {
-      if (panelRef.current?.contains(e.target)) return;
-      if (btnRef.current?.contains(e.target)) return;
-      setOpen(false);
-    };
-    document.addEventListener("mousedown", onDoc);
-    return () => document.removeEventListener("mousedown", onDoc);
-  }, [open]);
-
-  // Compute panel position
-  const reposition = () => {
-    const btn = btnRef.current,
-      panel = panelRef.current;
-    if (!btn || !panel) return;
-    const br = btn.getBoundingClientRect();
-    const ph = panel.offsetHeight || 0;
-    const pw = panel.offsetWidth || 0;
-    const gap = 8;
-    let top = br.top - ph - gap;
-    let origin = "bottom right";
-    if (top < 8) {
-      top = br.bottom + gap;
-      origin = "top right";
-    }
-    let left = br.right - pw;
-    left = Math.max(8, Math.min(left, window.innerWidth - pw - 8));
-    const maxTop = window.innerHeight - ph - 8;
-    top = Math.max(8, Math.min(top, maxTop));
-    setPanelPos({ top, left, origin });
-  };
-
-  // Reposition on open/resize/scroll
-  useLayoutEffect(() => {
-    if (!open) return;
-    reposition();
-    const onResize = () => reposition();
-    const onScroll = () => reposition();
-    window.addEventListener("resize", onResize);
-    window.addEventListener("scroll", onScroll, true);
-    return () => {
-      window.removeEventListener("resize", onResize);
-      window.removeEventListener("scroll", onScroll, true);
-    };
-  }, [open]);
-
   const warranty = phone.warranty ? `${phone.warranty}y` : null;
 
-  // Quick specs for card surface
   const quickSpecs = useMemo(() => {
     const specs = [];
-    if (phone.chipset) {
-      specs.push({ label: fmt.chipShort(phone.chipset), key: "chip" });
-    }
-    if (phone.ram_gb) {
-      specs.push({ label: `${phone.ram_gb}GB`, key: "ram" });
-    }
-    if (phone.battery_mah) {
-      specs.push({ label: `${phone.battery_mah}mAh`, key: "batt" });
-    }
-    if (phone.refresh_hz) {
-      specs.push({ label: `${phone.refresh_hz}Hz`, key: "hz" });
-    }
-    return specs.slice(0, 4); // Max 4 quick specs
+    if (phone.chipset) specs.push({ label: fmt.chipShort(phone.chipset), key: "chip", icon: Cpu });
+    if (phone.ram_gb) specs.push({ label: `${phone.ram_gb}GB`, key: "ram", icon: null });
+    if (phone.battery_mah) specs.push({ label: `${phone.battery_mah}mAh`, key: "batt", icon: Battery });
+    if (phone.refresh_hz) specs.push({ label: `${phone.refresh_hz}Hz`, key: "hz", icon: MonitorSmartphone });
+    return specs.slice(0, 4);
   }, [phone]);
 
   return (
-    <div
-      className={[
-        "relative z-0 group rounded-2xl",
-        "border bg-white/[0.03] backdrop-blur-sm",
-        "shadow-sm hover:shadow-xl hover:shadow-blue-500/10",
-        "hover:-translate-y-[2px] transition-all duration-200",
-        "min-h-[280px] overflow-visible hover:z-30 focus-within:z-30",
-        isComparing
-          ? "border-emerald-400/40 ring-1 ring-emerald-400/20"
-          : "border-white/10",
-      ].join(" ")}
-    >
-      {/* Header bar */}
-      <div className="rounded-[inherit] overflow-hidden">
-        <div className="flex items-center justify-between px-3 py-2 bg-white/[0.02] border-b border-white/10">
-          <div className="flex items-center gap-1.5">
-            {isTopPick ? (
-              <span className="h-5 px-2 rounded-full bg-blue-500/15 text-blue-200 border border-blue-400/20 text-[10px] font-medium">
-                Top pick
+    <>
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, ease: "easeOut" }}
+        className={[
+          "relative flex flex-col rounded-2xl",
+          "border bg-gradient-to-b from-white/[0.04] to-white/[0.02] backdrop-blur-sm",
+          "shadow-lg hover:shadow-xl transition-all duration-300",
+          "hover:-translate-y-0.5",
+          isComparing
+            ? "border-emerald-400/50 ring-2 ring-emerald-400/20"
+            : "border-white/10 hover:border-white/15",
+        ].join(" ")}
+      >
+        {/* Top accent for top pick */}
+        {isTopPick && (
+          <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-blue-500 via-cyan-500 to-blue-500 rounded-t-2xl" />
+        )}
+
+        {/* Header */}
+        <div className="flex items-center justify-between px-4 py-2.5 border-b border-white/5">
+          <div className="flex items-center gap-2">
+            {isTopPick && (
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-blue-500/15 text-blue-300 text-[10px] font-semibold">
+                <Award className="w-3 h-3" />
+                Top Pick
               </span>
-            ) : null}
-            {finalRank && totalCount ? (
-              <span className="h-5 px-2 rounded-full bg-white/10 text-zinc-200 border border-white/15 text-[10px] font-semibold tabular-nums">
-                #{finalRank} / {totalCount}
+            )}
+            {finalRank && totalCount && (
+              <span className="px-2 py-0.5 rounded-md bg-white/5 text-zinc-300 text-[10px] font-medium tabular-nums">
+                #{finalRank}/{totalCount}
               </span>
-            ) : null}
+            )}
           </div>
-          {warranty ? (
-            <span className="h-5 px-1.5 rounded border border-white/15 text-zinc-200 bg-white/5 text-[10px]">
-              {warranty}
+          {warranty && (
+            <span className="px-1.5 py-0.5 rounded text-zinc-400 text-[9px]">
+              {warranty} warranty
             </span>
-          ) : null}
+          )}
         </div>
 
-        {/* Body content */}
-        <div className="p-4">
-          <h2 className="text-[16px] leading-snug font-semibold text-white/95 line-clamp-2">
+        {/* Content */}
+        <div className="flex-1 p-4 space-y-3">
+          {/* Model name */}
+          <h2 className="text-base font-semibold text-white leading-snug line-clamp-2 min-h-[2.5rem]">
             {phone.model}
           </h2>
 
-          {/* Quick specs - visible on card */}
+          {/* Score rings */}
+          <div className="flex items-center justify-center gap-5 py-3 rounded-xl bg-white/[0.02] border border-white/5">
+            <ScoreRing score={Number(spec)} maxScore={10} size={50} strokeWidth={4} color={getScoreColor(spec)} label="Spec" />
+            <div className="w-px h-10 bg-white/10" />
+            <ScoreRing score={Number(value)} maxScore={2.5} size={50} strokeWidth={4} color={getValueColor(value)} label="Value" />
+          </div>
+
+          {/* Quick specs */}
           {quickSpecs.length > 0 && (
-            <div className="mt-2 flex flex-wrap gap-1.5">
+            <div className="flex flex-wrap gap-1.5">
               {quickSpecs.map((s) => (
-                <span
-                  key={s.key}
-                  className="px-2 py-0.5 text-[10px] rounded bg-white/5 text-zinc-300 border border-white/10"
-                >
+                <span key={s.key} className="inline-flex items-center gap-1 px-2 py-0.5 text-[10px] rounded bg-white/[0.04] text-zinc-400 border border-white/5">
+                  {s.icon && <s.icon className="w-3 h-3" />}
                   {s.label}
                 </span>
               ))}
             </div>
           )}
 
-          {/* Price link */}
+          {/* Price */}
           <a
             href={phone.price_url}
             target="_blank"
             rel="noopener noreferrer"
-            className="mt-3 flex items-center justify-between rounded-lg border border-white/10 bg-white/[0.03] px-3 py-2.5 hover:border-blue-400/30 hover:bg-blue-500/10 transition"
+            className="flex items-center justify-between rounded-lg border border-white/10 bg-white/[0.02] px-3 py-2.5 hover:border-blue-400/30 hover:bg-blue-500/5 transition-all group"
           >
-            <div className="flex items-baseline gap-2">
-              <span className="text-[18px] font-semibold text-white">S${price}</span>
-              <span className="text-[11px] text-zinc-300">View deal</span>
-            </div>
-            <svg
-              viewBox="0 0 24 24"
-              fill="none"
-              className="w-4 h-4 text-zinc-300 group-hover:text-white"
-              aria-hidden="true"
-            >
-              <path
-                d="M9 6l6 6-6 6"
-                stroke="currentColor"
-                strokeWidth="1.7"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
+            <span className="text-lg font-bold text-white">S${price}</span>
+            <span className="flex items-center gap-1 text-xs text-zinc-400 group-hover:text-blue-400 transition-colors">
+              View deal
+              <ExternalLink className="w-3.5 h-3.5" />
+            </span>
           </a>
-
-          {/* Scores */}
-          <div className="mt-3 flex items-center gap-2">
-            <span
-              className={`inline-block px-2 py-1 text-[11px] font-semibold rounded border ${scoreColour}`}
-            >
-              Spec {spec}/10
-            </span>
-            <span
-              className={`inline-block px-2 py-1 text-[11px] font-semibold rounded border ${smartbuyColour}`}
-            >
-              Value {value}
-            </span>
-          </div>
         </div>
-      </div>
 
-      {/* Action buttons */}
-      <div className="absolute bottom-2 right-2 z-40 flex items-center gap-1.5">
-        {/* Compare button */}
-        {onCompare && (
-          <button
-            type="button"
-            onClick={() => onCompare(phone)}
-            disabled={isComparing}
-            className={[
-              "inline-flex items-center justify-center w-7 h-7 rounded-full text-white text-xs shadow transition-all",
-              "focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 focus:ring-offset-black",
-              isComparing
-                ? "bg-emerald-600 cursor-default"
-                : "bg-zinc-600/90 hover:bg-zinc-500",
-            ].join(" ")}
-            aria-label={isComparing ? "Added to compare" : "Add to compare"}
-            title={isComparing ? "Added to compare" : "Add to compare"}
-          >
-            {isComparing ? (
-              <Check className="w-3.5 h-3.5" />
-            ) : (
-              <Plus className="w-3.5 h-3.5" />
-            )}
-          </button>
-        )}
-
-        {/* Info button to open spec panel */}
-        {allRows.length > 0 && (
-          <button
-            type="button"
-            ref={btnRef}
-            aria-haspopup="dialog"
-            aria-expanded={open ? "true" : "false"}
-            aria-label="Show spec breakdown"
-            onClick={() => setOpen((v) => !v)}
-            className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-blue-600/90 text-white text-xs shadow hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 focus:ring-offset-black"
-          >
-            <Info className="w-3.5 h-3.5" />
-          </button>
-        )}
-      </div>
-
-      {/* Overlay + panel */}
-      {open &&
-        allRows.length > 0 &&
-        createPortal(
-          <>
-            <div
-              className="fixed inset-0 z-40 bg-black/40 backdrop-blur-sm"
-              onClick={() => setOpen(false)}
-              aria-hidden="true"
-            />
-            <SpecPanel
-              panelRef={panelRef}
-              panelPos={panelPos}
-              coreRows={coreRows}
-              buildRows={buildRows}
-              rawRank={rawRank}
-              valueRank={valueRank}
-              onClose={() => setOpen(false)}
-            />
-          </>,
-          document.body
-        )}
-    </div>
-  );
-}
-
-function SpecPanel({ panelRef, panelPos, coreRows, buildRows, rawRank, valueRank, onClose }) {
-  return (
-    <div
-      role="dialog"
-      aria-label="Spec breakdown"
-      ref={panelRef}
-      style={{
-        position: "fixed",
-        top: panelPos.top,
-        left: panelPos.left,
-        transformOrigin: panelPos.origin,
-        scrollbarWidth: "thin",
-      }}
-      className={[
-        "spec-panel",
-        "z-50 w-[440px] max-w-[92vw] max-h-[80vh] overflow-auto overscroll-contain",
-        "rounded-xl border border-white/10 supports-[backdrop-filter]:bg-white/10 bg-zinc-900/70",
-        "shadow-2xl px-4 pb-4 pt-0 transition transform opacity-100 scale-100",
-        "text-zinc-100",
-      ].join(" ")}
-    >
-      {/* Custom scrollbar */}
-      <style>{`
-        .spec-panel::-webkit-scrollbar{ width:8px; height:8px; }
-        .spec-panel::-webkit-scrollbar-track{ background:transparent; }
-        .spec-panel::-webkit-scrollbar-thumb{ background:#6b7280; border-radius:8px; }
-        .spec-panel:hover::-webkit-scrollbar-thumb{ background:#818896; }
-        .spec-panel::-webkit-scrollbar-thumb:active{ background:#9aa0ad; }
-      `}</style>
-
-      {/* Header */}
-      <div className="sticky top-0 z-10 -mx-4 px-4 pt-2 pb-2 bg-black/30 border-b border-white/10">
-        <div className="flex items-center justify-between">
-          <p className="text-xs font-semibold text-zinc-200">Spec breakdown</p>
-          <div className="flex items-center gap-3">
-            <span className="text-[10px] text-zinc-400">0-10 each</span>
+        {/* Footer with action buttons */}
+        <div className="flex items-center justify-end gap-2 px-4 py-3 border-t border-white/5">
+          {onCompare && (
             <button
-              aria-label="Close"
-              onClick={onClose}
-              className="inline-flex items-center justify-center w-6 h-6 rounded-md text-zinc-300 hover:text-white hover:bg-white/10"
+              type="button"
+              onClick={() => onCompare(phone)}
+              disabled={isComparing}
+              className={[
+                "inline-flex items-center justify-center w-8 h-8 rounded-lg text-white transition-all",
+                "focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400",
+                isComparing
+                  ? "bg-emerald-600 cursor-default"
+                  : "bg-zinc-700 hover:bg-zinc-600 border border-white/10",
+              ].join(" ")}
+              aria-label={isComparing ? "Added to compare" : "Add to compare"}
             >
-              ×
+              {isComparing ? <Check className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
             </button>
-          </div>
+          )}
+
+          {allRows.length > 0 && (
+            <button
+              type="button"
+              ref={btnRef}
+              onClick={() => setOpen(true)}
+              className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-blue-600 hover:bg-blue-500 text-white transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400"
+              aria-label="Show spec breakdown"
+            >
+              <Info className="w-4 h-4" />
+            </button>
+          )}
         </div>
-        {rawRank && valueRank ? (
-          <div className="mt-1 text-[10px] text-zinc-400">
-            Spec Rank #{rawRank} • SmartBuy Rank #{valueRank}
-          </div>
-        ) : null}
-      </div>
+      </motion.div>
 
-      {/* Bottom gradient */}
-      <div className="pointer-events-none sticky bottom-0 h-6 -mb-4 bg-gradient-to-t from-black/40 to-transparent" />
+      {/* Modal portal - rendered outside the card */}
+      {createPortal(
+        <AnimatePresence>
+          {open && allRows.length > 0 && (
+            <>
+              <motion.div
+                key="overlay"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.2 }}
+                className="fixed inset-0 z-[100] bg-black/60 backdrop-blur-sm"
+                onClick={() => setOpen(false)}
+              />
+              <motion.div
+                key="panel"
+                initial={{ opacity: 0, scale: 0.95, y: 20 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.95, y: 20 }}
+                transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }}
+                className="fixed inset-x-4 top-[10%] bottom-[10%] z-[101] mx-auto max-w-lg overflow-hidden rounded-2xl border border-white/15 bg-zinc-900/95 backdrop-blur-xl shadow-2xl flex flex-col"
+              >
+                {/* Panel header */}
+                <div className="flex items-center justify-between px-5 py-4 border-b border-white/10">
+                  <div className="flex items-center gap-3">
+                    <div className="w-9 h-9 rounded-xl bg-blue-500/20 flex items-center justify-center">
+                      <TrendingUp className="w-5 h-5 text-blue-400" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-semibold text-white">Spec Breakdown</p>
+                      {rawRank && valueRank && (
+                        <p className="text-[10px] text-zinc-400">Spec #{rawRank} • Value #{valueRank}</p>
+                      )}
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => setOpen(false)}
+                    className="w-8 h-8 rounded-lg flex items-center justify-center text-zinc-400 hover:text-white hover:bg-white/10 transition-colors"
+                    aria-label="Close"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
+                </div>
 
-      {/* Sections */}
-      <GroupTitle title="Core specs" className="mt-3" />
-      <div>
-        {coreRows.map((r) => (
-          <ScoreRow key={r.key} section={r.key} label={r.label} value={r.value} meta={r.meta} />
-        ))}
-      </div>
+                {/* Panel content */}
+                <div className="flex-1 overflow-y-auto px-5 py-4 space-y-4">
+                  <div>
+                    <h4 className="text-[10px] uppercase tracking-wider font-semibold text-zinc-400 mb-2">Core Specs</h4>
+                    <div className="space-y-1">
+                      {coreRows.map((r) => <ScoreRow key={r.key} section={r.key} label={r.label} value={r.value} meta={r.meta} />)}
+                    </div>
+                  </div>
 
-      <GroupTitle title="Battery & build" className="mt-4" />
-      <div>
-        {buildRows.map((r) => (
-          <ScoreRow key={r.key} section={r.key} label={r.label} value={r.value} meta={r.meta} />
-        ))}
-      </div>
+                  <div>
+                    <h4 className="text-[10px] uppercase tracking-wider font-semibold text-zinc-400 mb-2">Battery & Build</h4>
+                    <div className="space-y-1">
+                      {buildRows.map((r) => <ScoreRow key={r.key} section={r.key} label={r.label} value={r.value} meta={r.meta} />)}
+                    </div>
+                  </div>
 
-      <div className="mt-4 text-[11px] text-zinc-300">
-        Overall Spec Score is a weighted blend of these sections.
-      </div>
-    </div>
-  );
-}
-
-function GroupTitle({ title, className = "" }) {
-  return (
-    <div
-      className={["text-[11px] uppercase tracking-wide text-zinc-300/80 px-0", className].join(" ")}
-    >
-      {title}
-    </div>
+                  <div className="p-3 rounded-lg bg-white/5 border border-white/5">
+                    <p className="text-[10px] text-zinc-400 leading-relaxed">
+                      Overall score is a weighted blend of these categories, normalized to 0-10.
+                    </p>
+                  </div>
+                </div>
+              </motion.div>
+            </>
+          )}
+        </AnimatePresence>,
+        document.body
+      )}
+    </>
   );
 }
 
 const WHAT = {
-  camera: "Photo/video quality; OIS helps steady shots and low light.",
-  display: "Screen type, smoothness (Hz), resolution and sharpness (ppi).",
-  soc: "Processor & graphics; affects speed, gaming and camera.",
-  ram: "How smoothly you can switch between apps; more RAM keeps them ready so they don't lag or start over.",
-  storage: "Space for apps, photos and videos.",
+  camera: "Photo/video quality; OIS helps steady shots.",
+  display: "Screen type, smoothness, and sharpness.",
+  soc: "Processor power for apps and games.",
+  ram: "Smooth app switching and multitasking.",
+  storage: "Space for apps, photos, and videos.",
   battery: "Battery size; larger usually lasts longer.",
-  charging: "Charging power; higher is generally faster.",
-  durability: "Glass family/toughness; helps with scratches and drops.",
+  charging: "Charging power; higher is faster.",
+  durability: "Glass quality; scratch/drop resistance.",
   protection: "Dust and water resistance (IP rating).",
-  extras:
-    "Quality-of-life features like 5G, NFC (tap-to-pay, transit cards, quick Bluetooth pairing), and stereo speakers.",
+  extras: "5G, NFC, stereo speakers, etc.",
 };
 
 const LINES = {
-  camera: {
-    poor: "Soft photos; struggles in low light or motion.",
-    needs: "Usable, but low-light shots can be shaky or noisy.",
-    good: "Dependable photos; OIS helps indoors.",
-    great: "Sharp, steady photos with strong low-light results.",
-  },
-  display: {
-    poor: "Dim or coarse-text; motion may look rough.",
-    needs: "Okay screen; not very smooth or contrasty.",
-    good: "Clear, smooth screen for everyday use.",
-    great: "Fast, sharp OLED. Scrolling looks silky.",
-  },
-  soc: {
-    poor: "Feels slow with modern apps and games.",
-    needs: "Fine for basics; heavier apps can lag.",
-    good: "Snappy in daily use and light gaming.",
-    great: "Fast for apps, games and camera processing.",
-  },
-  ram: {
-    poor: "4GB or less: feels slow; switching between apps stutters.",
-    needs: "6-8GB: fine for basics; app switching feels choppy/slow.",
-    good: "12GB: smooth multitasking; most games stay responsive.",
-    great: "16GB+: very smooth even with many apps and games open",
-  },
-  storage: {
-    poor: "Very limited space; fills quickly.",
-    needs: "Enough for basics to watch large apps/media.",
-    good: "Comfortable for photos and apps.",
-    great: "Plenty of headroom for video and big apps.",
-  },
-  battery: {
-    poor: "Needs frequent top-ups; may not last a day.",
-    needs: "Daylight use is tight; expect an afternoon charge.",
-    good: "Should last a full day.",
-    great: "Easily a day+ for most users.",
-  },
-  charging: {
-    poor: "Slow: full charge 2+ hours",
-    needs: "Average: 90-120 min to full; 10-20% in 15 min.",
-    good: "Quick: 60-90 min to full; 20-35% in 15 min.",
-    great: "Very quick: 30-50 min to full; 35-50% in 15 min.",
-  },
-  durability: {
-    poor: "Basic glass; case and protector strongly advised.",
-    needs: "OK glass; use a case to avoid chips.",
-    good: "Tough glass; a case still recommended.",
-    great: "Reinforced glass; better protection from drops.",
-  },
-  protection: {
-    poor: "No real water resistance, avoid rain.",
-    needs: "Splash resistant; keep away from heavy rain.",
-    good: "Good dust/splash protection.",
-    great: "Full dust/water resistance (IP67/68/69).",
-  },
-  extras: {
-    poor: "Missing common features like NFC or stereo.",
-    needs: "Some extras present; a few omissions.",
-    good: "Useful extras that improve daily use.",
-    great: "Has 5G, NFC and stereo speakers.",
-  },
+  camera: { poor: "Struggles in low light.", needs: "Usable but noisy in low light.", good: "Dependable with OIS.", great: "Sharp with strong low-light." },
+  display: { poor: "Dim or rough motion.", needs: "Okay, not very smooth.", good: "Clear and smooth.", great: "Silky OLED experience." },
+  soc: { poor: "Slow with modern apps.", needs: "Fine for basics.", good: "Snappy daily use.", great: "Fast for everything." },
+  ram: { poor: "Slow app switching.", needs: "Basic multitasking.", good: "Smooth multitasking.", great: "Handles everything." },
+  storage: { poor: "Very limited space.", needs: "Enough for basics.", good: "Comfortable storage.", great: "Plenty of room." },
+  battery: { poor: "Needs frequent charging.", needs: "Tight for a full day.", good: "Lasts a full day.", great: "Day+ easily." },
+  charging: { poor: "2+ hours to full.", needs: "90-120 min to full.", good: "60-90 min to full.", great: "30-50 min to full." },
+  durability: { poor: "Basic glass, case needed.", needs: "OK glass, use a case.", good: "Tough glass.", great: "Reinforced glass." },
+  protection: { poor: "No water resistance.", needs: "Splash resistant only.", good: "Good IP protection.", great: "Full IP67/68/69." },
+  extras: { poor: "Missing common features.", needs: "Some features missing.", good: "Useful extras.", great: "5G, NFC, stereo." },
 };
 
 const THRESH = {
-  camera: { poor: 3.5, good: 6.5, great: 8.0 },
-  display: { poor: 3.5, good: 6.5, great: 8.0 },
-  soc: { poor: 3.5, good: 6.5, great: 8.0 },
-  ram: { poor: 3.5, good: 7.0, great: 8.0 },
-  storage: { poor: 3.5, good: 7.0, great: 8.0 },
-  battery: { poor: 3.5, good: 7.0, great: 8.5 },
-  charging: { poor: 3.5, good: 7.0, great: 8.0 },
-  durability: { poor: 3.5, good: 7.0, great: 8.5 },
-  protection: { poor: 3.5, good: 7.0, great: 8.5 },
-  extras: { poor: 3.5, good: 7.0, great: 8.5 },
+  camera: { poor: 3.5, good: 6.0, great: 7.5 },
+  display: { poor: 3.5, good: 6.0, great: 7.5 },
+  soc: { poor: 3.5, good: 6.0, great: 7.5 },
+  ram: { poor: 3.5, good: 6.5, great: 8.0 },
+  storage: { poor: 3.5, good: 6.5, great: 8.0 },
+  battery: { poor: 3.5, good: 6.5, great: 8.0 },
+  charging: { poor: 3.5, good: 6.5, great: 8.0 },
+  durability: { poor: 3.5, good: 6.5, great: 8.0 },
+  protection: { poor: 3.5, good: 6.5, great: 8.0 },
+  extras: { poor: 3.5, good: 6.5, great: 8.0 },
 };
 
-// Map score to status
 function statusForScore(score, t) {
   if (score <= (t.poor ?? 3.5)) return "poor";
-  if (score < (t.good ?? 7.0)) return "needs";
-  if (score < (t.great ?? 8.5)) return "good";
+  if (score < (t.good ?? 6.5)) return "needs";
+  if (score < (t.great ?? 8.0)) return "good";
   return "great";
 }
 
 function ScoreRow({ section, label, value, meta }) {
-  // Normalize
   const safe = Math.max(0, Math.min(10, Number(value)));
   const width = `${safe * 10}%`;
-
-  // Thresholds + status
-  const t = THRESH[section] || { poor: 3.5, good: 7.0, great: 8.5 };
+  const t = THRESH[section] || { poor: 3.5, good: 6.5, great: 8.0 };
   const status = statusForScore(safe, t);
+  const line = LINES[section]?.[status] || "";
 
-  // Extra info
-  const what = WHAT[section] || "";
-  const line = (LINES[section] && LINES[section][status]) || "";
-
-  // Colour palette
-  const palette =
-    status === "great"
-      ? {
-          dot: "bg-emerald-400",
-          chipBg: "bg-emerald-500/10",
-          chipText: "text-emerald-300",
-          chipBorder: "border-emerald-400/20",
-          bar: "bg-emerald-400",
-        }
-      : status === "good"
-      ? {
-          dot: "bg-sky-400",
-          chipBg: "bg-sky-500/10",
-          chipText: "text-sky-300",
-          chipBorder: "border-sky-400/20",
-          bar: "bg-sky-400",
-        }
-      : status === "needs"
-      ? {
-          dot: "bg-amber-400",
-          chipBg: "bg-amber-500/10",
-          chipText: "text-amber-300",
-          chipBorder: "border-amber-400/20",
-          bar: "bg-amber-400",
-        }
-      : {
-          dot: "bg-zinc-400",
-          chipBg: "bg-white/10",
-          chipText: "text-zinc-300",
-          chipBorder: "border-white/15",
-          bar: "bg-zinc-400",
-        };
+  const palette = {
+    great: { dot: "bg-emerald-400", bar: "bg-emerald-500", chip: "bg-emerald-500/15 text-emerald-300 border-emerald-400/20" },
+    good: { dot: "bg-sky-400", bar: "bg-sky-500", chip: "bg-sky-500/15 text-sky-300 border-sky-400/20" },
+    needs: { dot: "bg-amber-400", bar: "bg-amber-500", chip: "bg-amber-500/15 text-amber-300 border-amber-400/20" },
+    poor: { dot: "bg-zinc-500", bar: "bg-zinc-500", chip: "bg-white/10 text-zinc-300 border-white/15" },
+  }[status];
 
   return (
-    <div className="grid grid-cols-[188px_1fr_72px] items-center gap-x-3 gap-y-1 py-2.5 border-t border-white/10 first:border-t-0">
-      {/* Label + meta */}
-      <div className="col-start-1">
-        <div className="flex items-center gap-1">
-          <span className={`inline-block w-1.5 h-1.5 rounded-full ${palette.dot}`} aria-hidden="true" />
-          <span className="text-[13px] font-medium text-white/95 leading-tight">{label}</span>
+    <div className="py-2.5 border-b border-white/5 last:border-b-0">
+      <div className="flex items-start justify-between gap-3 mb-1.5">
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2">
+            <span className={`w-1.5 h-1.5 rounded-full ${palette.dot}`} />
+            <span className="text-sm font-medium text-white">{label}</span>
+          </div>
+          {meta && <p className="text-[10px] text-zinc-400 mt-0.5 ml-3.5 truncate">{meta}</p>}
         </div>
-        {meta ? <div className="text-[11px] text-zinc-300 mt-0.5">{meta}</div> : null}
-        {what ? <div className="text-[11px] text-zinc-400 leading-snug mt-1">{what}</div> : null}
-        {line ? <div className="text-[11px] text-zinc-400 leading-snug mt-1">{line}</div> : null}
-      </div>
-
-      {/* Bar */}
-      <div
-        className="col-start-2 self-center"
-        role="progressbar"
-        aria-valuemin={0}
-        aria-valuemax={10}
-        aria-valuenow={Number(safe.toFixed(1))}
-      >
-        <div className="relative h-1.5 rounded-full bg-white/10 overflow-hidden">
-          <div className={`absolute inset-y-0 left-0 ${palette.bar} rounded-full`} style={{ width }} />
+        <div className="text-right flex-shrink-0">
+          <span className="text-sm font-bold tabular-nums text-white">{safe.toFixed(1)}</span>
+          <span className={`ml-2 px-1.5 py-0.5 text-[9px] font-medium rounded border ${palette.chip}`}>
+            {status === "great" ? "Great" : status === "good" ? "Good" : status === "needs" ? "OK" : "Poor"}
+          </span>
         </div>
       </div>
-
-      {/* Numeric + status chip */}
-      <div className="col-start-3 justify-self-end text-right">
-        <div className="text-[12px] tabular-nums text-white/90">{safe.toFixed(1)}</div>
-        <div
-          className={`mt-1 inline-block px-1.5 py-0.5 text-[10px] rounded border ${palette.chipBorder} ${palette.chipText} ${palette.chipBg}`}
-        >
-          {status === "great" ? "Great" : status === "good" ? "Good" : status === "needs" ? "Needs work" : "Poor"}
-        </div>
+      <div className="h-1 rounded-full bg-white/10 overflow-hidden">
+        <motion.div
+          className={`h-full rounded-full ${palette.bar}`}
+          initial={{ width: 0 }}
+          animate={{ width }}
+          transition={{ duration: 0.5, ease: "easeOut" }}
+        />
       </div>
+      {line && <p className="text-[10px] text-zinc-400 mt-1.5 ml-3.5">{line}</p>}
     </div>
   );
 }
