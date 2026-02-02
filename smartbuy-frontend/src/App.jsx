@@ -6,8 +6,10 @@
  * 2. Mode selection (Budget/Midrange/Flagship)
  * 3. Brand selection
  * 4. Filter and results display with comparison feature
+ *
+ * Uses static pre-calculated data for GitHub Pages deployment.
  */
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 
 // Components
@@ -33,53 +35,84 @@ function App() {
   const [search, setSearch] = useState("");
   const [maxPrice, setMaxPrice] = useState(2400);
 
+  // All phone data (loaded once)
+  const [allPhones, setAllPhones] = useState([]);
+  const [dataLoading, setDataLoading] = useState(true);
+  const [dataError, setDataError] = useState("");
+
   // Results + status
-  const [phones, setPhones] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
   const [hasSearched, setHasSearched] = useState(false);
 
   // Comparison state
   const [compareList, setCompareList] = useState([]);
 
-  // Fetch recommendations from API
-  const handleSearch = async () => {
-    setLoading(true);
-    setError("");
-    setHasSearched(true);
+  // Load static phone data on mount
+  useEffect(() => {
+    const loadPhoneData = async () => {
+      try {
+        setDataLoading(true);
+        // Use Vite's base URL for GitHub Pages compatibility
+        const baseUrl = import.meta.env.BASE_URL || "/";
+        const res = await fetch(`${baseUrl}phones.json`);
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const data = await res.json();
+        setAllPhones(data);
+      } catch (err) {
+        console.error("Failed to load phone data:", err);
+        setDataError("Failed to load phone data. Please refresh the page.");
+      } finally {
+        setDataLoading(false);
+      }
+    };
+    loadPhoneData();
+  }, []);
 
-    try {
-      // Build query params
-      const params = new URLSearchParams({
-        mode: mode?.toLowerCase() || "budget",
-        ...(brand && { brand }),
-        ...(maxPrice < 2400 && { max_price: maxPrice }),
-      });
-
-      const res = await fetch(`/api/recommendations/?${params.toString()}`);
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-
-      // Parse and rank results
-      const data = await res.json();
-      setPhones(addRanks(data));
-    } catch (err) {
-      console.error("Fetch error:", err);
-      setError("Failed to fetch recommendations. Please try again.");
-      setPhones([]);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Filter phones client-side by search term
+  // Filter phones based on current filters
   const filteredPhones = useMemo(() => {
-    if (!search.trim()) return phones;
-    const term = search.toLowerCase();
-    return phones.filter((p) =>
-      p.model?.toLowerCase().includes(term) ||
-      p.chipset?.toLowerCase().includes(term)
-    );
-  }, [phones, search]);
+    if (!hasSearched) return [];
+
+    let result = [...allPhones];
+
+    // Filter by mode (price category)
+    if (mode) {
+      const modeKey = mode.toLowerCase();
+      result = result.filter((p) => p.mode_category === modeKey);
+    }
+
+    // Filter by brand
+    if (brand) {
+      const brandLower = brand.toLowerCase();
+      result = result.filter(
+        (p) => p.brand?.toLowerCase() === brandLower
+      );
+    }
+
+    // Filter by max price
+    if (maxPrice < 2400) {
+      result = result.filter((p) => (p.price_sgd || 0) <= maxPrice);
+    }
+
+    // Filter by search term
+    if (search.trim()) {
+      const term = search.toLowerCase();
+      result = result.filter(
+        (p) =>
+          p.model?.toLowerCase().includes(term) ||
+          p.chipset?.toLowerCase().includes(term)
+      );
+    }
+
+    // Sort by smartbuy_score descending
+    result.sort((a, b) => (b.smartbuy_score || 0) - (a.smartbuy_score || 0));
+
+    // Add ranks
+    return addRanks(result);
+  }, [allPhones, mode, brand, maxPrice, search, hasSearched]);
+
+  // Handle search button click
+  const handleSearch = () => {
+    setHasSearched(true);
+  };
 
   // Comparison handlers
   const handleAddToCompare = (phone) => {
@@ -107,11 +140,14 @@ function App() {
   const handleStartOver = () => {
     setMode(null);
     setBrand(null);
-    setPhones([]);
     setHasSearched(false);
     setCompareList([]);
     setSearch("");
   };
+
+  // Show loading state while data loads
+  const loading = dataLoading;
+  const error = dataError;
 
   return (
     <div className="min-h-screen text-zinc-100 bg-transparent">
@@ -136,7 +172,6 @@ function App() {
               setMode={(m) => {
                 setMode(m);
                 setBrand(null);
-                setPhones([]);
                 setHasSearched(false);
               }}
             />
@@ -213,31 +248,21 @@ function App() {
                 >
                   {error}
                   <button
-                    onClick={handleSearch}
+                    onClick={() => window.location.reload()}
                     className="ml-3 underline hover:no-underline"
                   >
-                    Try again
+                    Refresh page
                   </button>
                 </motion.div>
               )}
 
               {/* Empty state - no results after search */}
-              {!loading && !error && hasSearched && filteredPhones.length === 0 && phones.length === 0 && (
+              {!loading && !error && hasSearched && filteredPhones.length === 0 && (
                 <EmptyState
                   title="No Phones Found"
                   message="No phones match your current filters. Try adjusting your price range or selecting a different brand."
                   onReset={handleResetFilters}
                   resetLabel="Reset Filters"
-                />
-              )}
-
-              {/* Empty state - search filtered everything out */}
-              {!loading && !error && phones.length > 0 && filteredPhones.length === 0 && (
-                <EmptyState
-                  title="No Matches"
-                  message={`No phones match "${search}". Try a different search term.`}
-                  onReset={() => setSearch("")}
-                  resetLabel="Clear Search"
                 />
               )}
 

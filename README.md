@@ -169,6 +169,50 @@ Scraper/
 - **PhoneCard** - Phone display with score ring and spec details
 - **CompareView** - Side-by-side comparison with fullscreen mode
 
+## GitHub Pages Deployment
+
+The app can be deployed as a fully static site to GitHub Pages (no backend required).
+
+### Automatic Deployment (Recommended)
+
+1. **Update the workflow file** - Edit `.github/workflows/deploy.yml` and change `VITE_BASE_URL` to match your repo name:
+   ```yaml
+   VITE_BASE_URL: /your-repo-name/
+   ```
+
+2. **Enable GitHub Pages** - Go to your repo Settings > Pages > Source: "GitHub Actions"
+
+3. **Push to main** - The workflow will automatically:
+   - Generate `phones.json` with pre-calculated scores
+   - Build the React frontend
+   - Deploy to GitHub Pages
+
+### Manual Deployment
+
+```bash
+# 1. Generate static phone data
+python build_static_data.py
+
+# 2. Build frontend
+cd smartbuy-frontend
+VITE_BASE_URL=/your-repo-name/ npm run build
+
+# 3. Deploy the dist/ folder to GitHub Pages
+```
+
+### Local Development (with static data)
+
+```bash
+# Generate phone data
+python build_static_data.py
+
+# Start frontend dev server
+cd smartbuy-frontend
+npm run dev
+```
+
+The frontend will load `phones.json` from the public folder and do all filtering client-side.
+
 ## License
 
 This project is for educational purposes as part of an FYP (Final Year Project).
