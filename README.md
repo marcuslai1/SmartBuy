@@ -109,18 +109,26 @@ python manage.py migrate
 
 # Start server
 python manage.py runserver
-Frontend
-Bash
+
+### Frontend
 cd smartbuy-frontend
 npm install
 npm run dev -- --host
+
+### Frontend
+```bash
+cd smartbuy-frontend
+npm install
+npm run dev -- --host
+```
+
 Once started, the app will be available at:
+- Local: http://localhost:5173/
+- Network: http://[your-ip]:5173/
 
-Local: http://localhost:5173/
+## Project Structure
 
-Network: http://[your-ip]:5173/
-
-Project Structure
+```
 Scraper/
 ├── phones/                    # Django app
 │   ├── scoring.py            # Scoring algorithm
@@ -145,30 +153,69 @@ Scraper/
 ├── manage.py
 ├── requirements.txt
 └── README.md
-UI Components
-Premium Design System
-Glass-morphism - Translucent cards with backdrop blur
+```
 
-Gradient accents - Subtle color gradients for visual hierarchy
+## UI Components
 
-Smooth animations - Framer Motion powered transitions
+### Premium Design System
+- **Glass-morphism** - Translucent cards with backdrop blur
+- **Gradient accents** - Subtle color gradients for visual hierarchy
+- **Smooth animations** - Framer Motion powered transitions
+- **Score visualization** - Circular progress rings and progress bars
+- **Dark theme** - Optimized for dark mode viewing
 
-Score visualization - Circular progress rings and progress bars
+### Key Components
+- **HeroIntro** - Animated splash screen with particle effects
+- **ModeSelector** - Budget/Midrange/Flagship selection cards
+- **BrandSelector** - Brand filtering with color-coded cards
+- **FilterBar** - Search and filter controls with portal-based dropdowns
+- **PhoneCard** - Phone display with score ring and spec details
+- **CompareView** - Side-by-side comparison with fullscreen mode
 
-Dark theme - Optimized for dark mode viewing
+## GitHub Pages Deployment
 
-Key Components
-HeroIntro - Animated splash screen with particle effects
+The app can be deployed as a fully static site to GitHub Pages (no backend required).
 
-ModeSelector - Budget/Midrange/Flagship selection cards
+### Automatic Deployment (Recommended)
 
-BrandSelector - Brand filtering with color-coded cards
+1. **Update the workflow file** - Edit `.github/workflows/deploy.yml` and change `VITE_BASE_URL` to match your repo name:
+   ```yaml
+   VITE_BASE_URL: /your-repo-name/
+   ```
 
-FilterBar - Search and filter controls with portal-based dropdowns
+2. **Enable GitHub Pages** - Go to your repo Settings > Pages > Source: "GitHub Actions"
 
-PhoneCard - Phone display with score ring and spec details
+3. **Push to main** - The workflow will automatically:
+   - Generate `phones.json` with pre-calculated scores
+   - Build the React frontend
+   - Deploy to GitHub Pages
 
-CompareView - Side-by-side comparison with fullscreen mode
+### Manual Deployment
 
-License
+```bash
+# 1. Generate static phone data
+python build_static_data.py
+
+# 2. Build frontend
+cd smartbuy-frontend
+VITE_BASE_URL=/your-repo-name/ npm run build
+
+# 3. Deploy the dist/ folder to GitHub Pages
+```
+
+### Local Development (with static data)
+
+```bash
+# Generate phone data
+python build_static_data.py
+
+# Start frontend dev server
+cd smartbuy-frontend
+npm run dev
+```
+
+The frontend will load `phones.json` from the public folder and do all filtering client-side.
+
+## License
+
 This project is for educational purposes as part of an FYP (Final Year Project).
