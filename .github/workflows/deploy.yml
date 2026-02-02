@@ -2,10 +2,8 @@
 name: Deploy to GitHub Pages
 
 on:
-  # Run on push to main branch
   push:
     branches: [main]
-  # Allow manual trigger
   workflow_dispatch:
 
 # Sets permissions for GITHUB_TOKEN
@@ -26,19 +24,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
-
-      - name: Install Python dependencies
-        run: |
-          pip install -r requirements.txt
-
-      - name: Build static phone data
-        run: |
-          python build_static_data.py
-
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
@@ -53,8 +38,8 @@ jobs:
       - name: Build frontend
         working-directory: smartbuy-frontend
         env:
-          # Set base URL to repo name - UPDATE THIS to your repo name!
-          VITE_BASE_URL: /Scraper/
+          # THIS MUST MATCH YOUR REPO NAME exactly (with slashes)
+          VITE_BASE_URL: /SmartBuy/ 
         run: npm run build
 
       - name: Setup Pages
