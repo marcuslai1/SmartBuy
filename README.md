@@ -2,7 +2,7 @@
 
 SmartBuy is a phone comparison and recommendation platform that helps users find the best value smartphones based on their preferences and budget. It uses a scoring algorithm to evaluate phones across multiple categories and calculate a "SmartBuy Score" that represents value for money.
 
-**Live Demo:** [https://your-username.github.io/SmartBuy/](https://your-username.github.io/SmartBuy/)
+**Live Demo:** [https://marcuslai1.github.io/SmartBuy/](https://marcuslai1.github.io/SmartBuy/)
 
 ## Features
 
