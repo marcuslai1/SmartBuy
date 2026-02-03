@@ -45,32 +45,6 @@ npm run dev
 
 The app will be available at http://localhost:5173/
 
-## GitHub Pages Deployment
-
-### Automatic Deployment
-
-1. Edit `.github/workflows/deploy.yml` and set your repo name:
-   ```yaml
-   VITE_BASE_URL: /your-repo-name/
-   ```
-
-2. Go to repo **Settings > Pages > Source** and select **GitHub Actions**
-
-3. Push to `main` branch - deployment happens automatically
-
-### Manual Deployment
-
-```bash
-# Generate phone data
-python build_static_data.py
-
-# Build frontend
-cd smartbuy-frontend
-npm run build
-
-# Deploy dist/ folder to GitHub Pages
-```
-
 ## Scoring System
 
 Phones are scored on a 0-10 scale across 10 categories:
