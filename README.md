@@ -120,6 +120,32 @@ This ensures fair comparisons - a flagship at $900 can score 10/10 value if it's
 | 5-7 | Average value for the price |
 | 1-4 | Below average value |
 
+### Protection (IP Rating) Scoring
+
+IP ratings are scored with proper differentiation between dust protection levels:
+
+| Rating | Score | Description |
+|--------|-------|-------------|
+| IP68 | 0.95 | Dust-tight + 1.5m submersion (flagship standard) |
+| IP67 | 0.82 | Dust-tight + 1m submersion |
+| IP66 | 0.70 | Dust-tight + powerful water jets |
+| IP65 | 0.60 | Dust-tight + water jets |
+| IP55 | 0.40 | Dust-protected + water jets |
+| IP54 | 0.30 | Dust-protected + splashing |
+
+### Extras Scoring
+
+Extra features are balanced to avoid any single feature dominating:
+
+| Feature | Score | Notes |
+|---------|-------|-------|
+| 5G | 0.65 | Important but not dominant |
+| NFC | 0.45 | Mobile payments |
+| Stereo speakers | 0.45 | Media experience |
+| Wireless charging | 0.40 | Convenience feature |
+| SD card slot | 0.35 | Expandable storage |
+| Headphone jack | 0.30 | Still valued by many users |
+
 ## Project Structure
 
 ```
@@ -128,8 +154,12 @@ SmartBuy/
 ├── phones/
 │   ├── scoring.py            # Scoring algorithm
 │   └── scoring_config.py     # Configurable weights and tiers
+├── scripts/
+│   ├── scrape_specs.py       # Scrapes phone specs from versus.com
+│   ├── scrape_price.py       # Scrapes prices from Lazada.sg
+│   └── add_glass.py          # Adds glass/durability data to phones
 ├── data/
-│   └── final_spec.json           # Source phone data (with glass/durability info)
+│   └── final_spec.json       # Source phone data (with glass/durability info)
 ├── smartbuy-frontend/
 │   ├── public/
 │   │   └── phones.json       # Generated static data
