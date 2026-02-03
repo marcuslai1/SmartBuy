@@ -64,7 +64,8 @@ function ScoreRing({ score, maxScore = 10, size = 52, strokeWidth = 4, color = "
 
 function PhoneCard({ phone, isTopPick, mode: modeProp, onCompare, isComparing }) {
   const spec = Number(phone.raw_score).toFixed(1);
-  const value = Number(phone.smartbuy_score).toFixed(2);
+  // Use value_score (0-10 normalized within tier) or fallback to smartbuy_score
+  const value = Number(phone.value_score ?? phone.smartbuy_score ?? 0).toFixed(1);
   const price = Number(phone.price_sgd).toFixed(2);
 
   const finalRank = phone.rank_final;
@@ -80,10 +81,11 @@ function PhoneCard({ phone, isTopPick, mode: modeProp, onCompare, isComparing })
     return "zinc";
   };
 
+  // Value score is now 0-10 (normalized within price tier)
   const getValueColor = (v) => {
     const val = Number(v);
-    if (val >= 1.4) return "emerald";
-    if (val >= 1.0) return "amber";
+    if (val >= 7) return "emerald";
+    if (val >= 5) return "amber";
     return "zinc";
   };
 
@@ -136,7 +138,7 @@ function PhoneCard({ phone, isTopPick, mode: modeProp, onCompare, isComparing })
   };
   const recs = RECS[mode] || RECS.midrange;
 
-  const breakdown = phone?.score_breakdown || null;
+  const breakdown = phone?.breakdown || phone?.score_breakdown || null;
   const allRows = useMemo(() => {
     if (!breakdown) return [];
     const build = (key, label, meta) => ({ key, label, meta, value: Number(breakdown[key]), rec: recs[key]?.target || null });
@@ -235,7 +237,7 @@ function PhoneCard({ phone, isTopPick, mode: modeProp, onCompare, isComparing })
           <div className="flex items-center justify-center gap-5 py-3 rounded-xl bg-white/[0.02] border border-white/5">
             <ScoreRing score={Number(spec)} maxScore={10} size={50} strokeWidth={4} color={getScoreColor(spec)} label="Spec" />
             <div className="w-px h-10 bg-white/10" />
-            <ScoreRing score={Number(value)} maxScore={2.5} size={50} strokeWidth={4} color={getValueColor(value)} label="Value" />
+            <ScoreRing score={Number(value)} maxScore={10} size={50} strokeWidth={4} color={getValueColor(value)} label="Value" />
           </div>
 
           {/* Quick specs */}

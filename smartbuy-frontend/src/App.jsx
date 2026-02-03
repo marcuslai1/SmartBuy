@@ -102,8 +102,8 @@ function App() {
       );
     }
 
-    // Sort by smartbuy_score descending
-    result.sort((a, b) => (b.smartbuy_score || 0) - (a.smartbuy_score || 0));
+    // Sort by value_score descending (0-10 normalized within tier)
+    result.sort((a, b) => (b.value_score ?? b.smartbuy_score ?? 0) - (a.value_score ?? a.smartbuy_score ?? 0));
 
     // Add ranks
     return addRanks(result);

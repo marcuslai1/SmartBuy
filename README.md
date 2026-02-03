@@ -1,221 +1,171 @@
 # SmartBuy - Phone Recommendation System
 
-SmartBuy is a phone comparison and recommendation platform that helps users find the best value smartphones based on their preferences and budget. It uses a sophisticated scoring algorithm to evaluate phones across multiple categories and calculate a "SmartBuy Score" that represents value for money.
+SmartBuy is a phone comparison and recommendation platform that helps users find the best value smartphones based on their preferences and budget. It uses a scoring algorithm to evaluate phones across multiple categories and calculate a "SmartBuy Score" that represents value for money.
+
+**Live Demo:** [https://your-username.github.io/SmartBuy/](https://your-username.github.io/SmartBuy/)
 
 ## Features
 
 - **Smart Scoring Algorithm** - Evaluates phones across 10 categories with configurable weights
-- **ISP Quality Scoring** - Camera scores account for computational photography capabilities based on SoC tier
+- **ISP Quality Scoring** - Camera scores account for computational photography based on SoC tier
 - **Multiple Modes** - Budget, Midrange, and Flagship filtering options
 - **Brand Filtering** - Filter by specific manufacturers
 - **Price Filtering** - Set maximum budget in SGD
 - **Phone Comparison** - Side-by-side comparison with category breakdowns
-- **Premium UI** - Glass-morphism design with smooth animations
+- **Static Deployment** - No backend required, works on GitHub Pages
 
 ## Tech Stack
 
-### Backend
-- **Django** - Python web framework
-- **SQLite** - Database (development)
-- **Custom Scoring Engine** - Configurable phone evaluation system
-
-### Frontend
 - **React 19** - UI framework
 - **Vite** - Build tool
 - **Tailwind CSS** - Styling
 - **Framer Motion** - Animations
 - **Lucide React** - Icons
+- **Python** - Scoring algorithm and data generation
 
-## Scoring System
+## Quick Start
 
-The scoring algorithm evaluates phones on a 0-10 scale across multiple categories:
+### 1. Generate Phone Data
 
-### Category Weights (Total: 13.0)
-| Category | Weight | Description |
-|----------|--------|-------------|
-| Camera | 2.0 | Main sensor, OIS, ultrawide, telephoto, ISP quality |
-| SoC | 1.75 | Processor performance tier |
-| Display | 1.5 | Panel type, refresh rate, resolution, PPI, brightness |
-| Battery | 1.5 | Capacity with efficiency multipliers |
-| Durability | 1.25 | Glass type and Mohs hardness |
-| RAM | 1.25 | Memory capacity |
-| Charging | 1.0 | Wired charging speed |
-| Storage | 1.0 | Internal storage capacity |
-| Extras | 1.0 | 5G, NFC, stereo speakers, wireless charging, etc. |
-| Protection | 0.75 | IP rating |
-
-### Camera Scoring
-
-Camera quality is evaluated using hardware specs plus an **ISP Quality Bonus** based on SoC tier:
-
-| Component | Max Points | Description |
-|-----------|------------|-------------|
-| Megapixels | 2.0 | Diminishing returns above 50MP |
-| OIS | 1.5 | Optical image stabilization |
-| ISP Quality | 1.5 | Based on SoC tier (computational photography) |
-| Ultrawide | 0.4 | 12MP+ secondary camera |
-| Telephoto | 0.5 | Optical zoom lens |
-| Selfie | 0.3 | Front camera (32MP = max) |
-
-The ISP bonus accounts for computational photography differences - explaining why a flagship 50MP phone often produces better photos than a budget 108MP phone.
-
-### ISP Quality Tiers
-| SoC Tier | ISP Bonus | Examples |
-|----------|-----------|----------|
-| 9.5+ | +1.5 | A17 Pro, Snapdragon 8 Gen 3 |
-| 9.0 | +1.35 | A16, Snapdragon 8 Gen 2 |
-| 8.0 | +1.05 | Snapdragon 8 Gen 1, A15 |
-| 7.0 | +0.75 | Dimensity 7200, Snapdragon 7 Gen 3 |
-| 6.0 | +0.4 | Helio G99 |
-| 5.0 | +0.2 | Helio G85 |
-| 4.0 | +0.1 | Entry-level chips |
-
-### SmartBuy Score
-
-The final SmartBuy Score represents value for money:
-
-SmartBuy Score = (Raw Score / Price) × 100
-
-
-Higher scores indicate better value. A phone with a raw score of 7.5 at $300 would have a SmartBuy Score of 2.5, while the same phone at $500 would score 1.5.
-
-## Configuration
-
-All scoring parameters are centralized in `phones/scoring_config.py` for easy tuning:
-
-- Category weights
-- SoC/RAM/Storage/Battery/Charging tiers
-- Display scoring thresholds
-- Camera scoring parameters
-- ISP quality tiers
-- Glass durability baselines
-- IP rating scores
-
-## Setup
-
-### Backend
-From the project root:
 ```bash
-# Create and activate virtual environment
-python -m venv venv
-venv\Scripts\activate  # Windows
-source venv/bin/activate  # macOS/Linux
-
-# Install dependencies
+# Install Python dependencies
 pip install -r requirements.txt
 
-# Run migrations
-python manage.py migrate
+# Generate static phone data with scores
+python build_static_data.py
+```
 
-# Start server
-python manage.py runserver
+### 2. Run Frontend
 
-### Frontend
-cd smartbuy-frontend
-npm install
-npm run dev -- --host
-
-### Frontend
 ```bash
 cd smartbuy-frontend
 npm install
-npm run dev -- --host
+npm run dev
 ```
 
-Once started, the app will be available at:
-- Local: http://localhost:5173/
-- Network: http://[your-ip]:5173/
-
-## Project Structure
-
-```
-Scraper/
-├── phones/                    # Django app
-│   ├── scoring.py            # Scoring algorithm
-│   ├── scoring_config.py     # Scoring configuration
-│   ├── models.py             # Phone model
-│   └── views.py              # API endpoints
-├── data/                      # Phone data JSON files
-│   ├── after_warranty_spec.json
-│   ├── cleaned_specs.json
-│   └── final_spec.json
-├── smartbuy-frontend/         # React frontend
-│   └── src/
-│       ├── components/
-│       │   ├── HeroIntro.jsx      # Splash screen
-│       │   ├── ModeSelector.jsx   # Budget/Midrange/Flagship
-│       │   ├── BrandSelector.jsx  # Brand selection
-│       │   ├── FilterBar.jsx      # Search filters
-│       │   ├── PhoneCard.jsx      # Phone display card
-│       │   ├── CompareView.jsx    # Comparison view
-│       │   └── ...
-│       └── index.css          # Global styles
-├── manage.py
-├── requirements.txt
-└── README.md
-```
-
-## UI Components
-
-### Premium Design System
-- **Glass-morphism** - Translucent cards with backdrop blur
-- **Gradient accents** - Subtle color gradients for visual hierarchy
-- **Smooth animations** - Framer Motion powered transitions
-- **Score visualization** - Circular progress rings and progress bars
-- **Dark theme** - Optimized for dark mode viewing
-
-### Key Components
-- **HeroIntro** - Animated splash screen with particle effects
-- **ModeSelector** - Budget/Midrange/Flagship selection cards
-- **BrandSelector** - Brand filtering with color-coded cards
-- **FilterBar** - Search and filter controls with portal-based dropdowns
-- **PhoneCard** - Phone display with score ring and spec details
-- **CompareView** - Side-by-side comparison with fullscreen mode
+The app will be available at http://localhost:5173/
 
 ## GitHub Pages Deployment
 
-The app can be deployed as a fully static site to GitHub Pages (no backend required).
+### Automatic Deployment
 
-### Automatic Deployment (Recommended)
-
-1. **Update the workflow file** - Edit `.github/workflows/deploy.yml` and change `VITE_BASE_URL` to match your repo name:
+1. Edit `.github/workflows/deploy.yml` and set your repo name:
    ```yaml
    VITE_BASE_URL: /your-repo-name/
    ```
 
-2. **Enable GitHub Pages** - Go to your repo Settings > Pages > Source: "GitHub Actions"
+2. Go to repo **Settings > Pages > Source** and select **GitHub Actions**
 
-3. **Push to main** - The workflow will automatically:
-   - Generate `phones.json` with pre-calculated scores
-   - Build the React frontend
-   - Deploy to GitHub Pages
+3. Push to `main` branch - deployment happens automatically
 
 ### Manual Deployment
-
-```bash
-# 1. Generate static phone data
-python build_static_data.py
-
-# 2. Build frontend
-cd smartbuy-frontend
-VITE_BASE_URL=/your-repo-name/ npm run build
-
-# 3. Deploy the dist/ folder to GitHub Pages
-```
-
-### Local Development (with static data)
 
 ```bash
 # Generate phone data
 python build_static_data.py
 
-# Start frontend dev server
+# Build frontend
 cd smartbuy-frontend
-npm run dev
+npm run build
+
+# Deploy dist/ folder to GitHub Pages
 ```
 
-The frontend will load `phones.json` from the public folder and do all filtering client-side.
+## Scoring System
+
+Phones are scored on a 0-10 scale across 10 categories:
+
+| Category | Weight | Description |
+|----------|--------|-------------|
+| Camera | 2.0 | Sensor, OIS, ultrawide, ISP quality |
+| SoC | 1.75 | Processor performance tier |
+| Display | 1.5 | Panel type, refresh rate, resolution |
+| Battery | 1.5 | Capacity with efficiency multipliers |
+| Durability | 1.25 | Glass type and hardness |
+| RAM | 1.25 | Memory capacity |
+| Charging | 1.0 | Wired charging speed |
+| Storage | 1.0 | Internal storage |
+| Extras | 1.0 | 5G, NFC, stereo speakers, etc. |
+| Protection | 0.75 | IP rating |
+
+### Camera ISP Quality Bonus
+
+Camera scores include an ISP bonus based on SoC tier, accounting for computational photography:
+
+| SoC Tier | ISP Bonus | Examples |
+|----------|-----------|----------|
+| 9.5+ | +1.5 | A17 Pro, Snapdragon 8 Gen 3 |
+| 8.0 | +1.05 | Snapdragon 8 Gen 1, A15 |
+| 7.0 | +0.75 | Dimensity 7200 |
+| 5.0 | +0.2 | Helio G85 |
+
+### Value Score (Tier-Relative)
+
+The Value Score (0-10) measures how good a deal a phone is **within its price bracket**:
+
+- **Budget** (≤$400) - Compared against other budget phones
+- **Midrange** ($401-$800) - Compared against other midrange phones
+- **Flagship** (>$800) - Compared against other flagship phones
+
+```
+Raw Value = (Spec Score / Price) × 100
+Value Score = Normalize(Raw Value) within tier → 0-10 scale
+```
+
+This ensures fair comparisons - a flagship at $900 can score 10/10 value if it's the best deal among flagships, rather than always losing to cheaper budget phones.
+
+| Value Score | Meaning |
+|-------------|---------|
+| 8-10 | Excellent value in this tier |
+| 5-7 | Average value for the price |
+| 1-4 | Below average value |
+
+## Project Structure
+
+```
+SmartBuy/
+├── build_static_data.py      # Generates phones.json with scores
+├── phones/
+│   ├── scoring.py            # Scoring algorithm
+│   └── scoring_config.py     # Configurable weights and tiers
+├── data/
+│   └── final_spec.json           # Source phone data (with glass/durability info)
+├── smartbuy-frontend/
+│   ├── public/
+│   │   └── phones.json       # Generated static data
+│   ├── src/
+│   │   ├── App.jsx           # Main app component
+│   │   ├── components/
+│   │   │   ├── HeroIntro.jsx
+│   │   │   ├── ModeSelector.jsx
+│   │   │   ├── BrandSelector.jsx
+│   │   │   ├── FilterBar.jsx
+│   │   │   ├── PhoneCard.jsx
+│   │   │   └── CompareView.jsx
+│   │   └── index.css
+│   └── vite.config.js
+├── .github/
+│   └── workflows/
+│       └── deploy.yml        # GitHub Pages deployment
+└── README.md
+```
+
+## Configuration
+
+Scoring parameters are in `phones/scoring_config.py`:
+
+- Category weights
+- SoC/RAM/Storage/Battery/Charging tiers
+- Display scoring thresholds
+- Camera and ISP quality tiers
+- Glass durability baselines
+- IP rating scores
+
+After modifying, regenerate data:
+```bash
+python build_static_data.py
+```
 
 ## License
 
-This project is for educational purposes as part of an FYP (Final Year Project).
+Educational project for FYP (Final Year Project).

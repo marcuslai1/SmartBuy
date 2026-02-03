@@ -5,6 +5,7 @@
  * Features score visualization, category winners, and fullscreen expansion.
  */
 import { useState, useEffect } from "react";
+// Note: useEffect is used for escape key handling
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Plus, Trophy, TrendingUp, Scale, Maximize2, Minimize2, Award, Sparkles } from "lucide-react";
 
@@ -54,36 +55,10 @@ function ScoreBar({ score, maxScore = 10, isWinner = false }) {
 }
 
 function CompareView({ phones, onRemove, onClose }) {
-  const [comparisonData, setComparisonData] = useState(null);
-  const [loading, setLoading] = useState(false);
   const [activeTab, setActiveTab] = useState("specs");
   const [isFullscreen, setIsFullscreen] = useState(false);
 
-  // Fetch comparison data when phones change
-  useEffect(() => {
-    if (phones.length < 2) {
-      setComparisonData(null);
-      return;
-    }
-
-    const fetchComparison = async () => {
-      setLoading(true);
-      try {
-        const slugParams = phones.map((p) => `slug=${p.slug}`).join("&");
-        const res = await fetch(`/api/compare/?${slugParams}`);
-        if (res.ok) {
-          const data = await res.json();
-          setComparisonData(data);
-        }
-      } catch (err) {
-        console.error("Comparison fetch failed:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchComparison();
-  }, [phones]);
+  // No need to fetch - phones already have breakdown data from static JSON
 
   // Handle escape key for fullscreen
   useEffect(() => {
@@ -197,24 +172,7 @@ function CompareView({ phones, onRemove, onClose }) {
 
               {/* Tab content */}
               <AnimatePresence mode="wait">
-                {loading ? (
-                  <motion.div
-                    key="loading"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    className="flex items-center justify-center py-12"
-                  >
-                    <div className="flex items-center gap-3 text-zinc-400">
-                      <motion.div
-                        className="w-5 h-5 border-2 border-blue-500 border-t-transparent rounded-full"
-                        animate={{ rotate: 360 }}
-                        transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                      />
-                      <span>Loading comparison...</span>
-                    </div>
-                  </motion.div>
-                ) : activeTab === "specs" ? (
+                {activeTab === "specs" ? (
                   <motion.div
                     key="specs"
                     initial={{ opacity: 0, y: 10 }}
@@ -232,7 +190,7 @@ function CompareView({ phones, onRemove, onClose }) {
                     exit={{ opacity: 0, y: -10 }}
                     transition={{ duration: 0.2 }}
                   >
-                    <SummaryView phones={phones} comparisonData={comparisonData} />
+                    <SummaryView phones={phones} />
                   </motion.div>
                 )}
               </AnimatePresence>
@@ -364,7 +322,7 @@ function SpecsTable({ phones, isFullscreen }) {
         <tbody>
           {CATEGORY_ORDER.map((key) => {
             const scores = phones.map(
-              (p) => p.score_breakdown?.[key] || 0
+              (p) => p.breakdown?.[key] || 0
             );
             const maxScore = Math.max(...scores);
             const hasWinner = scores.filter((s) => s === maxScore).length === 1 && maxScore > 0;
@@ -418,24 +376,24 @@ function SpecsTable({ phones, isFullscreen }) {
 }
 
 // Summary view component
-function SummaryView({ phones, comparisonData }) {
-  if (!comparisonData || phones.length < 2) return null;
+function SummaryView({ phones }) {
+  if (phones.length < 2) return null;
 
   // Find best for specs and value
   const bestSpecs = phones.reduce((a, b) =>
     a.raw_score > b.raw_score ? a : b
   );
   const bestValue = phones.reduce((a, b) =>
-    a.smartbuy_score > b.smartbuy_score ? a : b
+    (a.value_score ?? a.smartbuy_score ?? 0) > (b.value_score ?? b.smartbuy_score ?? 0) ? a : b
   );
 
   // Count category wins
   const categoryWins = phones.map(p => {
     let wins = 0;
     CATEGORY_ORDER.forEach(key => {
-      const scores = phones.map(ph => ph.score_breakdown?.[key] || 0);
+      const scores = phones.map(ph => ph.breakdown?.[key] || 0);
       const maxScore = Math.max(...scores);
-      if (p.score_breakdown?.[key] === maxScore && scores.filter(s => s === maxScore).length === 1) {
+      if (p.breakdown?.[key] === maxScore && scores.filter(s => s === maxScore).length === 1) {
         wins++;
       }
     });
@@ -485,8 +443,8 @@ function SummaryView({ phones, comparisonData }) {
         </div>
         <p className="text-lg font-bold text-white mb-2 truncate">{bestValue.model}</p>
         <div className="flex items-baseline gap-2">
-          <span className="text-3xl font-bold text-blue-400">{Number(bestValue.smartbuy_score).toFixed(2)}</span>
-          <span className="text-sm text-zinc-400">pts/$100</span>
+          <span className="text-3xl font-bold text-blue-400">{Number(bestValue.value_score ?? bestValue.smartbuy_score ?? 0).toFixed(1)}</span>
+          <span className="text-sm text-zinc-400">/10</span>
         </div>
       </motion.div>
 

@@ -50,6 +50,59 @@ def categorize_mode(phone: dict) -> str:
         return "flagship"
 
 
+def normalize_value_within_tiers(phones: list) -> list:
+    """
+    Normalize value scores to 0-10 within each price tier.
+
+    This ensures phones are compared fairly within their bracket:
+    - Best value in budget tier = 10
+    - Best value in flagship tier = 10
+    - Worst value in each tier approaches 0
+    """
+    # Group by tier
+    tiers = {"budget": [], "midrange": [], "flagship": []}
+    for phone in phones:
+        tier = phone.get("mode_category", "budget")
+        tiers[tier].append(phone)
+
+    print("\nNormalizing value scores by tier...")
+
+    for tier_name, tier_phones in tiers.items():
+        if not tier_phones:
+            continue
+
+        if len(tier_phones) == 1:
+            # Only one phone in tier - give it a good score
+            tier_phones[0]["value_score"] = 7.5
+            continue
+
+        # Get raw value ratios (raw_score / price) for this tier
+        # Higher ratio = better value
+        raw_values = [p["smartbuy_score"] for p in tier_phones]
+        min_val = min(raw_values)
+        max_val = max(raw_values)
+
+        if max_val == min_val:
+            # All same value - give neutral scores
+            for p in tier_phones:
+                p["value_score"] = 5.0
+        else:
+            # Normalize to 0-10 scale
+            # Best value = 10, worst value = 1 (not 0, to avoid harsh "0" display)
+            for p in tier_phones:
+                raw = p["smartbuy_score"]
+                # Linear interpolation from 1 to 10
+                normalized = 1.0 + ((raw - min_val) / (max_val - min_val)) * 9.0
+                p["value_score"] = round(normalized, 1)
+
+        # Stats for this tier
+        values = [p["value_score"] for p in tier_phones]
+        print(f"  {tier_name.capitalize()}: {len(tier_phones)} phones, "
+              f"value range {min(values):.1f} - {max(values):.1f}")
+
+    return phones
+
+
 def build_static_data(input_path: str, output_path: str):
     """Build static phone data with pre-calculated scores."""
     print(f"Loading phones from {input_path}...")
@@ -68,8 +121,11 @@ def build_static_data(input_path: str, output_path: str):
 
     print(f"Successfully scored {len(scored_phones)} phones")
 
-    # Sort by smartbuy_score descending
-    scored_phones.sort(key=lambda p: p.get("smartbuy_score", 0), reverse=True)
+    # Normalize value scores within each tier (0-10 scale)
+    scored_phones = normalize_value_within_tiers(scored_phones)
+
+    # Sort by value_score descending (within their tier context)
+    scored_phones.sort(key=lambda p: p.get("value_score", 0), reverse=True)
 
     # Ensure output directory exists
     os.makedirs(os.path.dirname(output_path), exist_ok=True)
@@ -91,9 +147,14 @@ def build_static_data(input_path: str, output_path: str):
     print(f"Midrange ($401-$800): {len(midrange)}")
     print(f"Flagship (>$800): {len(flagship)}")
 
-    if scored_phones:
-        top = scored_phones[0]
-        print(f"\nTop SmartBuy pick: {top['model']} (Score: {top['smartbuy_score']}, Price: ${top['price_sgd']})")
+    # Show top pick in each tier
+    print("\n--- Top Value Picks by Tier ---")
+    for tier_name, tier_phones in [("Budget", budget), ("Midrange", midrange), ("Flagship", flagship)]:
+        if tier_phones:
+            # Sort by value_score to find the best in this tier
+            top = max(tier_phones, key=lambda p: p.get("value_score", 0))
+            print(f"{tier_name}: {top['model']} "
+                  f"(Value: {top['value_score']}/10, Raw: {top['raw_score']}/10, ${top['price_sgd']})")
 
     print(f"\nOutput saved to: {output_path}")
     print("Done!")
@@ -102,7 +163,7 @@ def build_static_data(input_path: str, output_path: str):
 if __name__ == "__main__":
     # Paths
     script_dir = os.path.dirname(os.path.abspath(__file__))
-    input_path = os.path.join(script_dir, "data", "after_warranty_spec.json")
+    input_path = os.path.join(script_dir, "data", "final_spec.json")
     output_path = os.path.join(script_dir, "smartbuy-frontend", "public", "phones.json")
 
     # Check input exists

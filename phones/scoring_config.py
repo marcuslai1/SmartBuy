@@ -224,18 +224,24 @@ SCORING_CONFIG = {
 
     # =========================================================================
     # IP RATING SCORES
+    # First digit: Dust (5=protected, 6=tight/sealed)
+    # Second digit: Water (0=none, 7=immersion 1m, 8=immersion 1.5m+)
+    # IP6X rated higher than IP5X at same water level (dust-tight matters)
     # =========================================================================
     "ip_scores": {
-        "IP52": 0.25,
-        "IP53": 0.30,
-        "IP54": 0.35,
-        "IP55": 0.45,
-        "IP64": 0.55,
-        "IP65": 0.65,
-        "IP67": 0.80,
-        "IP68": 0.95,
-        "IP69": 1.00,
-        "UNKNOWN": 0.10,
+        # IP5X series (dust-protected, not sealed)
+        "IP52": 0.20,   # Dripping water
+        "IP53": 0.25,   # Spraying water
+        "IP54": 0.30,   # Splashing water
+        "IP55": 0.40,   # Water jets
+        # IP6X series (dust-tight/sealed - better)
+        "IP64": 0.50,   # Dust-tight + splashing
+        "IP65": 0.60,   # Dust-tight + water jets
+        "IP66": 0.70,   # Dust-tight + powerful water jets
+        "IP67": 0.82,   # Dust-tight + 1m immersion 30 min
+        "IP68": 0.95,   # Dust-tight + 1.5m+ immersion 30 min (flagship standard)
+        "IP69": 1.00,   # Dust-tight + high-pressure/steam (industrial grade)
+        "UNKNOWN": 0.08,  # No certification - minimal score
     },
 
     # =========================================================================
@@ -289,18 +295,19 @@ SCORING_CONFIG = {
 
     # =========================================================================
     # EXTRAS SCORING
-    # More granular extras consideration
+    # Rebalanced for more even distribution - no single feature dominates
+    # Total possible: ~3.0 (normalized against weight)
     # =========================================================================
     "extras": {
-        "5g_bonus": 1.0,              # 5G connectivity (standard now)
-        "mmwave_bonus": 0.2,          # mmWave 5G (US carriers)
-        "nfc_bonus": 0.5,             # NFC for payments
-        "stereo_bonus": 0.5,          # Stereo speakers
-        "wireless_charging": 0.5,     # Qi wireless charging
-        "reverse_wireless": 0.15,     # Reverse wireless charging
-        "ir_blaster": 0.1,            # IR blaster
-        "sd_card": 0.2,               # MicroSD expansion
-        "headphone_jack": 0.15,       # 3.5mm jack
-        "notification_led": 0.05,     # LED notification
+        "5g_bonus": 0.65,             # 5G connectivity - important but not dominant
+        "mmwave_bonus": 0.15,         # mmWave 5G (mainly US carriers, niche)
+        "nfc_bonus": 0.45,            # NFC for payments - very useful
+        "stereo_bonus": 0.45,         # Stereo speakers - noticeable improvement
+        "wireless_charging": 0.40,    # Qi wireless charging - convenient
+        "reverse_wireless": 0.10,     # Reverse wireless charging - niche
+        "ir_blaster": 0.10,           # IR blaster - niche but handy
+        "sd_card": 0.35,              # MicroSD expansion - valuable for many users
+        "headphone_jack": 0.30,       # 3.5mm jack - still valued by many
+        "notification_led": 0.05,     # LED notification - minor convenience
     },
 }

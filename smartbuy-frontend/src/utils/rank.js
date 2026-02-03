@@ -5,7 +5,7 @@ export function addRanks(list) {
 
   // Sort *by reference* so we can map ranks back using object identity.
   const byRaw   = [...list].sort((a, b) => (b.raw_score ?? 0) - (a.raw_score ?? 0));
-  const byValue = [...list].sort((a, b) => (b.smartbuy_score ?? 0) - (a.smartbuy_score ?? 0));
+  const byValue = [...list].sort((a, b) => (b.value_score ?? b.smartbuy_score ?? 0) - (a.value_score ?? a.smartbuy_score ?? 0));
 
   const rawRank   = new Map();
   const valueRank = new Map();
