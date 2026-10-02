@@ -390,6 +390,12 @@ function SpecList({ phone }) {
             ? `${fmtNum(s.gb6)}${s.gb6_source === 'same chipset' ? ' (same chipset)' : ''}`
             : 'Not available',
         ],
+        [
+          '3DMark Wild Life Extreme',
+          isNum(s.gpu)
+            ? `${fmtNum(s.gpu)}${s.gpu_source && s.gpu_source !== 'tested' ? ' (estimated)' : ''}`
+            : 'Not available',
+        ],
       ],
     },
     {

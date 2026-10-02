@@ -15,6 +15,7 @@ def test_sensor_type():
     assert parse_sensor_type('48 MP, f/1.8, 24mm (wide), 1/1.28", 1.22µm') == round(1 / 1.28, 3)
     assert parse_sensor_type('50 MP, f/1.6, (wide), 1.0", 1.6µm') == 1.0
     assert parse_sensor_type("13 MP, f/2.2, (ultrawide)") is None
+    assert parse_sensor_type('200 MP, f/1.8, 23mm (wide), 1/1.56”, 0.5µm') == round(1 / 1.56, 3)
 
 
 def test_camera_modules_roles_zoom_ois():
@@ -24,6 +25,12 @@ def test_camera_modules_roles_zoom_ois():
     lenses = parse_camera_modules(text)
     assert [l["role"] for l in lenses] == ["wide", "periscope telephoto", "ultrawide"]
     assert lenses[0]["ois"] and lenses[1]["zoom"] == 5.0 and not lenses[2]["ois"]
+
+
+def test_continuous_zoom_takes_short_end():
+    text = ('50 MP, f/1.7, 23mm (wide), 1.0"-type, OIS '
+            '200 MP, f/2.4-3.0, 75-100mm (periscope telephoto), 1/1.4", OIS, 3.2-4.3x continuous optical zoom')
+    assert parse_camera_modules(text)[1]["zoom"] == 3.2
 
 
 def test_ip_takes_best_rating():

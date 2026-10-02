@@ -247,7 +247,11 @@ export function keySpec(phone, key) {
   const join = (arr) => arr.filter(Boolean).join(' · ') || '—';
   switch (key) {
     case 'performance':
-      return join([s.chipset, isNum(s.gb6) ? `Geekbench 6 ${fmtNum(s.gb6)}` : 'no benchmark']);
+      return join([
+        s.chipset,
+        isNum(s.gb6) ? `Geekbench 6 ${fmtNum(s.gb6)}` : 'no benchmark',
+        isNum(s.gpu) ? `3DMark ${fmtNum(s.gpu)}` : null,
+      ]);
     case 'camera':
       return join([
         sensorFormat(s.main_sensor_in)
@@ -314,10 +318,19 @@ export function plausibleRefresh(hz) {
   return isNum(hz) && hz >= 30 && hz <= 240;
 }
 
-/** Expected (typical) spec score at a price from the fitted curve. */
+/**
+ * Expected (typical) spec score at a price from the fitted curve:
+ * a + b·x + c·x², x = ln(price), held flat past its turning point (pipeline/value.py).
+ */
 export function expectedAt(model, price) {
   if (!model || !isNum(model.a) || !isNum(model.b) || !(price > 0)) return null;
-  return model.a + model.b * Math.log(price);
+  const c = isNum(model.c) ? model.c : 0;
+  let x = Math.log(price);
+  if (c) {
+    const peak = -model.b / (2 * c);
+    x = c < 0 ? Math.min(x, peak) : Math.max(x, peak);
+  }
+  return model.a + model.b * x + c * x * x;
 }
 
 /* ---------- filtering & sorting ---------- */

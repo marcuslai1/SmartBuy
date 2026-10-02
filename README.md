@@ -31,7 +31,8 @@ Chrome window via Playwright (`pip install -r requirements.txt`). Pages are
 cached in `.cache/`. If Lazada rate-limits, use
 `python -m pipeline.prices crawl --lazada-browser` and solve the slider once.
 
-A phone is on the site only if an official store currently sells it.
+A phone is on the site only if an official store currently sells it. Foldables
+are left out: they're priced for the form factor, not the specs.
 
 ### Prices
 
@@ -48,7 +49,7 @@ Nine categories, each 0–10 (`pipeline/config.py` holds every threshold):
 
 | Category | Based on |
 |---|---|
-| Performance | GeekBench 6 multi-core (lab result; else same/similar chipset; else CPU-core estimate) |
+| Performance | Half CPU: GeekBench 6 multi-core. Half GPU: 3DMark Wild Life Extreme. Lab results; else same/similar chipset; else estimated (CPU cores / nearest GeekBench scores) |
 | Camera | Main sensor size, OIS, telephoto zoom & sensor, ultrawide, video, selfie. Megapixels alone don't count |
 | Battery life | GSMArena *Active use* hours (else estimated from EU label or capacity) |
 | Display | Panel, refresh rate, LTPO, HDR, measured brightness, sharpness |
@@ -62,9 +63,12 @@ Estimated inputs are flagged on the site.
 
 * **Spec score** – weighted average of the categories. Presets (Balanced,
   Camera, Battery, Performance, Keep-it-for-years) change the weights.
-* **Value score** – a line *expected score = a + b·ln(price)* is fitted across
-  all phones; value is how far a phone sits above or below it (5 = typical,
-  ~7 = one standard deviation better). Cheap phones don't win just for being cheap.
+* **Value score** – a curve *expected score = a + b·x + c·x²* (x = ln price)
+  is fitted across all phones. It bends because each extra dollar buys less at
+  the top end (a straight line under-rated every phone above ~S$1500), and it is
+  held flat past its peak. Value is how far a phone sits above or below it
+  (5 = typical, ~7 = one standard deviation better). Cheap phones don't win just
+  for being cheap.
 * **SmartBuy score** – 50% spec, 50% value. Default ranking.
 
 ## Development

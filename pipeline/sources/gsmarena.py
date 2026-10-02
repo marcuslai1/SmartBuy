@@ -129,11 +129,11 @@ def parse_variants(text: str) -> list[dict]:
 
 
 def parse_sensor_type(text: str) -> float | None:
-    """Optical format in inches: '1/1.3"' -> 0.769, '1.0"' -> 1.0."""
-    m = re.search(r'(\d+(?:\.\d+)?)\s*/\s*(\d+(?:\.\d+)?)\s*"', text)
+    """Optical format in inches: '1/1.3"' -> 0.769, '1.0"' -> 1.0 (some sheets use a curly ” for the inch mark)."""
+    m = re.search(r'(\d+(?:\.\d+)?)\s*/\s*(\d+(?:\.\d+)?)\s*["”″]', text)
     if m:
         return round(float(m.group(1)) / float(m.group(2)), 3)
-    m = re.search(r'(?<![\d/])(\d(?:\.\d+)?)\s*"', text)
+    m = re.search(r'(?<![\d/])(\d(?:\.\d+)?)\s*["”″]', text)
     if m and float(m.group(1)) <= 1.5:
         return float(m.group(1))
     return None
@@ -153,7 +153,8 @@ def parse_camera_modules(text: str) -> list[dict]:
             continue
         role_m = _ROLE_RE.search(part)
         role = role_m.group(1).lower() if role_m else ("tof" if "tof" in part.lower() else "other")
-        zoom = _num(r"(\d+(?:\.\d+)?)x optical zoom", part)
+        # '3x optical zoom', or the short end of a continuous range: '3.2-4.3x continuous optical zoom'
+        zoom = _num(r"(\d+(?:\.\d+)?)(?:-\d+(?:\.\d+)?)?x (?:continuous )?optical zoom", part)
         lenses.append({
             "role": role,
             "mp": mp,
@@ -252,6 +253,7 @@ def parse_spec(html: str, url: str) -> dict:
         "ip_rating": parse_ip(" ".join(v for k, v in r.items() if k.startswith("Body/"))),
         # display
         "display_tech": display_type,
+        "is_foldable": "foldable" in display_type.lower(),
         "is_oled": bool(re.search(r"OLED", display_type, re.I)),
         "is_ltpo": "LTPO" in display_type,
         "has_hdr": bool(re.search(r"HDR|Dolby Vision", display_type)),
@@ -294,6 +296,7 @@ def parse_spec(html: str, url: str) -> dict:
         "magsafe_or_qi2": bool(re.search(r"MagSafe|Qi2", charging)),
         # lab tests (only present for reviewed phones)
         "geekbench6": _num(r"GeekBench:\s*([\d,]+)\s*\(v6\)", perf, int),
+        "wildlife_extreme": _num(r"3DMark:\s*([\d,]+)\s*\(Wild Life Extreme\)", perf, int),
         "antutu": int(antutu.group(1).replace(",", "")) if antutu else None,
         "antutu_ver": int(antutu.group(2)) if antutu else None,
         "measured_nits": _num(r"([\d,]+)\s*nits", g("Our Tests/Display"), int),

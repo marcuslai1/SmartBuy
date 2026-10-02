@@ -45,7 +45,11 @@ def _interp(value: float, table: list[tuple[float, float]]) -> float:
 # ------------------------------------------------------------------ categories
 
 def performance(p: dict) -> float:
-    return 10 * _log01(p.get("gb6") or 0, C.PERF_GB6_LO, C.PERF_GB6_HI)
+    cpu = _log01(p.get("gb6") or 0, C.PERF_GB6_LO, C.PERF_GB6_HI)
+    if not p.get("gpu"):
+        return 10 * cpu
+    gpu = _log01(p["gpu"], C.PERF_GPU_LO, C.PERF_GPU_HI)
+    return 10 * ((1 - C.PERF_GPU_SHARE) * cpu + C.PERF_GPU_SHARE * gpu)
 
 
 def camera(p: dict) -> float:

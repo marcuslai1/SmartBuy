@@ -3,7 +3,9 @@
     python -m pipeline.build      # -> smartbuy-frontend/public/phones.json
 
 Only phones with a current official-store price are ranked. Each phone is
-scored on the exact storage variant its headline price buys.
+scored on the exact storage variant its headline price buys. Foldables are left
+out (they're priced for the form factor, not the specs); their benchmarks still
+feed the per-chipset tables.
 """
 from __future__ import annotations
 
@@ -80,6 +82,7 @@ def summary(p: dict) -> dict:
     return {
         "chipset": p.get("chipset"),
         "gb6": p.get("gb6"), "gb6_source": p.get("gb6_source"),
+        "gpu": p.get("gpu"), "gpu_source": p.get("gpu_source"),
         "display_in": p.get("display_in"), "oled": p.get("is_oled"), "ltpo": p.get("is_ltpo"),
         "refresh_hz": p.get("refresh_hz"), "nits": p.get("measured_nits") or p.get("peak_nits"),
         "nits_measured": bool(p.get("measured_nits")),
@@ -109,11 +112,21 @@ def short_name(p: dict) -> str:
     return f"{p['brand']} {p['model']}"
 
 
+def _bench_reason(test: str, source: str | None) -> str | None:
+    if source == "tested":
+        return None
+    if source in (None, "unknown"):
+        return f"No {test} result for this chip yet"
+    if source.startswith("estimated"):
+        return f"{test} {source}"
+    return f"{test} result taken from {source}"
+
+
 def estimated_reasons(p: dict) -> dict[str, str]:
     reasons = {}
     if "performance" in p["estimated"]:
-        reasons["performance"] = ("No benchmark for this chip yet" if p.get("gb6_source") == "unknown"
-                                  else f"GeekBench result taken from {p['gb6_source']}")
+        reasons["performance"] = "; ".join(filter(None, (_bench_reason("GeekBench", p.get("gb6_source")),
+                                                         _bench_reason("3DMark", p.get("gpu_source")))))
     if "battery" in p["estimated"]:
         reasons["battery"] = ("Battery life not tested yet" if p.get("battery_source") == "unknown"
                               else f"Battery life not lab-tested: {p['battery_source']}")
@@ -134,6 +147,7 @@ def crawl_status(date: str) -> dict:
 
 def build() -> dict:
     records, stats = enrich(json.loads(SPECS.read_text(encoding="utf-8")))
+    records = [r for r in records if not r.get("is_foldable")]
     by_id = {r["id"]: r for r in records}
     rows = load_rows()
     latest, offers = current_offers(rows)
@@ -215,7 +229,8 @@ def build() -> dict:
                     for k, v in C.PRESETS.items()},
         "tiers": [{"key": k, "min": lo, "max": hi if hi < 10**8 else None} for k, lo, hi in C.TIERS],
         "value_models": models,
-        "enrichment": {"chips_with_benchmarks": stats["chips_with_benchmarks"]},
+        "enrichment": {"chips_with_benchmarks": stats["chips_with_benchmarks"],
+                       "chips_with_gpu_benchmarks": stats["chips_with_gpu_benchmarks"]},
         "crawl": {"complete_brands": sorted(complete),
                   "incomplete_brands": sorted({p["brand"] for p in records} - complete),
                   "note": status.get("note", "")},
@@ -237,5 +252,6 @@ if __name__ == "__main__":
     }, indent=1, ensure_ascii=False), encoding="utf-8")
     print(f"{len(data['phones'])} phones ranked, {len(data['awaiting'])} awaiting prices, "
           f"{len(data['retired'])} retired; prices as of {data['price_date']}")
-    print(f"balanced value curve: expected = {m['a']:.2f} + {m['b']:.2f}*ln(price), sd {m['sd']:.2f}, R^2 {m['r2']:.2f}")
+    print(f"balanced value curve: expected = {m['a']:.2f} + {m['b']:.2f}*x + {m['c']:.3f}*x^2 (x = ln price), "
+          f"sd {m['sd']:.2f}, R^2 {m['r2']:.2f}")
     print(f"-> {OUT}")

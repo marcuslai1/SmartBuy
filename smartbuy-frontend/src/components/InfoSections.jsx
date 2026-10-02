@@ -3,7 +3,7 @@ import { fmtDate } from '../lib/data';
 
 export function HowItWorks({ categories }) {
   const desc = {
-    performance: 'Geekbench 6 multi-core result, on a log scale.',
+    performance: 'Half CPU (Geekbench 6 multi-core), half GPU (3DMark Wild Life Extreme), each on a log scale.',
     camera:
       'Main sensor size, OIS, telephoto zoom and sensor, ultrawide, video and selfie. Megapixels alone don’t count.',
     battery: 'Hours in GSMArena’s measured “Active use” test.',
@@ -35,7 +35,9 @@ export function HowItWorks({ categories }) {
           </li>
           <li>
             <h3 className="font-semibold text-ink">3 · Value score</h3>
-            We fit a curve of the typical spec score at every price across all phones (the line on the chart). Value
+            We fit a curve of the typical spec score at every price across all phones (the line on the chart). It
+            bends: past a point, extra money buys less extra phone, so flagships aren’t judged against an impossible
+            bar. Value
             measures how far a phone sits above or below that line: 5 is on the curve, about 7 is one standard deviation
             better than typical, 10 is exceptional. It is not “cheapest wins”.
           </li>

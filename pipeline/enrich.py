@@ -1,8 +1,10 @@
 """Fill gaps in lab data, and say which numbers are estimates.
 
 * Performance: GSMArena benchmarks only exist for reviewed phones. Phones
-  without one get the median GeekBench 6 score of other phones with the same
-  chipset (from every sheet fetched, including unsold candidates).
+  without one get the median GeekBench 6 / 3DMark Wild Life Extreme score of
+  other phones with the same chipset (from every sheet fetched, including
+  unsold candidates). A missing 3DMark result can also be estimated from the
+  phone's GeekBench score: the median of the phones with the nearest scores.
 * Battery: 'Active use score' hours when tested; otherwise estimated from the
   EU-label endurance figure, or failing that from capacity, using straight
   lines fitted on phones that have both numbers.
@@ -99,12 +101,32 @@ def _line(xs: list[float], ys: list[float]) -> tuple[float, float]:
     return my - b * mx, b
 
 
-def enrich(records: list[dict]) -> tuple[list[dict], dict]:
+def _nearest_median(x: float, pairs: list[tuple[float, float]], k: int = 7) -> float:
+    """Median y of the k pairs with the closest x. Unlike a fitted line it
+    follows curvature and shrugs off the odd mis-entered benchmark."""
+    near = sorted(pairs, key=lambda p: abs(p[0] - x))[:k]
+    return statistics.median(y for _, y in near)
+
+
+def _chip_medians(records: list[dict], field: str) -> dict[str, int]:
     by_chip: dict[str, list[int]] = {}
     for r in records:
-        if r.get("geekbench6") and _chip_key(r.get("chipset")):
-            by_chip.setdefault(_chip_key(r["chipset"]), []).append(r["geekbench6"])
-    chip_gb6 = {k: int(statistics.median(v)) for k, v in by_chip.items()}
+        if r.get(field) and _chip_key(r.get("chipset")):
+            by_chip.setdefault(_chip_key(r["chipset"]), []).append(r[field])
+    return {k: int(statistics.median(v)) for k, v in by_chip.items()}
+
+
+def _from_chip(key: str | None, table: dict[str, int]) -> tuple[int, str] | None:
+    """(score, source) from the same chipset, else the closest similar one."""
+    if key and table.get(key):
+        return table[key], "same chipset"
+    near = similar_chip(key, table) if key else None
+    return (table[near], f"similar chipset ({near.title()})") if near else None
+
+
+def enrich(records: list[dict]) -> tuple[list[dict], dict]:
+    chip_gb6 = _chip_medians(records, "geekbench6")
+    chip_gpu = _chip_medians(records, "wildlife_extreme")
 
     both_eu = [(r["eu_endurance_h"], r["active_use_h"]) for r in records
                if r.get("eu_endurance_h") and r.get("active_use_h")]
@@ -112,6 +134,8 @@ def enrich(records: list[dict]) -> tuple[list[dict], dict]:
                 if r.get("battery_mah") and r.get("active_use_h")]
     both_cpu = [(math.log(cpu_proxy(r.get("cpu"))), math.log(r["geekbench6"])) for r in records
                 if r.get("geekbench6") and cpu_proxy(r.get("cpu"))]
+    both_gpu = [(math.log(r["geekbench6"]), r["wildlife_extreme"]) for r in records
+                if r.get("geekbench6") and r.get("wildlife_extreme")]
     cpu_fit = _line(*zip(*both_cpu)) if len(both_cpu) >= 8 else None
     eu_fit = _line(*zip(*both_eu)) if len(both_eu) >= 8 else None
     mah_fit = _line(*zip(*both_mah)) if len(both_mah) >= 8 else None
@@ -120,21 +144,27 @@ def enrich(records: list[dict]) -> tuple[list[dict], dict]:
     for r in records:
         r = canonical(r)
         estimated = []
+        chip = _chip_key(r.get("chipset"))
         if r.get("geekbench6"):
             r["gb6"], r["gb6_source"] = r["geekbench6"], "tested"
-        elif chip_gb6.get(_chip_key(r.get("chipset"))):
-            r["gb6"], r["gb6_source"] = chip_gb6[_chip_key(r["chipset"])], "same chipset"
-            estimated.append("performance")
-        elif _chip_key(r.get("chipset")) and similar_chip(_chip_key(r["chipset"]), chip_gb6):
-            near = similar_chip(_chip_key(r["chipset"]), chip_gb6)
-            r["gb6"], r["gb6_source"] = chip_gb6[near], f"similar chipset ({near.title()})"
-            estimated.append("performance")
+        elif _from_chip(chip, chip_gb6):
+            r["gb6"], r["gb6_source"] = _from_chip(chip, chip_gb6)
         elif cpu_fit and cpu_proxy(r.get("cpu")):
             r["gb6"] = int(math.exp(cpu_fit[0] + cpu_fit[1] * math.log(cpu_proxy(r["cpu"]))))
             r["gb6_source"] = "estimated from CPU cores"
-            estimated.append("performance")
         else:
             r["gb6"], r["gb6_source"] = None, "unknown"
+
+        if r.get("wildlife_extreme"):
+            r["gpu"], r["gpu_source"] = r["wildlife_extreme"], "tested"
+        elif _from_chip(chip, chip_gpu):
+            r["gpu"], r["gpu_source"] = _from_chip(chip, chip_gpu)
+        elif len(both_gpu) >= 8 and r["gb6"]:
+            r["gpu"] = int(_nearest_median(math.log(r["gb6"]), both_gpu))
+            r["gpu_source"] = "estimated from GeekBench"
+        else:
+            r["gpu"], r["gpu_source"] = None, "unknown"
+        if r["gb6_source"] != "tested" or r["gpu_source"] != "tested":
             estimated.append("performance")
 
         if r.get("active_use_h"):
@@ -153,6 +183,7 @@ def enrich(records: list[dict]) -> tuple[list[dict], dict]:
         r["estimated"] = estimated
         out.append(r)
 
-    stats = {"chips_with_benchmarks": len(chip_gb6), "eu_fit": eu_fit, "mah_fit": mah_fit,
+    stats = {"chips_with_benchmarks": len(chip_gb6), "chips_with_gpu_benchmarks": len(chip_gpu),
+             "gpu_gb6_pairs": len(both_gpu), "eu_fit": eu_fit, "mah_fit": mah_fit,
              "eu_fit_n": len(both_eu), "mah_fit_n": len(both_mah)}
     return out, stats

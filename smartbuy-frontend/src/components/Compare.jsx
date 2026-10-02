@@ -70,6 +70,7 @@ function rows(categories, preset) {
     { label: 'Variant', get: (p) => shortVariant(p.variant), better: null, fmt: (v) => v || '—' },
     { label: 'Chipset', get: sp('chipset'), better: null, fmt: (v) => v || '—' },
     { label: 'Geekbench 6', get: sp('gb6'), better: 'high', fmt: (v) => fmtNum(v) },
+    { label: '3DMark WLE', get: sp('gpu'), better: 'high', fmt: (v) => fmtNum(v) },
     {
       label: 'Battery, active use',
       get: sp('battery_h'),
