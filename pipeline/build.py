@@ -3,14 +3,22 @@
     python -m pipeline.build      # -> smartbuy-frontend/public/phones.json
 
 Only phones with a current official-store price are ranked. Each phone is
-scored on the exact storage variant its headline price buys. Foldables are left
-out (they're priced for the form factor, not the specs); their benchmarks still
-feed the per-chipset tables.
+scored on the exact storage variant its headline price buys, at its *typical*
+price (median of the cheapest offer per crawl over the last 90 days) so one
+day's flash sale doesn't reorder the ranking. Foldables are left out (they're
+priced for the form factor, not the specs); their benchmarks still feed the
+per-chipset tables.
+
+Each ranked phone also gets a likely rank range: the ranking is recomputed many
+times with the category weights, prices and every estimated input nudged by
+their plausible error, and the middle 90% of the ranks it lands at is kept.
 """
 from __future__ import annotations
 
 import datetime as dt
 import json
+import random
+import statistics
 from collections import defaultdict
 from pathlib import Path
 
@@ -75,7 +83,44 @@ def history(rows: list[dict]) -> dict[str, list[dict]]:
     return out
 
 
-def summary(p: dict) -> dict:
+def typical_price(rows: list[dict], storage_gb: int | None, latest: str, current: float) -> tuple[float, int]:
+    """Median over crawls in the last TYPICAL_WINDOW_DAYS of the cheapest offer for
+    this storage size, and how many crawls that is."""
+    cutoff = (dt.date.fromisoformat(latest) - dt.timedelta(days=C.TYPICAL_WINDOW_DAYS)).isoformat()
+    per_date: dict[str, float] = {}
+    for r in rows:
+        if r["date"] != LEGACY_DATE and r["date"] >= cutoff and r["storage_gb"] == storage_gb:
+            per_date[r["date"]] = min(per_date.get(r["date"], r["price_sgd"]), r["price_sgd"])
+    if not per_date:
+        return current, 1
+    return round(statistics.median(per_date.values()), 2), len(per_date)
+
+
+def rank_ranges(phones: list[dict], preset: str, seed: int) -> list[tuple[int, int]]:
+    """5th-95th percentile SmartBuy rank of each phone when the weights, prices and
+    estimated inputs are nudged by their plausible error (see config)."""
+    rng = random.Random(seed)
+    base = C.PRESETS[preset]["weights"]
+    ranks: list[list[int]] = [[] for _ in phones]
+    for _ in range(C.UNCERTAINTY_DRAWS):
+        w = {k: v * rng.uniform(1 - C.WEIGHT_WOBBLE, 1 + C.WEIGHT_WOBBLE) for k, v in base.items()}
+        total = sum(w.values())
+        prices = [ph["_price"] * rng.uniform(1 - C.PRICE_WOBBLE, 1 + C.PRICE_WOBBLE) for ph in phones]
+        specs = []
+        for ph in phones:
+            cats = dict(ph["_cats"])
+            for k in ph["estimated"]:
+                cats[k] = min(10.0, max(0.0, cats[k] + rng.gauss(0, C.ESTIMATE_NOISE.get(k, 0.5))))
+            specs.append(sum(cats[k] * w[k] for k in w) / total)
+        model = value.fit(prices, specs)
+        sb = [value.smartbuy(s, value.value_score(model, pr, s)) for s, pr in zip(specs, prices)]
+        for r, i in enumerate(sorted(range(len(phones)), key=lambda i: -sb[i]), 1):
+            ranks[i].append(r)
+    n = C.UNCERTAINTY_DRAWS
+    return [(sorted(r)[int(0.05 * n)], sorted(r)[int(0.95 * n) - 1]) for r in ranks]
+
+
+def summary(p: dict, variant: dict) -> dict:
     lenses = p.get("lenses") or []
     main = next((l for l in lenses if l["role"] == "wide"), lenses[0] if lenses else {})
     teles = [l for l in lenses if "telephoto" in l["role"] and l.get("zoom")]
@@ -96,7 +141,12 @@ def summary(p: dict) -> dict:
         "wireless_w": p.get("wireless_w"),
         "ip_rating": p.get("ip_rating"), "glass": (p.get("glass") or "").split(" | ")[0] or None,
         "frame": p.get("frame"), "os": p.get("os"), "os_updates": scoring.os_updates(p),
-        "os_updates_stated": bool(p.get("os_updates")),
+        "os_updates_stated": bool(p.get("os_updates")), "os_source": p.get("os_source"),
+        "os_years_left": None if p.get("os_years_left") is None else round(p["os_years_left"], 1),
+        "main_sensor_est": p.get("main_sensor_est"),
+        "battery_cycles": p.get("battery_cycles"), "pwm_hz": p.get("pwm_hz"),
+        "secure_unlock": p.get("secure_unlock"),
+        "storage_type": scoring.storage_type(p, variant), "storage_type_est": not p.get("storage_types"),
         "weight_g": p.get("weight_g"), "thickness_mm": p.get("thickness_mm"),
         "has_5g": p.get("has_5g"), "nfc": p.get("nfc"), "stereo": p.get("stereo"), "jack": p.get("jack"),
         "esim": p.get("esim"), "card_slot": p.get("card_slot"), "uwb": p.get("uwb"), "ir": p.get("ir"),
@@ -122,9 +172,38 @@ def _bench_reason(test: str, source: str | None) -> str | None:
     return f"{test} result taken from {source}"
 
 
-def estimated_reasons(p: dict) -> dict[str, str]:
+def _sensor_label(inches: float) -> str:
+    return f'{inches:.1f}"' if inches >= 0.95 else f'1/{1 / inches:.2f}"'
+
+
+def estimated_reasons(p: dict, variant: dict) -> dict[str, str]:
     reasons = {}
-    if "performance" in p["estimated"]:
+    est = p["estimated"]
+    if "camera" in est:
+        main = next(l for l in p["lenses"] if l["role"] == "wide")
+        reasons["camera"] = (f"Main sensor size not published; assumed {_sensor_label(main['sensor_in'])}, typical "
+                             f"for a {main['mp']:g} MP main camera on phones with similar performance" if p.get("main_sensor_est")
+                             else "Main sensor size not published; the smallest size class assumed")
+    if "display" in est:
+        reasons["display"] = ("Brightness not lab-measured; 60% of the claimed peak used" if p.get("peak_nits")
+                              else "Brightness not published")
+    if "build" in est:
+        missing = [label for key, label in (("glass", "glass type"), ("frame", "frame material"),
+                                            ("eu_free_fall", "EU drop-test class"),
+                                            ("battery_cycles", "battery charge cycles")) if not p.get(key)]
+        reasons["build"] = f"Not published: {', '.join(missing)}; typical values assumed"
+    if "memory" in est:
+        kind = p.get("storage_type_est")
+        reasons["memory"] = (f"Storage type not published; {kind} assumed, the most common on phones with "
+                             f"{'the same chipset' if p.get('storage_type_source') == 'same chipset' else 'similar performance'}"
+                             if kind else "Storage type not published; budget-class speed assumed")
+    if "software" in est:
+        n = scoring.os_updates(p)
+        src = p.get("os_source") or ""
+        reasons["software"] = (f"No update promise stated; {n} years assumed, as promised for the "
+                               f"{src[len('same series ('):-1]}" if src.startswith("same series")
+                               else f"No update promise stated; {n} years assumed (typical for {p['brand']})")
+    if "performance" in est:
         reasons["performance"] = "; ".join(filter(None, (_bench_reason("GeekBench", p.get("gb6_source")),
                                                          _bench_reason("3DMark", p.get("gpu_source")))))
     if "battery" in p["estimated"]:
@@ -152,6 +231,8 @@ def build() -> dict:
     rows = load_rows()
     latest, offers = current_offers(rows)
     hist = history(rows)
+    for r in records:
+        r["os_years_left"] = scoring.os_years_left(r, latest)
 
     phones = []
     for pid, offs in offers.items():
@@ -160,6 +241,9 @@ def build() -> dict:
             continue
         head = offs[0]
         variant = {"storage_gb": head["storage_gb"], "ram_gb": head["ram_gb"]}
+        typical, n_crawls = typical_price([r for r in rows if r["phone_id"] == pid], head["storage_gb"],
+                                          latest, head["sgd"])
+        head = {**head, "typical_sgd": typical, "typical_crawls": n_crawls}
         cats = scoring.category_scores(p, variant)
         phones.append({
             "id": pid, "name": p["name"], "brand": p["brand"], "model": p["model"],
@@ -169,24 +253,30 @@ def build() -> dict:
             "tier": tier_for(head["sgd"]),
             "categories": {k: round(v, 2) for k, v in cats.items()},
             "estimated": p["estimated"],
-            "estimated_reasons": estimated_reasons(p),
-            "specs": summary(p),
-            "_cats": cats,
+            "estimated_reasons": estimated_reasons(p, variant),
+            "specs": summary(p, variant),
+            "_cats": cats, "_price": typical,
         })
 
     models = {}
-    for preset in C.PRESETS:
+    for seed, preset in enumerate(C.PRESETS):
         specs_ = [scoring.spec_score(ph["_cats"], preset) for ph in phones]
-        model = value.fit([ph["price"]["sgd"] for ph in phones], specs_)
+        model = value.fit([ph["_price"] for ph in phones], specs_)
         models[preset] = {k: round(v, 4) if isinstance(v, float) else v for k, v in model.items()}
         for ph, s in zip(phones, specs_):
-            v = value.value_score(model, ph["price"]["sgd"], s)
+            v = value.value_score(model, ph["_price"], s)
             ph.setdefault("scores", {})[preset] = {
                 "spec": round(s, 2), "value": round(v, 2), "smartbuy": round(value.smartbuy(s, v), 2),
-                "expected": round(value.expected(model, ph["price"]["sgd"]), 2),
+                "expected": round(value.expected(model, ph["_price"]), 2),
             }
+        order = sorted(phones, key=lambda ph: -ph["scores"][preset]["smartbuy"])
+        for r, ph in enumerate(order, 1):
+            ph["scores"][preset]["rank"] = r
+        for ph, (lo, hi) in zip(phones, rank_ranges(phones, preset, seed)):
+            ph["scores"][preset]["rank_range"] = [min(lo, ph["scores"][preset]["rank"]),
+                                                  max(hi, ph["scores"][preset]["rank"])]
     for ph in phones:
-        del ph["_cats"]
+        del ph["_cats"], ph["_price"]
     phones.sort(key=lambda ph: -ph["scores"]["balanced"]["smartbuy"])
 
     # Unpriced phones. Brands whose crawl finished: 2025 phones with no listing are
@@ -214,9 +304,9 @@ def build() -> dict:
                 "short_name": short_name(p), "announced": p.get("announced"), "gsm_url": p["gsm_url"],
                 "variant": variant, "last_price": h[-1] if h else None,
                 "categories": {k: round(v, 2) for k, v in cats.items()},
-                "estimated": p["estimated"], "estimated_reasons": estimated_reasons(p),
+                "estimated": p["estimated"], "estimated_reasons": estimated_reasons(p, variant),
                 "scores": {pr: {"spec": round(scoring.spec_score(cats, pr), 2)} for pr in C.PRESETS},
-                "specs": summary(p),
+                "specs": summary(p, variant),
             })
     awaiting.sort(key=lambda a: -a["scores"]["balanced"]["spec"])
 

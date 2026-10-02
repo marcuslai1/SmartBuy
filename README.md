@@ -42,6 +42,10 @@ are left out: they're priced for the form factor, not the specs.
   store, the listing's SKU options, or the title), and the phone is scored on
   that variant. The old version paired 1TB specs with 256GB prices.
 * **History:** `data/prices.csv` is append-only; each crawl adds rows.
+* **Typical price:** value is judged at the median of the cheapest offer per
+  crawl over the last 90 days, so a one-day flash sale doesn't reorder the
+  ranking. The current price is still what's shown and filtered on. (This only
+  smooths anything once several crawls exist.)
 
 ### Scores
 
@@ -50,16 +54,18 @@ Nine categories, each 0–10 (`pipeline/config.py` holds every threshold):
 | Category | Based on |
 |---|---|
 | Performance | Half CPU: GeekBench 6 multi-core. Half GPU: 3DMark Wild Life Extreme. Lab results; else same/similar chipset; else estimated (CPU cores / nearest GeekBench scores) |
-| Camera | Main sensor size, OIS, telephoto zoom & sensor, ultrawide, video, selfie. Megapixels alone don't count |
+| Camera | Main sensor size, OIS, telephoto zoom & sensor, ultrawide, video, selfie. Megapixels alone don't count. Unpublished sensor sizes are estimated from same-megapixel cameras on phones with similar performance |
 | Battery life | GSMArena *Active use* hours (else estimated from EU label or capacity) |
 | Display | Panel, refresh rate, LTPO, HDR, measured brightness, sharpness |
 | Charging | Wired & wireless watts, reverse wireless |
-| Build & durability | IP rating, glass, frame, EU drop test class |
-| Memory & storage | RAM and storage of the priced variant |
-| Software support | Years of OS upgrades promised |
-| Features | 5G, NFC, stereo speakers, eSIM, headphone jack, UWB, IR |
+| Build & durability | IP rating, glass, frame, EU drop test class, battery lifespan (EU-label charge cycles) |
+| Memory & storage | RAM, storage size and storage speed (UFS/eMMC) of the priced variant |
+| Software support | Years of OS upgrades *still to come*: the promise minus time since release. If a phone's sheet states no promise, it's borrowed from the closest same-series phone, else a brand default |
+| Features | 5G, NFC, stereo speakers, eSIM, headphone jack, UWB, IR, ultrasonic fingerprint or 3D face unlock |
 
-Estimated inputs are flagged on the site.
+Every input that's estimated, borrowed or assumed is flagged on the site with
+the reason. Lab results that disagree wildly (>25%) with other phones on the
+same chip are treated as bad runs and replaced by the chip median.
 
 * **Spec score** – weighted average of the categories. Presets (Balanced,
   Camera, Battery, Performance, Keep-it-for-years) change the weights.
@@ -69,7 +75,11 @@ Estimated inputs are flagged on the site.
   held flat past its peak. Value is how far a phone sits above or below it
   (5 = typical, ~7 = one standard deviation better). Cheap phones don't win just
   for being cheap.
-* **SmartBuy score** – 50% spec, 50% value. Default ranking.
+* **SmartBuy score** – 50% spec, 50% value. Default ranking. Phones with the
+  same rounded score share a rank (“=3”).
+* **Likely rank** – the ranking is recomputed 400 times with the preset weights
+  (±30%), prices (±8%) and every estimated input nudged by its plausible error;
+  each phone's page shows the middle 90% of ranks it lands at.
 
 ## Development
 

@@ -5,6 +5,7 @@ Inputs are parsed GSMArena records (sources/gsmarena.py) after enrichment
 """
 from __future__ import annotations
 
+import datetime as dt
 import math
 
 from . import config as C
@@ -131,11 +132,19 @@ def glass_points(glass: str | None) -> float:
 
 
 def build(p: dict) -> float:
-    score = C.IP_POINTS.get(p.get("ip_rating") or "", 0.0)
-    score += glass_points(p.get("glass"))
-    score += C.FRAME_POINTS.get((p.get("frame") or "").lower(), C.FRAME_UNKNOWN)
-    score += C.FREE_FALL_POINTS.get(p.get("eu_free_fall") or "", C.FREE_FALL_UNKNOWN)
-    return _clamp(score)
+    physical = C.IP_POINTS.get(p.get("ip_rating") or "", 0.0)
+    physical += glass_points(p.get("glass"))
+    physical += C.FRAME_POINTS.get((p.get("frame") or "").lower(), C.FRAME_UNKNOWN)
+    physical += C.FREE_FALL_POINTS.get(p.get("eu_free_fall") or "", C.FREE_FALL_UNKNOWN)
+    cycles = C.CYCLES_MAX * _lerp01(p.get("battery_cycles") or C.CYCLES_UNKNOWN, C.CYCLES_LO, C.CYCLES_HI)
+    return _clamp(C.BUILD_PHYSICAL_SHARE * physical + cycles)
+
+
+def storage_type(p: dict, variant: dict) -> str | None:
+    """Storage technology of the priced variant ('UFS 4.0'); estimated if the sheet doesn't say."""
+    types = p.get("storage_types") or {}
+    return (types.get(str(variant.get("storage_gb"))) or types.get("default") or next(iter(types.values()), None)
+            or p.get("storage_type_est"))
 
 
 def memory(p: dict, variant: dict) -> float:
@@ -143,15 +152,28 @@ def memory(p: dict, variant: dict) -> float:
     storage = _interp(variant.get("storage_gb") or 0, C.STORAGE_POINTS)
     if p.get("card_slot"):
         storage = min(5.0, storage + C.CARD_SLOT)
-    return _clamp(score + storage)
+    kind = storage_type(p, variant)
+    speed = next((pts for prefix, pts in C.STORAGE_SPEED if kind and kind.startswith(prefix)), C.STORAGE_SPEED_UNKNOWN)
+    return _clamp(C.MEMORY_CAPACITY_SHARE * (score + storage) + speed)
 
 
 def os_updates(p: dict) -> int:
-    return p.get("os_updates") or C.OS_UPDATES_DEFAULT.get(p.get("brand"), 3)
+    """Years of OS upgrades promised at launch (stated, borrowed from the series, or brand default)."""
+    return p.get("os_years") or p.get("os_updates") or C.OS_UPDATES_DEFAULT.get(p.get("brand"), 3)
+
+
+def os_years_left(p: dict, as_of: str | None) -> float:
+    """Promised years minus the time since release (never below 0)."""
+    start = p.get("released") or p.get("announced")
+    if not as_of or not start:
+        return float(os_updates(p))
+    age = (dt.date.fromisoformat(as_of) - dt.date.fromisoformat(start)).days / 365.25
+    return max(0.0, os_updates(p) - max(0.0, age))
 
 
 def software(p: dict) -> float:
-    return 10 * _lerp01(os_updates(p), 1, C.OS_UPDATES_MAX)
+    left = p["os_years_left"] if p.get("os_years_left") is not None else os_updates(p)
+    return 10 * _lerp01(left, 1, C.OS_UPDATES_MAX)
 
 
 def extras(p: dict) -> float:

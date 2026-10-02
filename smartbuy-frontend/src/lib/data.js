@@ -10,6 +10,18 @@ export const SORTS = [
   { key: 'price_desc', label: 'Price: high to low' },
 ];
 
+/** Screen-size filter (inches). */
+export const SIZES = [
+  { key: 'any', label: 'Any' },
+  { key: 'compact', label: 'Compact', title: 'Under 6.4″', test: (d) => d < 6.4 },
+  { key: 'standard', label: 'Standard', title: '6.4–6.79″', test: (d) => d >= 6.4 && d < 6.8 },
+  { key: 'large', label: 'Large', title: '6.8″ and up', test: (d) => d >= 6.8 },
+];
+
+/** The price a phone's value is judged at: its typical price over recent crawls. */
+export const scoringPrice = (phone) =>
+  isNum(phone.price?.typical_sgd) ? phone.price.typical_sgd : phone.price?.sgd;
+
 const FALLBACK_TIERS = [
   { key: 'budget', min: 0, max: 400 },
   { key: 'midrange', min: 400, max: 800 },
@@ -290,13 +302,16 @@ export function keySpec(phone, key) {
         s.glass,
         s.frame && `${s.frame} frame`,
         s.eu_free_fall && `EU drop class ${s.eu_free_fall}`,
+        isNum(s.battery_cycles) && `${fmtNum(s.battery_cycles)} battery cycles`,
       ]);
     case 'memory':
-      return variantLabel(phone.variant) || '—';
+      return join([variantLabel(phone.variant), s.storage_type && `${s.storage_type}${s.storage_type_est ? ' (est.)' : ''}`]);
     case 'software':
-      return isNum(s.os_updates)
-        ? `${s.os_updates} yr${s.os_updates === 1 ? '' : 's'} of OS updates${s.os_updates_stated ? '' : ' (typical for brand)'}`
-        : '—';
+      if (!isNum(s.os_updates)) return '—';
+      return join([
+        isNum(s.os_years_left) ? `~${fmtNum(s.os_years_left, 1)} yrs of OS upgrades left` : null,
+        `${s.os_updates} promised${s.os_updates_stated ? '' : ' (assumed)'}`,
+      ]);
     case 'extras':
       return join([
         yes(s.has_5g, '5G'),
@@ -307,6 +322,7 @@ export function keySpec(phone, key) {
         yes(s.card_slot, 'microSD'),
         yes(s.uwb, 'UWB'),
         yes(s.ir, 'IR blaster'),
+        yes(s.secure_unlock, 'ultrasonic/3D unlock'),
       ]);
     default:
       return '—';
@@ -344,6 +360,8 @@ export function matchesFilters(phone, f, tiers) {
     if (!isNum(price) || price > f.max) return false;
   }
   if (f.brands?.length && !f.brands.includes(phone.brand)) return false;
+  const size = SIZES.find((s) => s.key === f.size);
+  if (size?.test && !(isNum(phone.specs?.display_in) && size.test(phone.specs.display_in))) return false;
   const q = (f.q || '').trim().toLowerCase();
   if (q) {
     const hay = `${phone.name} ${phone.short_name || ''} ${phone.brand} ${phone.specs?.chipset || ''}`.toLowerCase();

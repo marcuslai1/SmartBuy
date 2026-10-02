@@ -7,6 +7,7 @@ export default function ResultsList({
   phones,
   categories,
   preset,
+  sort,
   sortLabel,
   presetLabel,
   compare,
@@ -32,6 +33,12 @@ export default function ResultsList({
       </div>
 
       {phones.length > 0 && <ListHeader />}
+      {phones.length > 1 && SCORE_SORTS.has(sort) && (
+        <p className="border-b border-line px-4 py-1.5 text-2xs text-muted sm:px-5">
+          “=” marks phones tied on the rounded score. Neighbours a few tenths apart can swap places with small
+          changes in price or priorities, so read the order as a guide.
+        </p>
+      )}
       {phones.length === 0 ? (
         <div className="px-5 py-12 text-center">
           <p className="font-medium text-ink">No phones match these filters.</p>
@@ -42,11 +49,12 @@ export default function ResultsList({
         </div>
       ) : (
         <ol className="divide-y divide-line">
-          {phones.map((p, i) => (
+          {tiedRanks(phones, sort, preset).map(({ phone: p, rank, tied }) => (
             <PhoneRow
               key={p.id}
               phone={p}
-              rank={i + 1}
+              rank={rank}
+              tied={tied}
               categories={categories}
               preset={preset}
               inCompare={compare.includes(p.id)}
@@ -61,6 +69,20 @@ export default function ResultsList({
       )}
     </section>
   );
+}
+
+const SCORE_SORTS = new Set(['smartbuy', 'value', 'spec']);
+
+/** Competition ranks ("=3") for phones whose displayed score is the same. */
+function tiedRanks(phones, sort, preset) {
+  const shown = (p) => (SCORE_SORTS.has(sort) ? fmtScore(scoreOf(p, preset)[sort]) : null);
+  const keys = phones.map(shown);
+  let rank = 0;
+  return phones.map((phone, i) => {
+    if (i === 0 || keys[i] == null || keys[i] !== keys[i - 1]) rank = i + 1;
+    const tied = keys[i] != null && (keys[i] === keys[i - 1] || keys[i] === keys[i + 1]);
+    return { phone, rank, tied };
+  });
 }
 
 function CategoryKey({ categories }) {
@@ -97,6 +119,7 @@ function ListHeader() {
 const PhoneRow = memo(function PhoneRow({
   phone,
   rank,
+  tied,
   categories,
   preset,
   inCompare,
@@ -141,7 +164,12 @@ const PhoneRow = memo(function PhoneRow({
       onMouseEnter={() => onHover(phone.id)}
       onMouseLeave={() => onHover(null)}
     >
-      <div className="tnum w-6 shrink-0 pt-0.5 text-right text-sm font-semibold text-muted sm:w-7">{rank}</div>
+      <div
+        className="tnum w-6 shrink-0 pt-0.5 text-right text-sm font-semibold text-muted sm:w-7"
+        title={tied ? 'Tied with a neighbour on the rounded score' : undefined}
+      >
+        {tied ? `=${rank}` : rank}
+      </div>
       <div className={`min-w-0 flex-1 ${ROW_GRID}`}>
         {/* Name, meta, traits */}
         <div className="flex min-w-0 items-start gap-3 sm:block">

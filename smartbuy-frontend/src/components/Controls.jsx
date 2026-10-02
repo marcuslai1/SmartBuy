@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { ChevronDown, Search, SlidersHorizontal, X } from 'lucide-react';
-import { SORTS, tierLabel } from '../lib/data';
+import { SIZES, SORTS, tierLabel } from '../lib/data';
 
 function Segmented({ name, label, options, value, onChange, hideLabel = false }) {
   return (
@@ -163,6 +163,13 @@ export default function Controls({
                 onChange={(budget) => update({ budget })}
               />
               <MaxPrice value={view.max} onCommit={(max) => update({ max })} />
+              <Segmented
+                name="size"
+                label="Screen"
+                options={SIZES.map(({ key, label, title }) => ({ key, label, title }))}
+                value={view.size}
+                onChange={(size) => update({ size })}
+              />
               <div className="flex flex-wrap items-center gap-1.5" role="group" aria-label="Brands">
                 <span className="eyebrow mr-1">Brand</span>
                 {brands.map((b) => (

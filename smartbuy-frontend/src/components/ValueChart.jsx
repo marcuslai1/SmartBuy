@@ -1,5 +1,15 @@
 import { useMemo, useState } from 'react';
-import { expectedAt, fmtSGD, fmtScore, isNum, scoreOf, shortName, shortVariant, storeLabel } from '../lib/data';
+import {
+  expectedAt,
+  fmtSGD,
+  fmtScore,
+  isNum,
+  scoreOf,
+  scoringPrice,
+  shortName,
+  shortVariant,
+  storeLabel,
+} from '../lib/data';
 import { useElementSize } from '../lib/hooks';
 
 const X_TICKS = [100, 150, 200, 300, 400, 500, 600, 800, 1000, 1200, 1500, 2000, 2500, 3000, 4000, 5000];
@@ -33,7 +43,7 @@ export default function ValueChart({
   const pts = useMemo(
     () =>
       phones
-        .map((p) => ({ p, price: p.price?.sgd, spec: scoreOf(p, preset).spec }))
+        .map((p) => ({ p, price: scoringPrice(p), spec: scoreOf(p, preset).spec }))
         .filter((d) => isNum(d.price) && d.price > 0 && isNum(d.spec)),
     [phones, preset],
   );

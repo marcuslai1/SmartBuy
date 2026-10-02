@@ -9,10 +9,11 @@ export function HowItWorks({ categories }) {
     battery: 'Hours in GSMArena’s measured “Active use” test.',
     display: 'Panel type, refresh rate, LTPO, HDR, measured brightness and sharpness.',
     charging: 'Wired and wireless watts, plus reverse wireless.',
-    build: 'IP rating, glass, frame and EU drop-test class.',
-    memory: 'RAM and storage of the exact variant priced.',
-    software: 'Years of promised OS upgrades.',
-    extras: '5G, NFC, stereo speakers, eSIM, headphone jack, UWB and IR blaster.',
+    build: 'IP rating, glass, frame, EU drop-test class and battery lifespan (EU-label charge cycles).',
+    memory: 'RAM, storage size and storage speed (UFS/eMMC) of the exact variant priced.',
+    software: 'Years of OS upgrades still to come: the promise minus the time since release.',
+    extras:
+      '5G, NFC, stereo speakers, eSIM, headphone jack, UWB, IR blaster, and ultrasonic fingerprint or 3D face unlock.',
   };
   return (
     <section id="how" aria-labelledby="how-title" className="scroll-mt-28">
@@ -44,7 +45,9 @@ export function HowItWorks({ categories }) {
           <li>
             <h3 className="font-semibold text-ink">4 · SmartBuy score</h3>
             Half spec score, half value score. It’s the default ranking: good phones that are also fairly priced rise to
-            the top.
+            the top. Value is judged at a phone’s usual price over recent price checks, so a one-day sale doesn’t
+            reshuffle the list. Phones a few tenths apart are close calls; each phone’s page shows the range of ranks it
+            would likely land at if the priorities, prices and estimated specs were a little different.
           </li>
         </ol>
         <div className="card p-5">

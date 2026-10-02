@@ -55,8 +55,12 @@ function roundedTop(x, y, w, h, r) {
   return `M${x},${y + h} V${y + r} Q${x},${y} ${x + r},${y} H${x + w - r} Q${x + w},${y} ${x + w},${y + r} V${y + h} Z`;
 }
 
+// Lists only flag missing lab tests; smaller guesses (assumed glass, update policy...)
+// are marked per category in the detail view and in Compare.
+const LIST_ESTIMATES = ['performance', 'battery'];
+
 export function EstBadge({ phone, keys }) {
-  const ks = (keys || phone.estimated || []).filter(Boolean);
+  const ks = (keys || (phone.estimated || []).filter((k) => LIST_ESTIMATES.includes(k))).filter(Boolean);
   if (!ks.length) return null;
   const text = ks.map((k) => `${cap(k)}: ${estimateNote(phone, k)}`).join('. ');
   return (

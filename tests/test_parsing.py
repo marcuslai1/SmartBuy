@@ -1,5 +1,6 @@
 from pipeline.sources.gsmarena import (
-    _charge_rate, normalize_chipset, parse_camera_modules, parse_ip, parse_sensor_type, parse_variants,
+    _charge_rate, normalize_chipset, parse_camera_modules, parse_ip, parse_sensor_type, parse_storage_types,
+    parse_variants,
 )
 
 
@@ -47,3 +48,13 @@ def test_chipset_drops_model_codes():
 def test_charge_rate_from_claims():
     assert _charge_rate("Wired, PD3.2, 50% in 20 min") == 2.5
     assert _charge_rate("45W wired") is None
+
+
+def test_storage_types_per_size():
+    assert parse_storage_types("128GB 8GB RAM, 256GB 8GB RAM | UFS 3.1 - 128GB only UFS 4.0") == {
+        "128": "UFS 3.1", "default": "UFS 4.0"}
+    assert parse_storage_types("256GB 8GB RAM | UFS 3.1 - 128GB UFS 4.1 - 256/512GB") == {
+        "128": "UFS 3.1", "256": "UFS 4.1", "512": "UFS 4.1"}
+    assert parse_storage_types("256GB 8GB RAM | NVMe") == {"default": "NVMe"}
+    assert parse_storage_types("64GB 4GB RAM | eMMC 5.1") == {"default": "eMMC 5.1"}
+    assert parse_storage_types("128GB 4GB RAM | UFS") == {}

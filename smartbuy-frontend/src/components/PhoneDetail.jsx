@@ -11,6 +11,7 @@ import {
   keySpec,
   plausibleRefresh,
   scoreOf,
+  scoringPrice,
   sensorFormat,
   storeLabel,
   traits,
@@ -77,6 +78,10 @@ function DetailBody({ phone, data, preset, inCompare, compareFull, onToggleCompa
   const diff = isNum(s.spec) && isNum(s.expected) ? s.spec - s.expected : null;
   const hasPrice = isNum(price.sgd);
   const last = phone.last_price;
+  const judgedAt = scoringPrice(phone);
+  const usual = isNum(price.typical_sgd) && price.typical_crawls >= 2 && Math.abs(price.typical_sgd - price.sgd) > 1;
+  const total = data.phones?.length;
+  const range = Array.isArray(s.rank_range) ? s.rank_range : null;
 
   return (
     <div>
@@ -94,6 +99,12 @@ function DetailBody({ phone, data, preset, inCompare, compareFull, onToggleCompa
                 {storeLabel(price.store)}
                 {price.seller && price.seller !== storeLabel(price.store) ? ` · ${price.seller}` : ''}
               </div>
+              {usual && (
+                <div className="tnum mt-1 text-xs text-muted">
+                  {price.sgd < price.typical_sgd ? 'Below' : 'Above'} its usual {fmtSGD(price.typical_sgd)} (median of{' '}
+                  {price.typical_crawls} price checks). Value is judged at the usual price.
+                </div>
+              )}
             </>
           ) : (
             <>
@@ -128,6 +139,16 @@ function DetailBody({ phone, data, preset, inCompare, compareFull, onToggleCompa
           <div className={hasPrice ? '' : 'hidden'}>
             <div className="text-2xs font-medium uppercase tracking-wide text-muted">SmartBuy</div>
             <div className="text-4xl font-semibold leading-none text-ink">{fmtScore(s.smartbuy)}</div>
+            {isNum(s.rank) && (
+              <div
+                className="tnum mt-1 text-xs text-ink-2"
+                title="Recomputed hundreds of times with the priorities, prices and estimated specs nudged by their likely error; the middle 90% of the ranks it lands at."
+              >
+                #{s.rank}
+                {total ? ` of ${total}` : ''}
+                {range && range[0] !== range[1] && <span className="text-muted"> · likely #{range[0]}–{range[1]}</span>}
+              </div>
+            )}
           </div>
           <div className="tnum flex gap-4 text-sm text-ink-2">
             <div className={hasPrice ? '' : 'hidden'}>
@@ -147,7 +168,7 @@ function DetailBody({ phone, data, preset, inCompare, compareFull, onToggleCompa
           <>
             With a <strong className="text-ink">{presetLabel}</strong> priority it scores{' '}
             <strong className="tnum text-ink">{fmtScore(s.spec)}</strong> on specs, where a typical phone at{' '}
-            <span className="tnum">{fmtSGD(price.sgd)}</span> scores{' '}
+            <span className="tnum">{fmtSGD(judgedAt)}</span> scores{' '}
             <span className="tnum">{fmtScore(s.expected)}</span>.{' '}
             {Math.abs(diff) < 0.15
               ? 'That is right on the curve, so value is average.'
@@ -396,6 +417,7 @@ function SpecList({ phone }) {
             ? `${fmtNum(s.gpu)}${s.gpu_source && s.gpu_source !== 'tested' ? ' (estimated)' : ''}`
             : 'Not available',
         ],
+        ['Storage type', s.storage_type ? `${s.storage_type}${s.storage_type_est ? ' (estimated)' : ''}` : null],
       ],
     },
     {
@@ -409,6 +431,7 @@ function SpecList({ phone }) {
           'Peak brightness',
           isNum(s.nits) ? `${fmtNum(s.nits)} nits ${s.nits_measured ? '(measured)' : '(claimed)'}` : null,
         ],
+        ['PWM dimming', isNum(s.pwm_hz) ? `${fmtNum(s.pwm_hz)}Hz` : null],
       ],
     },
     {
@@ -416,7 +439,11 @@ function SpecList({ phone }) {
       rows: [
         [
           'Main',
-          [isNum(s.main_mp) && `${fmtNum(s.main_mp)}MP`, sensorFormat(s.main_sensor_in), s.main_ois === true && 'OIS']
+          [
+            isNum(s.main_mp) && `${fmtNum(s.main_mp)}MP`,
+            sensorFormat(s.main_sensor_in) && `${sensorFormat(s.main_sensor_in)}${s.main_sensor_est ? ' (est.)' : ''}`,
+            s.main_ois === true && 'OIS',
+          ]
             .filter(Boolean)
             .join(' · ') || null,
         ],
@@ -438,6 +465,7 @@ function SpecList({ phone }) {
         ],
         ['Wired', wired],
         ['Wireless', isNum(s.wireless_w) ? `${fmtNum(s.wireless_w)}W` : 'No'],
+        ['Battery lifespan', isNum(s.battery_cycles) ? `${fmtNum(s.battery_cycles)} charge cycles (EU label)` : null],
       ],
     },
     {
@@ -458,9 +486,10 @@ function SpecList({ phone }) {
         [
           'OS upgrades',
           isNum(s.os_updates)
-            ? `${s.os_updates} years${s.os_updates_stated ? ' (promised)' : ' (typical for brand)'}`
+            ? `${s.os_updates} years${s.os_updates_stated ? ' (promised)' : ' (assumed)'}`
             : null,
         ],
+        ['Upgrade years left', isNum(s.os_years_left) ? `~${fmtNum(s.os_years_left, 1)}` : null],
         ['5G', yn(s.has_5g)],
         ['NFC', yn(s.nfc)],
         ['eSIM', yn(s.esim)],
@@ -469,6 +498,7 @@ function SpecList({ phone }) {
         ['microSD slot', yn(s.card_slot)],
         ['UWB', yn(s.uwb)],
         ['IR blaster', yn(s.ir)],
+        ['Ultrasonic fingerprint / 3D face unlock', yn(s.secure_unlock)],
       ],
     },
   ];

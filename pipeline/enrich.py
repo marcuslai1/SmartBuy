@@ -8,12 +8,27 @@
 * Battery: 'Active use score' hours when tested; otherwise estimated from the
   EU-label endurance figure, or failing that from capacity, using straight
   lines fitted on phones that have both numbers.
+* Lab results that disagree wildly with every other phone on the same chip
+  (a mis-entered or throttled run) are replaced by that chip's median.
+* OS update policy: when a sheet doesn't state one, it's borrowed from the
+  closest phone in the same series that does (Redmi Note 17 <- Redmi Note 15),
+  else the brand's typical policy.
+* Main camera sensor size: when unpublished, the median size of same-megapixel
+  main cameras on the phones with the nearest GeekBench scores (published sizes
+  skew to flagships, so a plain same-MP median would flatter budget phones).
+* Storage type (UFS/eMMC): when unpublished, the most common type on phones with
+  the same chipset, else on the phones with the nearest GeekBench scores.
+
+Every category that rests on a guess is listed in record["estimated"].
 """
 from __future__ import annotations
 
+import datetime as dt
 import math
 import re
 import statistics
+
+from . import config as C
 
 BRANDS = {"apple": "Apple", "samsung": "Samsung", "google": "Google", "xiaomi": "Xiaomi", "oppo": "OPPO",
           "vivo": "vivo", "honor": "Honor", "realme": "realme", "oneplus": "OnePlus", "nothing": "Nothing"}
@@ -108,12 +123,103 @@ def _nearest_median(x: float, pairs: list[tuple[float, float]], k: int = 7) -> f
     return statistics.median(y for _, y in near)
 
 
-def _chip_medians(records: list[dict], field: str) -> dict[str, int]:
+def _chip_values(records: list[dict], field: str) -> dict[str, list[int]]:
     by_chip: dict[str, list[int]] = {}
     for r in records:
         if r.get(field) and _chip_key(r.get("chipset")):
             by_chip.setdefault(_chip_key(r["chipset"]), []).append(r[field])
-    return {k: int(statistics.median(v)) for k, v in by_chip.items()}
+    return by_chip
+
+
+def _chip_medians(records: list[dict], field: str) -> dict[str, int]:
+    return {k: int(statistics.median(v)) for k, v in _chip_values(records, field).items()}
+
+
+def _lab_result(r: dict, field: str, by_chip: dict[str, list[int]]) -> tuple[int, str] | None:
+    """The phone's own lab result, unless at least two other phones share its chip
+    and it's more than LAB_OUTLIER away from their median."""
+    v = r.get(field)
+    if not v:
+        return None
+    others = list(by_chip.get(_chip_key(r.get("chipset")), []))
+    if v in others:
+        others.remove(v)
+    if len(others) >= 2:
+        med = statistics.median(others)
+        if abs(v / med - 1) > C.LAB_OUTLIER:
+            return int(med), f"same chipset (its own result, {v:,}, looked wrong)"
+    return v, "tested"
+
+
+def series(model: str) -> tuple[str, str]:
+    """(family, line): 'Poco F8 Ultra' -> ('Poco F', 'Poco F|ultra'), '17T Pro' -> ('', '|t pro')."""
+    m = re.match(r"(\D*?)\s*\d+([A-Za-z]*)\s*(.*)", model)
+    if not m:
+        return model, model
+    fam = m.group(1).strip()
+    return fam, f"{fam}|" + " ".join(filter(None, (m.group(2).lower(), m.group(3).strip().lower())))
+
+
+def _days(date: str | None) -> int:
+    try:
+        return dt.date.fromisoformat(date).toordinal()
+    except (TypeError, ValueError):
+        return 0
+
+
+def _os_policy(r: dict, stated: list[dict]) -> tuple[int, str] | None:
+    """Update policy of the closest same-series phone that states one (same line first, then family)."""
+    fam, line = series(r["model"])
+    siblings = [s for s in stated if s["brand"] == r["brand"] and s["id"] != r["id"]]
+    for i, key in ((1, line), (0, fam)):
+        same = [s for s in siblings if series(s["model"])[i] == key]
+        if same:
+            best = min(same, key=lambda s: (abs(_days(s.get("announced")) - _days(r.get("announced"))),
+                                            -s["os_updates"]))
+            return best["os_updates"], f"same series ({best['name']})"
+    return None
+
+
+def _main_lens(r: dict) -> dict | None:
+    return next((l for l in r.get("lenses") or [] if l["role"] == "wide"), None)
+
+
+def _storage_kind(r: dict) -> str | None:
+    types = r.get("storage_types") or {}
+    return types.get("default") or next(iter(types.values()), None)
+
+
+def _fill_hardware_gaps(out: list[dict]) -> None:
+    """Second pass, once every phone has a GeekBench figure: estimate unpublished
+    main-sensor sizes and storage types from comparable phones."""
+    sensors = [(round(_main_lens(r)["mp"]), math.log(r["gb6"]), _main_lens(r)["sensor_in"]) for r in out
+               if r.get("gb6") and _main_lens(r) and _main_lens(r).get("sensor_in")]
+    storage = [(_chip_key(r.get("chipset")), math.log(r["gb6"]), _storage_kind(r)) for r in out
+               if r.get("gb6") and _storage_kind(r)]
+    for r in out:
+        main = _main_lens(r)
+        r["main_sensor_est"] = False
+        if main and not main.get("sensor_in"):
+            pairs = [(x, size) for mp, x, size in sensors if mp == round(main.get("mp") or 0)]
+            if r.get("gb6") and len(pairs) >= 3:
+                size = round(_nearest_median(math.log(r["gb6"]), pairs), 3)
+                r["lenses"] = [{**l, "sensor_in": size} if l is main else l for l in r["lenses"]]
+                r["main_sensor_est"] = True
+            r["estimated"].append("camera")
+
+        if not r.get("storage_types"):
+            chip = _chip_key(r.get("chipset"))
+            same = [kind for c, _, kind in storage if chip and c == chip]
+            if same:
+                r["storage_type_est"], r["storage_type_source"] = statistics.mode(same), "same chipset"
+            elif r.get("gb6") and storage:
+                near = sorted(storage, key=lambda t: abs(t[1] - math.log(r["gb6"])))[:7]
+                r["storage_type_est"] = statistics.mode(kind for _, _, kind in near)
+                r["storage_type_source"] = "similar performance"
+            r["estimated"].append("memory")
+
+        order = [k for k, _ in C.CATEGORIES]
+        r["estimated"] = sorted(set(r["estimated"]), key=order.index)
 
 
 def _from_chip(key: str | None, table: dict[str, int]) -> tuple[int, str] | None:
@@ -125,8 +231,12 @@ def _from_chip(key: str | None, table: dict[str, int]) -> tuple[int, str] | None
 
 
 def enrich(records: list[dict]) -> tuple[list[dict], dict]:
+    gb6_by_chip = _chip_values(records, "geekbench6")
+    gpu_by_chip = _chip_values(records, "wildlife_extreme")
     chip_gb6 = _chip_medians(records, "geekbench6")
     chip_gpu = _chip_medians(records, "wildlife_extreme")
+    canon = [canonical(r) for r in records]
+    stated_os = [r for r in canon if r.get("os_updates")]
 
     both_eu = [(r["eu_endurance_h"], r["active_use_h"]) for r in records
                if r.get("eu_endurance_h") and r.get("active_use_h")]
@@ -141,12 +251,11 @@ def enrich(records: list[dict]) -> tuple[list[dict], dict]:
     mah_fit = _line(*zip(*both_mah)) if len(both_mah) >= 8 else None
 
     out = []
-    for r in records:
-        r = canonical(r)
+    for r in canon:
         estimated = []
         chip = _chip_key(r.get("chipset"))
-        if r.get("geekbench6"):
-            r["gb6"], r["gb6_source"] = r["geekbench6"], "tested"
+        if _lab_result(r, "geekbench6", gb6_by_chip):
+            r["gb6"], r["gb6_source"] = _lab_result(r, "geekbench6", gb6_by_chip)
         elif _from_chip(chip, chip_gb6):
             r["gb6"], r["gb6_source"] = _from_chip(chip, chip_gb6)
         elif cpu_fit and cpu_proxy(r.get("cpu")):
@@ -155,8 +264,8 @@ def enrich(records: list[dict]) -> tuple[list[dict], dict]:
         else:
             r["gb6"], r["gb6_source"] = None, "unknown"
 
-        if r.get("wildlife_extreme"):
-            r["gpu"], r["gpu_source"] = r["wildlife_extreme"], "tested"
+        if _lab_result(r, "wildlife_extreme", gpu_by_chip):
+            r["gpu"], r["gpu_source"] = _lab_result(r, "wildlife_extreme", gpu_by_chip)
         elif _from_chip(chip, chip_gpu):
             r["gpu"], r["gpu_source"] = _from_chip(chip, chip_gpu)
         elif len(both_gpu) >= 8 and r["gb6"]:
@@ -180,8 +289,23 @@ def enrich(records: list[dict]) -> tuple[list[dict], dict]:
         else:
             r["battery_h"], r["battery_source"] = None, "unknown"
             estimated.append("battery")
+
+        if r.get("os_updates"):
+            r["os_years"], r["os_source"] = r["os_updates"], "stated"
+        elif _os_policy(r, stated_os):
+            r["os_years"], r["os_source"] = _os_policy(r, stated_os)
+            estimated.append("software")
+        else:
+            r["os_years"], r["os_source"] = C.OS_UPDATES_DEFAULT.get(r["brand"], 3), "brand default"
+            estimated.append("software")
+
+        if not r.get("measured_nits"):
+            estimated.append("display")
+        if not (r.get("glass") and r.get("frame") and r.get("eu_free_fall") and r.get("battery_cycles")):
+            estimated.append("build")
         r["estimated"] = estimated
         out.append(r)
+    _fill_hardware_gaps(out)
 
     stats = {"chips_with_benchmarks": len(chip_gb6), "chips_with_gpu_benchmarks": len(chip_gpu),
              "gpu_gb6_pairs": len(both_gpu), "eu_fit": eu_fit, "mah_fit": mah_fit,

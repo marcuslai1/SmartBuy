@@ -128,6 +128,21 @@ def parse_variants(text: str) -> list[dict]:
     return out
 
 
+def parse_storage_types(text: str) -> dict:
+    """Storage technology, per size where the sheet splits it:
+    'UFS 3.1 - 128GB only UFS 4.0' -> {'default': 'UFS 4.0', '128': 'UFS 3.1'}.
+    A bare 'UFS' (version not given) counts as unknown."""
+    out: dict[str, str] = {}
+    for m in re.finditer(r"(UFS\s*\d(?:\.[\dxX])?|eMMC(?:\s*[\d.]+)?|NVMe)(?:\s*-\s*([\d/]+)\s*GB)?", text or ""):
+        kind = re.sub(r"\s+", " ", m.group(1)).replace("x", "X")
+        if m.group(2):
+            for gb in m.group(2).split("/"):
+                out.setdefault(gb, kind)
+        else:
+            out.setdefault("default", kind)
+    return out
+
+
 def parse_sensor_type(text: str) -> float | None:
     """Optical format in inches: '1/1.3"' -> 0.769, '1.0"' -> 1.0 (some sheets use a curly ” for the inch mark)."""
     m = re.search(r'(\d+(?:\.\d+)?)\s*/\s*(\d+(?:\.\d+)?)\s*["”″]', text)
@@ -236,6 +251,7 @@ def parse_spec(html: str, url: str) -> dict:
     build = g("Body/Build")
     protection = g("Display/Protection") or (re.search(r"Glass front \(([^)]+)\)", build) or [None, None])[1]
 
+    sensors = g("Features/Sensors")
     brand_model = title.split(" ", 1)
     return {
         "gsm_id": gsm_id(url),
@@ -254,6 +270,7 @@ def parse_spec(html: str, url: str) -> dict:
         # display
         "display_tech": display_type,
         "is_foldable": "foldable" in display_type.lower(),
+        "pwm_hz": _num(r"(\d+)\s*Hz PWM", display_type, int),
         "is_oled": bool(re.search(r"OLED", display_type, re.I)),
         "is_ltpo": "LTPO" in display_type,
         "has_hdr": bool(re.search(r"HDR|Dolby Vision", display_type)),
@@ -273,6 +290,7 @@ def parse_spec(html: str, url: str) -> dict:
         # memory
         "card_slot": not g("Memory/Card slot").lower().startswith("no") if g("Memory/Card slot") else None,
         "variants": parse_variants(g("Memory/Internal")),
+        "storage_types": parse_storage_types(g("Memory/Internal")),
         # cameras
         "lenses": lenses,
         "selfie_mp": selfie[0]["mp"] if selfie else None,
@@ -287,6 +305,8 @@ def parse_spec(html: str, url: str) -> dict:
         "uwb": "UWB" in " ".join(v for k, v in r.items() if k.startswith(("Comms/", "Features/"))),
         "ir": _yes(g("Comms/Infrared port")),
         "esim": "eSIM" in g("Body/SIM"),
+        # ultrasonic under-display fingerprint, or 3D face unlock (Face ID)
+        "secure_unlock": bool(re.search(r"Fingerprint \(under display, ultrasonic\)|Face ID|3D face", sensors)),
         # battery
         "battery_mah": _num(r"(\d{3,5})\s*mAh", battery_text, int),
         "wired_w": _num(r"(\d+(?:\.\d+)?)W wired", charging),
@@ -304,6 +324,7 @@ def parse_spec(html: str, url: str) -> dict:
         "active_use_h": _hours(g("Our Tests/Battery")),
         "eu_endurance_h": _hours(g("EU LABEL/Battery")),
         "eu_free_fall": (re.search(r"Class ([A-E])", g("EU LABEL/Free fall")) or [None, None])[1],
+        "battery_cycles": _num(r"(\d{3,4})\s*cycles", g("EU LABEL/Battery"), int),
         "eu_repairability": (re.search(r"Class ([A-E])", g("EU LABEL/Repairability")) or [None, None])[1],
         "price_text": g("Misc/Price") or None,
     }

@@ -40,7 +40,8 @@ def test_categories_can_reach_ten():
                        {"role": "periscope telephoto", "mp": 200, "sensor_in": 0.5, "zoom": 6.0, "ois": True},
                        {"role": "ultrawide", "mp": 50, "sensor_in": 0.4, "zoom": None, "ois": False}],
             "selfie_mp": 50, "refresh_hz": 144, "wired_w": 120, "wireless_w": 50, "ip_rating": "IP69",
-            "jack": True, "ir": True}
+            "jack": True, "ir": True, "secure_unlock": True, "battery_cycles": 2000,
+            "storage_types": {"default": "UFS 4.0"}}
     cats = scoring.category_scores(best, {"storage_gb": 1024, "ram_gb": 16})
     assert all(math.isclose(v, 10.0) for v in cats.values()), cats
 
@@ -119,3 +120,80 @@ def test_gpu_estimate_follows_nearest_geekbench_scores():
     assert budget["gpu_source"] == "estimated from GeekBench"
     assert 340 <= budget["gpu"] <= 400   # flagship results and the odd outlier don't drag it up
     assert "performance" in budget["estimated"]
+
+
+def test_storage_speed_follows_the_priced_variant():
+    p = {"storage_types": {"default": "UFS 4.0", "128": "UFS 3.1"}}
+    assert scoring.storage_type(p, {"storage_gb": 128}) == "UFS 3.1"
+    assert scoring.storage_type(p, {"storage_gb": 256}) == "UFS 4.0"
+    small = scoring.memory(p, {"storage_gb": 128, "ram_gb": 8})
+    big_slow = scoring.memory({"storage_types": {"default": "eMMC 5.1"}}, {"storage_gb": 128, "ram_gb": 8})
+    assert small > big_slow
+    assert scoring.storage_type({"storage_type_est": "UFS 2.2"}, {"storage_gb": 128}) == "UFS 2.2"
+
+
+def test_battery_cycles_count_toward_build():
+    base = {"ip_rating": "IP68", "glass": "Gorilla Glass Victus 2", "frame": "aluminum", "eu_free_fall": "B"}
+    assert scoring.build({**base, "battery_cycles": 2000}) > scoring.build(base) > scoring.build(
+        {**base, "battery_cycles": 800})
+
+
+def test_software_counts_years_left_not_years_promised():
+    p = {"brand": "Samsung", "os_years": 7, "released": "2024-10-02"}
+    assert math.isclose(scoring.os_years_left(p, "2026-10-02"), 5.0, abs_tol=0.01)
+    assert scoring.os_years_left({**p, "released": "2027-01-01"}, "2026-10-02") == 7
+    assert scoring.os_years_left({"os_years": 2, "released": "2020-01-01"}, "2026-10-02") == 0
+    new = scoring.software({**p, "os_years_left": 7.0})
+    old = scoring.software({**p, "os_years_left": 5.0})
+    assert new == 10.0 and old < new
+
+
+def test_update_policy_borrowed_from_same_series():
+    from pipeline.enrich import enrich, series
+    assert series("Poco F8 Ultra") == ("Poco F", "Poco F|ultra")
+    assert series("17T Pro") == ("", "|t pro")
+    assert series("Redmi Note 17 Pro")[0] == "Redmi Note"
+    sheets = [
+        {"name": "Xiaomi Redmi Note 15 Pro", "announced": "2025-08-21", "os_updates": 4},
+        {"name": "Xiaomi Redmi 15C", "announced": "2025-08-01", "os_updates": 2},
+        {"name": "Xiaomi Redmi Note 17 Pro", "announced": "2026-08-27"},
+        {"name": "Xiaomi 17T", "announced": "2026-05-28"},
+    ]
+    out = {r["model"]: r for r in enrich(sheets)[0]}
+    assert out["Redmi Note 17 Pro"]["os_years"] == 4
+    assert out["Redmi Note 17 Pro"]["os_source"] == "same series (Xiaomi Redmi Note 15 Pro)"
+    assert "software" in out["Redmi Note 17 Pro"]["estimated"]
+    assert out["17T"]["os_source"] == "brand default"
+    assert "software" not in out["Redmi Note 15 Pro"]["estimated"]
+
+
+def test_lab_result_far_from_its_chip_is_replaced():
+    from pipeline.enrich import enrich
+    sheets = [{"name": f"OPPO Phone {i}", "chipset": "Qualcomm Snapdragon 7 Gen 4", "geekbench6": gb}
+              for i, gb in enumerate([4006, 4095, 3990, 1188])]
+    out = enrich(sheets)[0]
+    bad = next(r for r in out if r["model"] == "Phone 3")
+    assert bad["gb6"] == 4006 and bad["gb6_source"].startswith("same chipset (its own result, 1,188")
+    assert next(r for r in out if r["model"] == "Phone 0")["gb6_source"] == "tested"
+
+
+def test_unknown_main_sensor_estimated_from_similar_phones():
+    from pipeline.enrich import enrich
+    def phone(i, gb, size):
+        return {"name": f"Xiaomi P{i}", "chipset": f"Chip {i}", "geekbench6": gb,
+                "lenses": [{"role": "wide", "mp": 50, "sensor_in": size, "zoom": None, "ois": False}]}
+    sheets = ([phone(i, 2000 + 10 * i, 0.36) for i in range(8)] + [phone(10 + i, 9000 + 10 * i, 0.77) for i in range(8)]
+              + [phone(99, 2050, None)])
+    budget = next(r for r in enrich(sheets)[0] if r["model"] == "P99")
+    assert budget["lenses"][0]["sensor_in"] == 0.36 and budget["main_sensor_est"]
+    assert "camera" in budget["estimated"]
+
+
+def test_typical_price_is_median_of_cheapest_per_crawl():
+    from pipeline.build import typical_price
+    rows = [{"date": d, "storage_gb": 256, "price_sgd": pr} for d, pr in
+            [("2026-07-10", 999), ("2026-08-10", 899), ("2026-08-10", 949), ("2026-09-10", 1049),
+             ("2026-10-02", 799), ("2026-01-01", 500)]]
+    rows.append({"date": "2026-10-02", "storage_gb": 512, "price_sgd": 700})
+    typical, n = typical_price(rows, 256, "2026-10-02", 799)
+    assert n == 4 and typical == 949.0     # median of 999, 899, 1049, 799; Jan row is outside 90 days

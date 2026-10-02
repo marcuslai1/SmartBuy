@@ -6,6 +6,7 @@ export const DEFAULT_VIEW = {
   preset: 'balanced',
   sort: 'smartbuy',
   budget: 'any',
+  size: 'any',
   max: null,
   brands: [],
   q: '',
@@ -28,6 +29,7 @@ function readView() {
     preset: p.get('preset') || DEFAULT_VIEW.preset,
     sort: p.get('sort') || DEFAULT_VIEW.sort,
     budget: p.get('budget') || DEFAULT_VIEW.budget,
+    size: p.get('size') || DEFAULT_VIEW.size,
     max: Number.isFinite(max) && max > 0 ? max : null,
     brands: list(p.get('brands')),
     q: p.get('q') || '',
@@ -41,6 +43,7 @@ function writeView(v, push) {
   if (v.preset !== DEFAULT_VIEW.preset) p.set('preset', v.preset);
   if (v.sort !== DEFAULT_VIEW.sort) p.set('sort', v.sort);
   if (v.budget !== DEFAULT_VIEW.budget) p.set('budget', v.budget);
+  if (v.size !== DEFAULT_VIEW.size) p.set('size', v.size);
   if (v.max) p.set('max', String(v.max));
   if (v.brands.length) p.set('brands', v.brands.join(','));
   if (v.q) p.set('q', v.q);

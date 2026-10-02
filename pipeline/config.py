@@ -58,6 +58,9 @@ PERF_GB6_LO, PERF_GB6_HI = 1200, 11000
 # GPU: 3DMark Wild Life Extreme, log-scaled. ~200 = Helio G81 class, ~8000 = 2026 flagship
 PERF_GPU_LO, PERF_GPU_HI = 200, 8000
 PERF_GPU_SHARE = 0.5  # performance = CPU and GPU halves (CPU only when no GPU figure exists)
+# A lab result more than this far from the median of other phones on the same chip
+# (at least two of them) is treated as a bad run and replaced by that median
+LAB_OUTLIER = 0.25
 
 # ---------------------------------------------------------------- camera
 CAMERA = {
@@ -115,28 +118,59 @@ FRAME_POINTS = {"titanium": 1.5, "stainless steel": 1.5, "aluminum": 1.2, "plast
 FRAME_UNKNOWN = 0.8
 FREE_FALL_POINTS = {"A": 1.0, "B": 0.7, "C": 0.4, "D": 0.2, "E": 0.1}
 FREE_FALL_UNKNOWN = 0.5
+# Battery lifespan: EU-label charge cycles to 80% capacity. Build = 85% the physical
+# points above + up to 1.5 for cycles (800 = EU minimum -> 0, 2000 -> 1.5)
+BUILD_PHYSICAL_SHARE = 0.85
+CYCLES_MAX, CYCLES_LO, CYCLES_HI = 1.5, 800, 2000
+CYCLES_UNKNOWN = 1000          # the most common label value
 
 # ---------------------------------------------------------------- memory
 RAM_POINTS = [(16, 5.0), (12, 4.2), (8, 3.0), (6, 1.5), (4, 0.5), (0, 0.0)]
 STORAGE_POINTS = [(1024, 5.0), (512, 4.5), (256, 3.5), (128, 2.0), (64, 0.5), (0, 0.0)]
 CARD_SLOT = 0.5
+# Storage speed. Memory = 85% capacity points above + up to 1.5 for speed
+MEMORY_CAPACITY_SHARE = 0.85
+STORAGE_SPEED = [("NVMe", 1.5), ("UFS 4", 1.5), ("UFS 3", 1.0), ("UFS 2", 0.4), ("eMMC", 0.0)]
+STORAGE_SPEED_UNKNOWN = 0.4    # sheets that don't say are almost all budget phones
 
 # ---------------------------------------------------------------- software
-# Years of major OS upgrades promised. GSMArena states it for most Android
-# phones; these brand defaults fill the gaps (Apple doesn't publish a number,
-# 6 matches its recent track record).
+# Years of major OS upgrades still to come: promised years minus time since
+# release (as of the price date). GSMArena states the promise for most Android
+# phones; otherwise it's taken from the closest same-series phone, then these
+# brand defaults (Apple doesn't publish a number, 6 matches its recent track record).
 OS_UPDATES_DEFAULT = {"Apple": 6, "Google": 7, "Samsung": 4, "OnePlus": 4, "Nothing": 3, "Xiaomi": 3,
                       "OPPO": 3, "vivo": 3, "Honor": 3, "realme": 2}
 OS_UPDATES_MAX = 7
 
 # ---------------------------------------------------------------- extras
-EXTRAS = {"has_5g": 2.0, "nfc": 2.0, "stereo": 1.5, "esim": 1.0, "jack": 1.0, "uwb": 0.5, "ir": 0.5}
+EXTRAS = {"has_5g": 2.0, "nfc": 2.0, "stereo": 1.5, "esim": 1.0, "jack": 1.0, "uwb": 0.5, "ir": 0.5,
+          "secure_unlock": 0.5}   # ultrasonic fingerprint or 3D face unlock
 
 # ---------------------------------------------------------------- value
 VALUE_SPREAD = 2.0  # value = 5 + VALUE_SPREAD * (residual / residual std), clamped 0-10
 SMARTBUY_BLEND = 0.5  # smartbuy = blend * spec + (1 - blend) * value
 
+# ---------------------------------------------------------------- uncertainty
+# Likely rank ranges: the ranking is recomputed UNCERTAINTY_DRAWS times with
+# every preset weight scaled by up to +-WEIGHT_WOBBLE, every price by up to
+# +-PRICE_WOBBLE (the median sale discount seen) and each estimated category
+# score nudged by a normal error with these standard deviations (score points):
+UNCERTAINTY_DRAWS = 400
+WEIGHT_WOBBLE = 0.3
+PRICE_WOBBLE = 0.08
+ESTIMATE_NOISE = {
+    "performance": 0.6,   # borrowed / estimated benchmarks
+    "battery": 1.5,       # EU-label or capacity estimate: median miss ~1.5h = ~1.4 points
+    "camera": 0.4,        # assumed main sensor size
+    "display": 0.6,       # claimed rather than measured brightness
+    "build": 0.5,         # glass / frame / drop class / cycles not published
+    "memory": 0.4,        # storage type not published
+    "software": 1.7,      # update policy not stated: +-1 year
+}
+
 # ---------------------------------------------------------------- prices
+# Value is judged at the typical price: median of the cheapest offer per crawl in this window
+TYPICAL_WINDOW_DAYS = 90
 # Rough FX for sanity-checking store prices against GSMArena's USD/EUR street price
 FX_TO_SGD = {"$": 1.30, "€": 1.50, "£": 1.72}
 PRICE_SANITY = (0.45, 4.0)   # accept if reference*lo <= price <= reference*hi (fakes are cheap; big storage tiers aren't)

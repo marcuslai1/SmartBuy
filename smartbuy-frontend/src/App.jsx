@@ -104,15 +104,15 @@ function Explorer({ data }) {
   }, [phones, data.brands, incomplete]);
 
   const filters = useMemo(
-    () => ({ budget: view.budget, max: view.max, brands: view.brands, q: view.q }),
-    [view.budget, view.max, view.brands, view.q],
+    () => ({ budget: view.budget, size: view.size, max: view.max, brands: view.brands, q: view.q }),
+    [view.budget, view.size, view.max, view.brands, view.q],
   );
   const matched = useMemo(() => phones.filter((p) => matchesFilters(p, filters, tiers)), [phones, filters, tiers]);
   const sorted = useMemo(() => sortPhones(matched, sortKey, presetKey), [matched, sortKey, presetKey]);
   // Budget filters need a price, so only brand and search apply to awaiting phones.
   const awaitingMatched = useMemo(
-    () => awaiting.filter((p) => matchesFilters(p, { brands: view.brands, q: view.q }, tiers)),
-    [awaiting, view.brands, view.q, tiers],
+    () => awaiting.filter((p) => matchesFilters(p, { brands: view.brands, size: view.size, q: view.q }, tiers)),
+    [awaiting, view.brands, view.size, view.q, tiers],
   );
   const matchIds = useMemo(() => new Set(matched.map((p) => p.id)), [matched]);
 
@@ -128,8 +128,12 @@ function Explorer({ data }) {
   }, [matched, presetKey, sortKey, view.phone, byId]);
 
   const activeCount =
-    (view.budget !== 'any' ? 1 : 0) + (view.max ? 1 : 0) + (view.brands.length ? 1 : 0) + (view.q.trim() ? 1 : 0);
-  const reset = useCallback(() => update({ budget: 'any', max: null, brands: [], q: '' }), [update]);
+    (view.budget !== 'any' ? 1 : 0) +
+    (view.size !== 'any' ? 1 : 0) +
+    (view.max ? 1 : 0) +
+    (view.brands.length ? 1 : 0) +
+    (view.q.trim() ? 1 : 0);
+  const reset = useCallback(() => update({ budget: 'any', size: 'any', max: null, brands: [], q: '' }), [update]);
 
   const openPhone = useCallback(
     (id) => {
@@ -229,6 +233,7 @@ function Explorer({ data }) {
             categories={categories}
             preset={presetKey}
             presetLabel={presetLabel}
+            sort={sortKey}
             sortLabel={sortLabel}
             compare={view.compare}
             onToggleCompare={toggleCompare}
