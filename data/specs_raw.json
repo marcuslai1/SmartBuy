@@ -28,6 +28,7 @@
   "os_updates": null,
   "chipset": "Apple A20 Pro",
   "cpu": "Hexa-core (2x4.93 GHz + 4x2.64 GHz)",
+  "gpu_name": "Apple GPU (7-core graphics)",
   "card_slot": false,
   "variants": [
    {
@@ -133,6 +134,7 @@
   "os_updates": null,
   "chipset": "Apple A20 Pro",
   "cpu": "Hexa-core (2x4.93 GHz + 4x2.64 GHz)",
+  "gpu_name": "Apple GPU (7-core graphics)",
   "card_slot": false,
   "variants": [
    {
@@ -238,6 +240,7 @@
   "os_updates": null,
   "chipset": "Apple A19",
   "cpu": "Hexa-core (2x4.26 GHz + 4x2.60 GHz)",
+  "gpu_name": "Apple GPU (4-core graphics)",
   "card_slot": false,
   "variants": [
    {
@@ -321,6 +324,7 @@
   "os_updates": null,
   "chipset": "Apple A19 Pro",
   "cpu": "Hexa-core (2x4.26 GHz + 4x2.60 GHz)",
+  "gpu_name": "Apple GPU (6-core graphics)",
   "card_slot": false,
   "variants": [
    {
@@ -426,6 +430,7 @@
   "os_updates": null,
   "chipset": "Apple A19 Pro",
   "cpu": "Hexa-core (2x4.26 GHz + 4x2.60 GHz)",
+  "gpu_name": "Apple GPU (6-core graphics)",
   "card_slot": false,
   "variants": [
    {
@@ -527,6 +532,7 @@
   "os_updates": null,
   "chipset": "Apple A19 Pro",
   "cpu": "Hexa-core (2x4.26 GHz + 4x2.60 GHz)",
+  "gpu_name": "Apple GPU (5-core graphics)",
   "card_slot": false,
   "variants": [
    {
@@ -614,6 +620,7 @@
   "os_updates": null,
   "chipset": "Apple A19",
   "cpu": "Hexa-core (2x4.26 GHz + 4x2.60 GHz)",
+  "gpu_name": "Apple GPU (5-core graphics)",
   "card_slot": false,
   "variants": [
    {
@@ -704,6 +711,7 @@
   "os_updates": null,
   "chipset": "Apple A18",
   "cpu": "Hexa-core (2x4.04 GHz + 4x2.20 GHz)",
+  "gpu_name": "Apple GPU (4-core graphics)",
   "card_slot": false,
   "variants": [
    {
@@ -791,6 +799,7 @@
   "os_updates": 6,
   "chipset": "Exynos 1610",
   "cpu": "Octa-core (2x2.4 GHz Cortex-A7X & 6x2.0 GHz Cortex-A55)",
+  "gpu_name": "Mali-G68",
   "card_slot": true,
   "variants": [
    {
@@ -890,6 +899,7 @@
   "os_updates": 6,
   "chipset": "Mediatek Helio G99",
   "cpu": "Octa-core (2x2.2 GHz Cortex-A76 & 6x2.0 GHz Cortex-A55)",
+  "gpu_name": "Mali-G57 MC2",
   "card_slot": true,
   "variants": [
    {
@@ -975,6 +985,7 @@
   "os_updates": 6,
   "chipset": "Mediatek Helio G99+",
   "cpu": "Octa-core (2x2.2 GHz Cortex-A76 & 6x2.0 GHz Cortex-A55)",
+  "gpu_name": "Mali-G57 MC2",
   "card_slot": true,
   "variants": [
    {
@@ -1060,6 +1071,7 @@
   "os_updates": 7,
   "chipset": "Exynos 2500",
   "cpu": "10-core (1x3.3GHz Cortex-X925 & 2x2.74GHz Cortex-A725 & 5x2.36GHz Cortex-A725 & 2x1.8GHz Cortex-A520)",
+  "gpu_name": "Xclipse 950",
   "card_slot": false,
   "variants": [
    {
@@ -1161,6 +1173,7 @@
   "os_updates": 6,
   "chipset": "Qualcomm Snapdragon 6 Gen 3",
   "cpu": "Octa-core (4x2.4 GHz Cortex-A78 & 4x1.8 GHz Cortex-A55)",
+  "gpu_name": "Adreno 710",
   "card_slot": true,
   "variants": [
    {
@@ -1262,6 +1275,7 @@
   "os_updates": 6,
   "chipset": "Exynos 1680",
   "cpu": "Octa-core (1x2.9 GHz Cortex-720 & 4x2.6 GHz Cortex-720 & 3x1.95 GHz Cortex-520)",
+  "gpu_name": "Xclipse 550",
   "card_slot": false,
   "variants": [
    {
@@ -1367,6 +1381,7 @@
   "os_updates": 6,
   "chipset": "Exynos 1480",
   "cpu": "Octa-core (4x2.75 GHz Cortex-A78 & 4x2.0 GHz Cortex-A55)",
+  "gpu_name": "Xclipse 530",
   "card_slot": false,
   "variants": [
    {
@@ -1472,6 +1487,7 @@
   "os_updates": 7,
   "chipset": "Qualcomm Snapdragon 8 Elite Gen 5",
   "cpu": "Octa-core (2x4.74 GHz Oryon V3 Phoenix L + 6x3.62 GHz Oryon V3 Phoenix M)",
+  "gpu_name": "Adreno 840 (1.3GHz)",
   "card_slot": false,
   "variants": [
    {
@@ -1580,6 +1596,7 @@
   "os_updates": 7,
   "chipset": "Qualcomm Snapdragon 8 Elite Gen 5 - US/CA/CN Exynos 2600 - ROW",
   "cpu": "Octa-core (2x4.74 GHz Oryon V3 Phoenix L + 6x3.62 GHz Oryon V3 Phoenix M) - US/CA/CN 10-core (1x3.80GHz C1-Ultra & 3x3.25GHz C1-Pro & 6x2.75GHz C1-Pro) - ROW",
+  "gpu_name": "Adreno 840 (1.3GHz) - US/CA/CN Xclipse 960 - ROW",
   "card_slot": false,
   "variants": [
    {
@@ -1677,6 +1694,7 @@
   "os_updates": 7,
   "chipset": "Qualcomm Snapdragon 8 Elite Gen 5 - US/CA/CN Exynos 2600 - ROW",
   "cpu": "Octa-core (2x4.74 GHz Oryon V3 Phoenix L + 6x3.62 GHz Oryon V3 Phoenix M) - US/CA/CN 10-core (1x3.80GHz C1-Ultra & 3x3.25GHz C1-Pro & 6x2.75GHz C1-Pro) - ROW",
+  "gpu_name": "Adreno 840 (1.3GHz) - US/CA/CN Xclipse 960 - ROW",
   "card_slot": false,
   "variants": [
    {
@@ -1778,6 +1796,7 @@
   "os_updates": 6,
   "chipset": "Mediatek Dimensity 6300",
   "cpu": "Octa-core (2x2.4 GHz Cortex-A76 & 6x2.0 GHz Cortex-A55)",
+  "gpu_name": "Mali-G57 MC2",
   "card_slot": true,
   "variants": [
    {
@@ -1863,6 +1882,7 @@
   "os_updates": 6,
   "chipset": "Mediatek Helio G99",
   "cpu": "Octa-core (2x2.2 GHz Cortex-A76 & 6x2.0 GHz Cortex-A55)",
+  "gpu_name": "Mali-G57 MC2",
   "card_slot": true,
   "variants": [
    {
@@ -1970,6 +1990,7 @@
   "os_updates": 7,
   "chipset": "Exynos 2400",
   "cpu": "10-core (1x3.2GHz Cortex-X4 & 2x2.9GHz Cortex-A720 & 3x2.6GHz Cortex-A720 & 4x1.95GHz Cortex-A520)",
+  "gpu_name": "Xclipse 940",
   "card_slot": false,
   "variants": [
    {
@@ -2071,6 +2092,7 @@
   "os_updates": 6,
   "chipset": "Mediatek Helio G99",
   "cpu": "Octa-core (2x2.2 GHz Cortex-A76 & 6x2.0 GHz Cortex-A55)",
+  "gpu_name": "Mali-G57 MC2",
   "card_slot": true,
   "variants": [
    {
@@ -2162,6 +2184,7 @@
   "os_updates": 6,
   "chipset": "Exynos 1330",
   "cpu": "Octa-core (2x2.4 GHz Cortex-A78 & 6x2.0 GHz Cortex-A55)",
+  "gpu_name": "Mali-G68 MP2",
   "card_slot": true,
   "variants": [
    {
@@ -2269,6 +2292,7 @@
   "os_updates": 7,
   "chipset": "Qualcomm Snapdragon 8 Elite",
   "cpu": "Octa-core (2x4.47 GHz Oryon V2 Phoenix L + 6x3.53 GHz Oryon V2 Phoenix M)",
+  "gpu_name": "Adreno 830 (1200 MHz)",
   "card_slot": false,
   "variants": [
    {
@@ -2357,6 +2381,7 @@
   "os_updates": 6,
   "chipset": "Exynos 1580",
   "cpu": "Octa-core (1x2.9 GHz Cortex-A720 & 3x2.6 GHz Cortex-A720 & 4x1.9 GHz Cortex-A520)",
+  "gpu_name": "Xclipse 540",
   "card_slot": false,
   "variants": [
    {
@@ -2466,6 +2491,7 @@
   "os_updates": 6,
   "chipset": "Qualcomm Snapdragon 6 Gen 3",
   "cpu": "Octa-core (4x2.4 GHz Cortex-A78 & 4x1.8 GHz Cortex-A55)",
+  "gpu_name": "Adreno 710",
   "card_slot": false,
   "variants": [
    {
@@ -2575,6 +2601,7 @@
   "os_updates": 6,
   "chipset": "Exynos 1380 - Global Exynos 1280 - LATAM",
   "cpu": "Octa-core (4x2.4 GHz Cortex-A78 & 4x2.0 GHz Cortex-A55) - Global Octa-core (2x2.4 GHz Cortex-A78 & 6x2.0 GHz Cortex-A55) - LATAM",
+  "gpu_name": "Mali-G68 MP5 - Global Mali-G68 - LATAM",
   "card_slot": true,
   "variants": [
    {
@@ -2682,6 +2709,7 @@
   "os_updates": 4,
   "chipset": "Mediatek Dimensity 6300",
   "cpu": "Octa-core (2x2.4 GHz Cortex-A76 & 6x2.0 GHz Cortex-A55)",
+  "gpu_name": "Mali-G57 MC2",
   "card_slot": true,
   "variants": [
    {
@@ -2767,6 +2795,7 @@
   "os_updates": 7,
   "chipset": "Qualcomm Snapdragon 8 Elite",
   "cpu": "Octa-core (2x4.47 GHz Oryon V2 Phoenix L + 6x3.53 GHz Oryon V2 Phoenix M)",
+  "gpu_name": "Adreno 830 (1200 MHz)",
   "card_slot": false,
   "variants": [
    {
@@ -2879,6 +2908,7 @@
   "os_updates": 7,
   "chipset": "Qualcomm Snapdragon 8 Elite",
   "cpu": "Octa-core (2x4.47 GHz Oryon V2 Phoenix L + 6x3.53 GHz Oryon V2 Phoenix M)",
+  "gpu_name": "Adreno 830 (1200 MHz)",
   "card_slot": false,
   "variants": [
    {
@@ -2976,6 +3006,7 @@
   "os_updates": 7,
   "chipset": "Qualcomm Snapdragon 8 Elite",
   "cpu": "Octa-core (2x4.47 GHz Oryon V2 Phoenix L + 6x3.53 GHz Oryon V2 Phoenix M)",
+  "gpu_name": "Adreno 830 (1200 MHz)",
   "card_slot": false,
   "variants": [
    {
@@ -3078,6 +3109,7 @@
   "os_updates": 7,
   "chipset": "Google Tensor G6",
   "cpu": "7-core (1x4.1 GHz ARM C1-Ultra & 4x3.4 GHz ARM C1-Pro & 2x2.65 GHz ARM C1-Pro)",
+  "gpu_name": "IMG CXTP-48-1536",
   "card_slot": false,
   "variants": [
    {
@@ -3179,6 +3211,7 @@
   "os_updates": 7,
   "chipset": "Google Tensor G6",
   "cpu": "7-core (1x4.1 GHz ARM C1-Ultra & 4x3.4 GHz ARM C1-Pro & 2x2.65 GHz ARM C1-Pro)",
+  "gpu_name": "IMG CXTP-48-1536",
   "card_slot": false,
   "variants": [
    {
@@ -3280,6 +3313,7 @@
   "os_updates": 7,
   "chipset": "Google Tensor G6",
   "cpu": "7-core (1x4.1 GHz ARM C1-Ultra & 4x3.4 GHz ARM C1-Pro & 2x2.65 GHz ARM C1-Pro)",
+  "gpu_name": "IMG CXTP-48-1536",
   "card_slot": false,
   "variants": [
    {
@@ -3377,6 +3411,7 @@
   "os_updates": 7,
   "chipset": "Google Tensor G4",
   "cpu": "Octa-core (1x3.1 GHz Cortex-X4 & 3x2.6 GHz Cortex-A720 & 4x1.9 GHz Cortex-A520)",
+  "gpu_name": "Mali-G715 MP7",
   "card_slot": false,
   "variants": [
    {
@@ -3467,6 +3502,7 @@
   "os_updates": 7,
   "chipset": "Google Tensor G5",
   "cpu": "Octa-core (1x3.78 GHz Cortex-X4 & 5x3.05 GHz Cortex-A725 & 2x2.25 GHz Cortex-A520)",
+  "gpu_name": "PowerVR DXT-48-1536",
   "card_slot": false,
   "variants": [
    {
@@ -3568,6 +3604,7 @@
   "os_updates": 7,
   "chipset": "Google Tensor G5",
   "cpu": "Octa-core (1x3.78 GHz Cortex-X4 & 5x3.05 GHz Cortex-A725 & 2x2.25 GHz Cortex-A520)",
+  "gpu_name": "PowerVR DXT-48-1536",
   "card_slot": false,
   "variants": [
    {
@@ -3674,6 +3711,7 @@
   "os_updates": 7,
   "chipset": "Google Tensor G5",
   "cpu": "Octa-core (1x3.78 GHz Cortex-X4 & 5x3.05 GHz Cortex-A725 & 2x2.25 GHz Cortex-A520)",
+  "gpu_name": "PowerVR DXT-48-1536",
   "card_slot": false,
   "variants": [
    {
@@ -3772,6 +3810,7 @@
   "os_updates": 7,
   "chipset": "Google Tensor G4",
   "cpu": "Octa-core (1x3.1 GHz Cortex-X4 & 3x2.6 GHz Cortex-A720 & 4x1.9 GHz Cortex-A520)",
+  "gpu_name": "Mali-G715 MP7",
   "card_slot": false,
   "variants": [
    {
@@ -3862,6 +3901,7 @@
   "os_updates": null,
   "chipset": "Qualcomm Snapdragon 8 Elite Extreme Gen 6",
   "cpu": "Octa-core (2x5.01 GHz Prime + 3x4.03 GHz Performance + 3x3.74 GHz Performance)",
+  "gpu_name": "Adreno 850",
   "card_slot": false,
   "variants": [
    {
@@ -3967,6 +4007,7 @@
   "os_updates": null,
   "chipset": "Qualcomm Snapdragon 8 Elite Gen 6",
   "cpu": "Octa-core (up to 5 GHz)",
+  "gpu_name": "Adreno",
   "card_slot": false,
   "variants": [
    {
@@ -4072,6 +4113,7 @@
   "os_updates": null,
   "chipset": "Mediatek Helio G91 Ultra",
   "cpu": "Octa-core (2x2.0 GHz Cortex-A75 & 6x1.8 GHz Cortex-A55)",
+  "gpu_name": "Mali-G52 MC2",
   "card_slot": true,
   "variants": [
    {
@@ -4155,6 +4197,7 @@
   "os_updates": 4,
   "chipset": "Qualcomm Snapdragon 6 Gen 5",
   "cpu": "Octa-core (4x2.6 GHz Cortex-A78 & 4x2.0 GHz Cortex-A55)",
+  "gpu_name": "Adreno 812",
   "card_slot": false,
   "variants": [
    {
@@ -4245,6 +4288,7 @@
   "os_updates": null,
   "chipset": "Qualcomm Snapdragon 6s Gen 4",
   "cpu": "Octa-core (4x2.4 GHz Cortex-A78 & 4x1.8 GHz Cortex-A55)",
+  "gpu_name": "Adreno 710",
   "card_slot": false,
   "variants": [
    {
@@ -4337,6 +4381,7 @@
   "os_updates": 4,
   "chipset": "Qualcomm Snapdragon 8 Elite Gen 5",
   "cpu": "Octa-core (2x4.6 GHz Oryon V3 Phoenix L + 6x3.62 GHz Oryon V3 Phoenix M)",
+  "gpu_name": "Adreno 840",
   "card_slot": false,
   "variants": [
    {
@@ -4438,6 +4483,7 @@
   "os_updates": 4,
   "chipset": "Qualcomm Snapdragon 8 Elite Gen 5 V Series",
   "cpu": "Octa-core (2x4.6 GHz Oryon V3 Phoenix L + 6x3.62 GHz Oryon V3 Phoenix M)",
+  "gpu_name": "Adreno 840",
   "card_slot": false,
   "variants": [
    {
@@ -4535,6 +4581,7 @@
   "os_updates": null,
   "chipset": "Qualcomm Snapdragon 6 Gen 5",
   "cpu": "Octa-core (4x2.6 GHz Cortex-A78 & 4x2.0 GHz Cortex-A55)",
+  "gpu_name": "Adreno 812",
   "card_slot": false,
   "variants": [
    {
@@ -4634,6 +4681,7 @@
   "os_updates": null,
   "chipset": "Qualcomm Snapdragon 6s Gen 4",
   "cpu": "Octa-core (4x2.4 GHz Cortex-A78 & 4x1.8 GHz Cortex-A55)",
+  "gpu_name": "Adreno 710",
   "card_slot": false,
   "variants": [
    {
@@ -4741,6 +4789,7 @@
   "os_updates": null,
   "chipset": "Qualcomm Snapdragon 4 Gen 4",
   "cpu": "Octa-core (2x2.3 GHz Cortex-A78 & 6x1.95 GHz Cortex-A55)",
+  "gpu_name": "Adreno 613",
   "card_slot": true,
   "variants": [
    {
@@ -4828,6 +4877,7 @@
   "os_updates": null,
   "chipset": "Qualcomm Snapdragon 6s 4G Gen 2",
   "cpu": "Octa-core (4x2.9 GHz Cortex-A73 & 4x1.9 GHz Cortex-A53)",
+  "gpu_name": "Adreno 610",
   "card_slot": true,
   "variants": [
    {
@@ -4923,6 +4973,7 @@
   "os_updates": null,
   "chipset": "Mediatek Dimensity 6300",
   "cpu": "Octa-core (2x2.4 GHz Cortex-A76 & 6x2.0 GHz Cortex-A55)",
+  "gpu_name": "Mali-G57 MC2",
   "card_slot": true,
   "variants": [
    {
@@ -5006,6 +5057,7 @@
   "os_updates": 4,
   "chipset": "Qualcomm Snapdragon 4 Gen 5",
   "cpu": "Octa-core (2x2.4 GHz Cortex-A78 & 6x2.0 GHz Cortex-A55)",
+  "gpu_name": "Adreno 613",
   "card_slot": true,
   "variants": [
    {
@@ -5089,6 +5141,7 @@
   "os_updates": null,
   "chipset": "Qualcomm Snapdragon 4 Gen 5",
   "cpu": "Octa-core (2x2.4 GHz Cortex-A78 & 6x2.0 GHz Cortex-A55)",
+  "gpu_name": "Adreno 613",
   "card_slot": false,
   "variants": [
    {
@@ -5176,6 +5229,7 @@
   "os_updates": null,
   "chipset": "Qualcomm Snapdragon 4 Gen 5",
   "cpu": "Octa-core (2x2.4 GHz Cortex-A78 & 6x2.0 GHz Cortex-A55)",
+  "gpu_name": "Adreno 613",
   "card_slot": true,
   "variants": [
    {
@@ -5271,6 +5325,7 @@
   "os_updates": null,
   "chipset": "Mediatek Helio G91 Ultra",
   "cpu": "Octa-core (2x2.0 GHz Cortex-A75 & 6x1.8 GHz Cortex-A55)",
+  "gpu_name": "Mali-G52 MC2",
   "card_slot": true,
   "variants": [
    {
@@ -5362,6 +5417,7 @@
   "os_updates": 4,
   "chipset": "Qualcomm Snapdragon 4 Gen 4",
   "cpu": "Octa-core (2x2.3 GHz Cortex-A78 & 6x1.95 GHz Cortex-A55)",
+  "gpu_name": "Adreno 613",
   "card_slot": true,
   "variants": [
    {
@@ -5445,6 +5501,7 @@
   "os_updates": null,
   "chipset": "Qualcomm Snapdragon 4 Gen 4",
   "cpu": "Octa-core (2x2.3 GHz Cortex-A78 & 6x1.95 GHz Cortex-A55)",
+  "gpu_name": "Adreno 613",
   "card_slot": true,
   "variants": [
    {
@@ -5532,6 +5589,7 @@
   "os_updates": null,
   "chipset": "Mediatek Helio G81 Ultra",
   "cpu": "Octa-core (2x2.0 GHz Cortex-A75 & 6x1.8 GHz Cortex-A55)",
+  "gpu_name": "Mali-G52 MC2",
   "card_slot": true,
   "variants": [
    {
@@ -5613,6 +5671,7 @@
   "os_updates": null,
   "chipset": "Mediatek Dimensity 9500",
   "cpu": "Octa-core (1x4.21 GHz C1-Ultra & 3x3.5 GHz C1-Premium & 4x2.7 GHz C1-Pro)",
+  "gpu_name": "Mali-G1 Ultra MC12",
   "card_slot": false,
   "variants": [
    {
@@ -5718,6 +5777,7 @@
   "os_updates": null,
   "chipset": "Mediatek Dimensity 8500 Ultra",
   "cpu": "Octa-core (1x3.4 GHz Cortex-A725 & 3x3.2 GHz Cortex-A725 & 4x2.2 GHz Cortex-A725)",
+  "gpu_name": "Mali-G720 MC8",
   "card_slot": false,
   "variants": [
    {
@@ -5815,6 +5875,7 @@
   "os_updates": 4,
   "chipset": "Unisoc T7250",
   "cpu": "Octa-core (2x1.8 GHz Cortex-A75 & 6x1.6 GHz Cortex-A55)",
+  "gpu_name": "Mali-G57 MP1",
   "card_slot": true,
   "variants": [
    {
@@ -5902,6 +5963,7 @@
   "os_updates": 4,
   "chipset": "Unisoc T7250",
   "cpu": "Octa-core (2x1.8 GHz Cortex-A75 & 6x1.6 GHz Cortex-A55)",
+  "gpu_name": "Mali-G57 MP1",
   "card_slot": true,
   "variants": [
    {
@@ -5979,6 +6041,7 @@
   "os_updates": 2,
   "chipset": "Unisoc T7250",
   "cpu": "Octa-core (2x1.8 GHz Cortex-A75 & 6x1.6 GHz Cortex-A55)",
+  "gpu_name": "Mali-G57 MP1",
   "card_slot": true,
   "variants": [
    {
@@ -6056,6 +6119,7 @@
   "os_updates": 4,
   "chipset": "Unisoc T8300",
   "cpu": "Octa-core (2x2.2 GHz Cortex-A78 & 6x2.0 GHz Cortex-A55)",
+  "gpu_name": "Mali-G57 MC2",
   "card_slot": true,
   "variants": [
    {
@@ -6143,6 +6207,7 @@
   "os_updates": 2,
   "chipset": "Unisoc T7250",
   "cpu": "Octa-core (2x1.8 GHz Cortex-A75 & 6x1.6 GHz Cortex-A55)",
+  "gpu_name": "Mali-G57 MP1",
   "card_slot": true,
   "variants": [
    {
@@ -6220,6 +6285,7 @@
   "os_updates": null,
   "chipset": "Qualcomm Snapdragon 6s Gen 3",
   "cpu": "Octa-core (2x2.3 GHz Cortex-A78 & 6x2.0 GHz Cortex-A55)",
+  "gpu_name": "Adreno",
   "card_slot": true,
   "variants": [
    {
@@ -6303,6 +6369,7 @@
   "os_updates": null,
   "chipset": "Unisoc T8300",
   "cpu": "Octa-core (2x2.2 GHz Cortex-A78 & 6x2.0 GHz Cortex-A55)",
+  "gpu_name": "Mali-G57 MC2",
   "card_slot": true,
   "variants": [
    {
@@ -6394,6 +6461,7 @@
   "os_updates": null,
   "chipset": "Unisoc T8300",
   "cpu": "Octa-core (2x2.2 GHz Cortex-A78 & 6x2.0 GHz Cortex-A55)",
+  "gpu_name": "Mali-G57 MC2",
   "card_slot": true,
   "variants": [
    {
@@ -6485,6 +6553,7 @@
   "os_updates": 4,
   "chipset": "Qualcomm Snapdragon 6 Gen 3",
   "cpu": "Octa-core (4x2.4 GHz Cortex-A78 & 4x1.8 GHz Cortex-A55)",
+  "gpu_name": "Adreno 710",
   "card_slot": true,
   "variants": [
    {
@@ -6572,6 +6641,7 @@
   "os_updates": null,
   "chipset": "Unisoc T7250",
   "cpu": "Octa-core (2x1.8 GHz Cortex-A75 & 6x1.6 GHz Cortex-A55)",
+  "gpu_name": "Mali-G57 MP1",
   "card_slot": true,
   "variants": [
    {
@@ -6655,6 +6725,7 @@
   "os_updates": 4,
   "chipset": "Unisoc T8300",
   "cpu": "Octa-core (2x2.2 GHz Cortex-A78 & 6x2.0 GHz Cortex-A55)",
+  "gpu_name": "Mali-G57 MC2",
   "card_slot": true,
   "variants": [
    {
@@ -6742,6 +6813,7 @@
   "os_updates": null,
   "chipset": "Mediatek Dimensity 9500s",
   "cpu": "Octa-core (1x3.73 GHz Cortex-X925 & 3x3.3 GHz Cortex-X4 & 4x2.4 GHz Cortex-A720)",
+  "gpu_name": "Immortalis-G925 MC11",
   "card_slot": false,
   "variants": [
    {
@@ -6832,6 +6904,7 @@
   "os_updates": null,
   "chipset": "Mediatek Dimensity 8500 Ultra",
   "cpu": "Octa-core (1x3.4 GHz Cortex-A725 & 3x3.2 GHz Cortex-A725 & 4x2.2 GHz Cortex-A725)",
+  "gpu_name": "Mali-G720 MC8",
   "card_slot": false,
   "variants": [
    {
@@ -6930,6 +7003,7 @@
   "os_updates": null,
   "chipset": "Unisoc T8300",
   "cpu": "Octa-core (2x2.2 GHz Cortex-A78 & 6x2.0 GHz Cortex-A55)",
+  "gpu_name": "Mali-G57 MC2",
   "card_slot": true,
   "variants": [
    {
@@ -7013,6 +7087,7 @@
   "os_updates": null,
   "chipset": "Qualcomm Snapdragon 8 Elite Gen 5",
   "cpu": "Octa-core (2x4.6 GHz Oryon V3 Phoenix L + 6x3.62 GHz Oryon V3 Phoenix M)",
+  "gpu_name": "Adreno 840",
   "card_slot": false,
   "variants": [
    {
@@ -7110,6 +7185,7 @@
   "os_updates": null,
   "chipset": "Qualcomm Snapdragon 8 Elite Gen 5",
   "cpu": "Octa-core (2x4.6 GHz Oryon V3 Phoenix L + 6x3.62 GHz Oryon V3 Phoenix M)",
+  "gpu_name": "Adreno 840",
   "card_slot": false,
   "variants": [
    {
@@ -7215,6 +7291,7 @@
   "os_updates": 4,
   "chipset": "Qualcomm Snapdragon 7s Gen 4",
   "cpu": "Octa-core (1x2.7 GHz Cortex-A720 & 3x2.4 GHz Cortex-A720 & 4x1.8 GHz Cortex-A520)",
+  "gpu_name": "Adreno 810",
   "card_slot": false,
   "variants": [
    {
@@ -7305,6 +7382,7 @@
   "os_updates": 4,
   "chipset": "Qualcomm Snapdragon 6 Gen 3",
   "cpu": "Octa-core (4x2.4 GHz Cortex-A78 & 4x1.8 GHz Cortex-A55)",
+  "gpu_name": "Adreno 710",
   "card_slot": true,
   "variants": [
    {
@@ -7396,6 +7474,7 @@
   "os_updates": 4,
   "chipset": "Qualcomm Snapdragon 7s Gen 4",
   "cpu": "Octa-core (1x2.7 GHz Cortex-A720 & 3x2.4 GHz Cortex-A720 & 4x1.8 GHz Cortex-A520)",
+  "gpu_name": "Adreno 810",
   "card_slot": false,
   "variants": [
    {
@@ -7490,6 +7569,7 @@
   "os_updates": 4,
   "chipset": "Mediatek Dimensity 7400 Ultra",
   "cpu": "Octa-core (4x2.6 GHz Cortex-A78 & 4x2.0 GHz Cortex-A55)",
+  "gpu_name": "Mali-G615 MC2",
   "card_slot": false,
   "variants": [
    {
@@ -7592,6 +7672,7 @@
   "os_updates": 4,
   "chipset": "Qualcomm Snapdragon 6 Gen 3",
   "cpu": "Octa-core (4x2.4 GHz Cortex-A78 & 4x1.8 GHz Cortex-A55)",
+  "gpu_name": "Adreno 710",
   "card_slot": true,
   "variants": [
    {
@@ -7694,6 +7775,7 @@
   "os_updates": 4,
   "chipset": "Mediatek Helio G200 Ultra",
   "cpu": "Octa-core (2x2.2 GHz Cortex-A76 & 6x2.0 GHz Cortex-A55)",
+  "gpu_name": "Mali-G57 MC2 (1.1GHz)",
   "card_slot": true,
   "variants": [
    {
@@ -7788,6 +7870,7 @@
   "os_updates": 4,
   "chipset": "Mediatek Helio G100 Ultra",
   "cpu": "Octa-core (2x2.2 GHz Cortex-A76 & 6x2.0 GHz Cortex-A55)",
+  "gpu_name": "Mali-G57 MC2",
   "card_slot": true,
   "variants": [
    {
@@ -7883,6 +7966,7 @@
   "os_updates": 2,
   "chipset": "Mediatek Dimensity 6300",
   "cpu": "Octa-core (2x2.4 GHz Cortex-A76 & 6x2.0 GHz Cortex-A55)",
+  "gpu_name": "Mali-G57 MC2",
   "card_slot": true,
   "variants": [
    {
@@ -7974,6 +8058,7 @@
   "os_updates": null,
   "chipset": "Qualcomm Snapdragon 8 Elite Gen 5",
   "cpu": "Octa-core (2x4.6 GHz Oryon V3 Phoenix L + 6x3.62 GHz Oryon V3 Phoenix M)",
+  "gpu_name": "Adreno 840",
   "card_slot": false,
   "variants": [
    {
@@ -8071,6 +8156,7 @@
   "os_updates": null,
   "chipset": "Qualcomm Snapdragon 8 Elite",
   "cpu": "Octa-core (2x4.32 GHz Oryon V2 Phoenix L + 6x3.53 GHz Oryon V2 Phoenix M)",
+  "gpu_name": "Adreno 830",
   "card_slot": false,
   "variants": [
    {
@@ -8168,6 +8254,7 @@
   "os_updates": null,
   "chipset": "Qualcomm Snapdragon 8 Elite Gen 5",
   "cpu": "Octa-core (2x4.6 GHz Oryon V3 Phoenix L + 6x3.62 GHz Oryon V3 Phoenix M)",
+  "gpu_name": "Adreno 840",
   "card_slot": false,
   "variants": [
    {
@@ -8269,6 +8356,7 @@
   "os_updates": null,
   "chipset": "Qualcomm Snapdragon 8 Elite Gen 5",
   "cpu": "Octa-core (2x4.6 GHz Oryon V3 Phoenix L + 6x3.62 GHz Oryon V3 Phoenix M)",
+  "gpu_name": "Adreno 840",
   "card_slot": false,
   "variants": [
    {
@@ -8374,6 +8462,7 @@
   "os_updates": null,
   "chipset": "Mediatek Dimensity 9400+",
   "cpu": "Octa-core (1x3.63 GHz Cortex-X925 & 3x3.3 GHz Cortex-X4 & 4x2.4 GHz Cortex-A720)",
+  "gpu_name": "Immortalis-G925",
   "card_slot": false,
   "variants": [
    {
@@ -8475,6 +8564,7 @@
   "os_updates": null,
   "chipset": "Mediatek Dimensity 8400 Ultra",
   "cpu": "Octa-core (1x3.25 GHz Cortex-A725 & 3x3.0 GHz Cortex-A725 & 4x2.1 GHz Cortex-A725)",
+  "gpu_name": "Mali-G720 MC7",
   "card_slot": false,
   "variants": [
    {
@@ -8572,6 +8662,7 @@
   "os_updates": 2,
   "chipset": "Mediatek Dimensity 6300",
   "cpu": "Octa-core (2x2.4 GHz Cortex-A76 & 6x2.0 GHz Cortex-A55)",
+  "gpu_name": "Mali-G57 MC2",
   "card_slot": true,
   "variants": [
    {
@@ -8667,6 +8758,7 @@
   "os_updates": null,
   "chipset": "Mediatek Helio G81 Ultra",
   "cpu": "Octa-core (2x2.0 GHz Cortex-A75 & 6x1.8 GHz Cortex-A55)",
+  "gpu_name": "Mali-G52 MC2",
   "card_slot": true,
   "variants": [
    {
@@ -8750,6 +8842,7 @@
   "os_updates": null,
   "chipset": "Qualcomm Snapdragon 685",
   "cpu": "Octa-core (4x2.8 GHz Cortex-A73 & 4x1.9 GHz Cortex-A53)",
+  "gpu_name": "Adreno 610",
   "card_slot": true,
   "variants": [
    {
@@ -8837,6 +8930,7 @@
   "os_updates": 2,
   "chipset": "Qualcomm Snapdragon 6s Gen 3",
   "cpu": "Octa-core (2x2.3 GHz Cortex-A78 & 6x2.0 GHz Cortex-A55)",
+  "gpu_name": "Adreno 619",
   "card_slot": true,
   "variants": [
    {
@@ -8922,6 +9016,7 @@
   "os_updates": null,
   "chipset": "Qualcomm Snapdragon 685",
   "cpu": "Octa-core (4x2.8 GHz Cortex-A73 & 4x1.9 GHz Cortex-A53)",
+  "gpu_name": "Adreno 610",
   "card_slot": true,
   "variants": [
    {
@@ -9011,6 +9106,7 @@
   "os_updates": null,
   "chipset": "Qualcomm Snapdragon 6s Gen 3",
   "cpu": "Octa-core (2x2.3 GHz Cortex-A78 & 6x2.0 GHz Cortex-A55)",
+  "gpu_name": "Adreno 619",
   "card_slot": true,
   "variants": [
    {
@@ -9106,6 +9202,7 @@
   "os_updates": null,
   "chipset": "Mediatek Helio G81 Ultra",
   "cpu": "Octa-core (2x2.0 GHz Cortex-A75 & 6x1.8 GHz Cortex-A55)",
+  "gpu_name": "Mali-G52 MC2",
   "card_slot": true,
   "variants": [
    {
@@ -9199,6 +9296,7 @@
   "os_updates": null,
   "chipset": "Qualcomm Snapdragon 8s Gen 4",
   "cpu": "Octa-core (1x3.21 GHz Cortex-X4 & 3x3.0 GHz Cortex-A720 & 2x2.8 GHz Cortex-A720 & 2x2.0 GHz Cortex-A720)",
+  "gpu_name": "Adreno 825",
   "card_slot": false,
   "variants": [
    {
@@ -9289,6 +9387,7 @@
   "os_updates": null,
   "chipset": "Xring O1",
   "cpu": "10-core (2x3.9GHz Cortex-X925 & 4x3.4GHz Cortex-A725 & 2x1.9GHz Cortex-A725 & 2x1.8GHz Cortex-A520)",
+  "gpu_name": "Immortalis-G925 MP16",
   "card_slot": false,
   "variants": [
    {
@@ -9386,6 +9485,7 @@
   "os_updates": 2,
   "chipset": "Unisoc T7250",
   "cpu": "Octa-core (2x1.8 GHz Cortex-A75 & 6x1.6 GHz Cortex-A55)",
+  "gpu_name": "Mali-G57 MP1",
   "card_slot": true,
   "variants": [
    {
@@ -9477,6 +9577,7 @@
   "os_updates": null,
   "chipset": "Qualcomm Snapdragon 8 Elite",
   "cpu": "Octa-core (2x4.32 GHz Oryon V2 Phoenix L + 6x3.53 GHz Oryon V2 Phoenix M)",
+  "gpu_name": "Adreno 830",
   "card_slot": false,
   "variants": [
    {
@@ -9574,6 +9675,7 @@
   "os_updates": null,
   "chipset": "Qualcomm Snapdragon 8 Gen 3",
   "cpu": "Octa-core (1x3.3 GHz Cortex-X4 & 3x3.2 GHz Cortex-A720 & 2x3.0 GHz Cortex-A720 & 2x2.3 GHz Cortex-A520)",
+  "gpu_name": "Adreno 750",
   "card_slot": false,
   "variants": [
    {
@@ -9664,6 +9766,7 @@
   "os_updates": null,
   "chipset": "Mediatek Helio G91 Ultra",
   "cpu": "Octa-core (2x2.0 GHz Cortex-A75 & 6x1.8 GHz Cortex-A55)",
+  "gpu_name": "Mali-G52 MC2",
   "card_slot": true,
   "variants": [
    {
@@ -9758,6 +9861,7 @@
   "os_updates": 2,
   "chipset": "Unisoc T7250",
   "cpu": "Octa-core (2x1.8 GHz Cortex-A75 & 6x1.6 GHz Cortex-A55)",
+  "gpu_name": "Mali-G57 MP1",
   "card_slot": true,
   "variants": [
    {
@@ -9849,6 +9953,7 @@
   "os_updates": null,
   "chipset": "Mediatek Helio G99 Ultra",
   "cpu": "Octa-core (2x2.2 GHz Cortex-A76 & 6x2.0 GHz Cortex-A55)",
+  "gpu_name": "Mali-G57 MC2",
   "card_slot": true,
   "variants": [
    {
@@ -9950,6 +10055,7 @@
   "os_updates": 4,
   "chipset": "Qualcomm Snapdragon 8 Elite",
   "cpu": "Octa-core (2x4.32 GHz Oryon V2 Phoenix L + 6x3.53 GHz Oryon V2 Phoenix M)",
+  "gpu_name": "Adreno 830",
   "card_slot": false,
   "variants": [
    {
@@ -10058,6 +10164,7 @@
   "os_updates": 2,
   "chipset": "Qualcomm Snapdragon 4 Gen 2",
   "cpu": "Octa-core (2x2.2 GHz Cortex-A78 & 6x1.95 GHz Cortex-A55)",
+  "gpu_name": "Adreno 613",
   "card_slot": true,
   "variants": [
    {
@@ -10139,6 +10246,7 @@
   "os_updates": 3,
   "chipset": "Qualcomm Snapdragon 7s Gen 3",
   "cpu": "Octa-core (1x2.5 GHz Cortex-A720 & 3x2.4 GHz Cortex-A720 & 4x1.8 GHz Cortex-A520)",
+  "gpu_name": "Adreno 810",
   "card_slot": false,
   "variants": [
    {
@@ -10240,6 +10348,7 @@
   "os_updates": 3,
   "chipset": "Mediatek Dimensity 7300 Ultra",
   "cpu": "Octa-core (4x2.5 GHz Cortex-A78 & 4x2.0 GHz Cortex-A55)",
+  "gpu_name": "Mali-G615 MC2",
   "card_slot": false,
   "variants": [
    {
@@ -10341,6 +10450,7 @@
   "os_updates": null,
   "chipset": "Mediatek Helio G100 Ultra",
   "cpu": "Octa-core (2x2.2 GHz Cortex-A76 & 6x2.0 GHz Cortex-A55)",
+  "gpu_name": "Mali-G57 MC2",
   "card_slot": true,
   "variants": [
    {
@@ -10446,6 +10556,7 @@
   "os_updates": 2,
   "chipset": "Mediatek Dimensity 7025 Ultra",
   "cpu": "Octa-core (2x2.5 GHz Cortex-A78 & 6x2.0 GHz Cortex-A55)",
+  "gpu_name": "IMG BXM-8-256",
   "card_slot": true,
   "variants": [
    {
@@ -10551,6 +10662,7 @@
   "os_updates": 4,
   "chipset": "Mediatek Helio G99 Ultra",
   "cpu": "Octa-core (2x2.2 GHz Cortex-A76 & 6x2.0 GHz Cortex-A55)",
+  "gpu_name": "Mali-G57 MC2",
   "card_slot": true,
   "variants": [
    {
@@ -10649,6 +10761,7 @@
   "os_updates": null,
   "chipset": "Mediatek Dimensity 8400 Ultra",
   "cpu": "Octa-core (1x3.25 GHz Cortex-A725 & 3x3.0 GHz Cortex-A725 & 4x2.1 GHz Cortex-A725)",
+  "gpu_name": "Mali-G720 MC7",
   "card_slot": false,
   "variants": [
    {
@@ -10743,6 +10856,7 @@
   "os_updates": null,
   "chipset": "Mediatek Dimensity 7300 Ultra",
   "cpu": "Octa-core (4x2.5 GHz Cortex-A78 & 4x2.0 GHz Cortex-A55)",
+  "gpu_name": "Mali-G615 MC2",
   "card_slot": false,
   "variants": [
    {
@@ -10844,6 +10958,7 @@
   "os_updates": 2,
   "chipset": "Qualcomm Snapdragon 4 Gen 2",
   "cpu": "Octa-core (2x2.2 GHz Cortex-A78 & 6x1.95 GHz Cortex-A55)",
+  "gpu_name": "Adreno 613",
   "card_slot": true,
   "variants": [
    {
@@ -10935,6 +11050,7 @@
   "os_updates": null,
   "chipset": "Mediatek Dimensity 9600 Pro",
   "cpu": "Octa-core (2x4.55 GHz & 3x4.35 GHz & 3x3.1 GHz)",
+  "gpu_name": "Mali-G2-Ultra-NX",
   "card_slot": false,
   "variants": [
    {
@@ -11040,6 +11156,7 @@
   "os_updates": null,
   "chipset": "Mediatek Dimensity 9600M",
   "cpu": "Octa-core (1x4.21 GHz & 3x3.5 GHz & 4x2.7 GHz)",
+  "gpu_name": "ARM G1-Ultra",
   "card_slot": false,
   "variants": [
    {
@@ -11145,6 +11262,7 @@
   "os_updates": null,
   "chipset": "Mediatek Dimensity 9500s",
   "cpu": "Octa-core (1x3.73 GHz Cortex-X925 & 3x3.3 GHz Cortex-X4 & 4x2.4 GHz Cortex-A720)",
+  "gpu_name": "Immortalis-G925 MC11",
   "card_slot": false,
   "variants": [
    {
@@ -11242,6 +11360,7 @@
   "os_updates": null,
   "chipset": "Mediatek Dimensity 6360 Max",
   "cpu": "Octa-core (2x2.4 GHz Cortex-A76 & 6x2.0 GHz Cortex-A55)",
+  "gpu_name": "Mali-G57 MC2",
   "card_slot": true,
   "variants": [
    {
@@ -11325,6 +11444,7 @@
   "os_updates": null,
   "chipset": "Qualcomm Snapdragon 4 Gen 5",
   "cpu": "Octa-core (2x2.4 GHz Cortex-A78 & 6x2.0 GHz Cortex-A55)",
+  "gpu_name": "Adreno 613",
   "card_slot": false,
   "variants": [
    {
@@ -11420,6 +11540,7 @@
   "os_updates": null,
   "chipset": "Mediatek Dimensity 7300 Energy",
   "cpu": "Octa-core (4x2.5 GHz Cortex-A78 & 4x2.0 GHz Cortex-A55)",
+  "gpu_name": "Mali-G615 MC2",
   "card_slot": true,
   "variants": [
    {
@@ -11521,6 +11642,7 @@
   "os_updates": null,
   "chipset": "Mediatek Dimensity 8550 Super",
   "cpu": "Octa-core (1x3.4 GHz Cortex-A725 & 3x3.2 GHz Cortex-A725 & 4x2.2 GHz Cortex-A725)",
+  "gpu_name": "Mali-G720 MC8",
   "card_slot": false,
   "variants": [
    {
@@ -11618,6 +11740,7 @@
   "os_updates": null,
   "chipset": "Qualcomm Snapdragon 7 Gen 4",
   "cpu": "Octa-core (1x2.8 GHz Cortex-720 & 4x2.4 GHz Cortex-720 & 3x1.8 GHz Cortex-520)",
+  "gpu_name": "Adreno 722",
   "card_slot": false,
   "variants": [
    {
@@ -11723,6 +11846,7 @@
   "os_updates": null,
   "chipset": "Mediatek Dimensity 7300 Energy",
   "cpu": "Octa-core (4x2.5 GHz Cortex-A78 & 4x2.0 GHz Cortex-A55)",
+  "gpu_name": "Mali-G615 MC2",
   "card_slot": true,
   "variants": [
    {
@@ -11816,6 +11940,7 @@
   "os_updates": null,
   "chipset": "Mediatek Dimensity 7300 Energy",
   "cpu": "Octa-core (4x2.5 GHz Cortex-A78 & 4x2.0 GHz Cortex-A55)",
+  "gpu_name": "Mali-G615 MC2",
   "card_slot": true,
   "variants": [
    {
@@ -11917,6 +12042,7 @@
   "os_updates": 5,
   "chipset": "Qualcomm Snapdragon 8 Elite Gen 5",
   "cpu": "Octa-core (2x4.6 GHz Oryon V3 Phoenix L + 6x3.62 GHz Oryon V3 Phoenix M)",
+  "gpu_name": "Adreno 840",
   "card_slot": false,
   "variants": [
    {
@@ -12029,6 +12155,7 @@
   "os_updates": null,
   "chipset": "Mediatek Dimensity 9500",
   "cpu": "Octa-core (1x4.21 GHz C1-Ultra & 3x3.5 GHz C1-Premium & 4x2.7 GHz C1-Pro)",
+  "gpu_name": "Immortalis-G925",
   "card_slot": false,
   "variants": [
    {
@@ -12134,6 +12261,7 @@
   "os_updates": null,
   "chipset": "Mediatek Dimensity 9500s",
   "cpu": "Octa-core (1x3.73 GHz Cortex-X925 & 3x3.3 GHz Cortex-X4 & 4x2.4 GHz Cortex-A720)",
+  "gpu_name": "Immortalis-G925 MC11",
   "card_slot": false,
   "variants": [
    {
@@ -12231,6 +12359,7 @@
   "os_updates": null,
   "chipset": "Unisoc T7250",
   "cpu": "Octa-core (2x1.8 GHz Cortex-A75 & 6x1.6 GHz Cortex-A55)",
+  "gpu_name": "Mali-G57 MP1",
   "card_slot": true,
   "variants": [
    {
@@ -12314,6 +12443,7 @@
   "os_updates": null,
   "chipset": "Mediatek Dimensity 6300",
   "cpu": "Octa-core (2x2.4 GHz Cortex-A76 & 6x2.0 GHz Cortex-A55)",
+  "gpu_name": "Mali-G57 MC2",
   "card_slot": true,
   "variants": [
    {
@@ -12405,6 +12535,7 @@
   "os_updates": null,
   "chipset": "Qualcomm Snapdragon 8 Elite Gen 5",
   "cpu": "Hepta-core (2x4.6 GHz Oryon V3 Phoenix L + 5x3.62 GHz Oryon V3 Phoenix M)",
+  "gpu_name": "Adreno 840",
   "card_slot": false,
   "variants": [
    {
@@ -12506,6 +12637,7 @@
   "os_updates": null,
   "chipset": "Mediatek Helio G100 Max",
   "cpu": "Octa-core (2x2.2 GHz Cortex-A76 & 6x2.0 GHz Cortex-A55)",
+  "gpu_name": "Mali-G57 MC2",
   "card_slot": true,
   "variants": [
    {
@@ -12585,6 +12717,7 @@
   "os_updates": null,
   "chipset": "Qualcomm Snapdragon 6 Gen 1",
   "cpu": "Octa-core (4x2.2 GHz Cortex-A78 & 4x1.8 GHz Cortex-A55)",
+  "gpu_name": "Adreno 710",
   "card_slot": true,
   "variants": [
    {
@@ -12682,6 +12815,7 @@
   "os_updates": null,
   "chipset": "Qualcomm Snapdragon 685",
   "cpu": "Octa-core (4x2.8 GHz Cortex-A73 & 4x1.9 GHz Cortex-A53)",
+  "gpu_name": "Adreno 610",
   "card_slot": true,
   "variants": [
    {
@@ -12761,6 +12895,7 @@
   "os_updates": null,
   "chipset": "Mediatek Dimensity 6300",
   "cpu": "Octa-core (2x2.4 GHz Cortex-A76 & 6x2.0 GHz Cortex-A55)",
+  "gpu_name": "Mali-G57 MC2",
   "card_slot": true,
   "variants": [
    {
@@ -12860,6 +12995,7 @@
   "os_updates": null,
   "chipset": "Qualcomm Snapdragon 685",
   "cpu": "Octa-core (4x2.8 GHz Cortex-A73 & 4x1.9 GHz Cortex-A53)",
+  "gpu_name": "Adreno 610",
   "card_slot": true,
   "variants": [
    {
@@ -12951,6 +13087,7 @@
   "os_updates": null,
   "chipset": "Mediatek Dimensity 6300",
   "cpu": "Octa-core (2x2.4 GHz Cortex-A76 & 6x2.0 GHz Cortex-A55)",
+  "gpu_name": "Mali-G57 MC2",
   "card_slot": true,
   "variants": [
    {
@@ -13054,6 +13191,7 @@
   "os_updates": null,
   "chipset": "Qualcomm Snapdragon 685",
   "cpu": "Octa-core (4x2.8 GHz Cortex-A73 & 4x1.9 GHz Cortex-A53)",
+  "gpu_name": "Adreno 610",
   "card_slot": true,
   "variants": [
    {
@@ -13153,6 +13291,7 @@
   "os_updates": null,
   "chipset": "Mediatek Dimensity 6300",
   "cpu": "Octa-core (2x2.4 GHz Cortex-A76 & 6x2.0 GHz Cortex-A55)",
+  "gpu_name": "Mali-G57 MC2",
   "card_slot": true,
   "variants": [
    {
@@ -13248,6 +13387,7 @@
   "os_updates": null,
   "chipset": "Qualcomm Snapdragon 685",
   "cpu": "Octa-core (4x2.8 GHz Cortex-A73 & 4x1.9 GHz Cortex-A53)",
+  "gpu_name": "Adreno 610",
   "card_slot": true,
   "variants": [
    {
@@ -13331,6 +13471,7 @@
   "os_updates": null,
   "chipset": "Mediatek Dimensity 6300",
   "cpu": "Octa-core (2x2.4 GHz Cortex-A76 & 6x2.0 GHz Cortex-A55)",
+  "gpu_name": "Mali-G57 MC2",
   "card_slot": true,
   "variants": [
    {
@@ -13418,6 +13559,7 @@
   "os_updates": null,
   "chipset": "Mediatek Dimensity 8450",
   "cpu": "Octa-core (1x3.25 GHz Cortex-A725 & 3x3.0 GHz Cortex-A725 & 4x2.1 GHz Cortex-A725)",
+  "gpu_name": "Mali-G720 MC7",
   "card_slot": false,
   "variants": [
    {
@@ -13515,6 +13657,7 @@
   "os_updates": null,
   "chipset": "Mediatek Dimensity 8450",
   "cpu": "Octa-core (1x3.25 GHz Cortex-A725 & 3x3.0 GHz Cortex-A725 & 4x2.1 GHz Cortex-A725)",
+  "gpu_name": "Mali-G720 MC7",
   "card_slot": false,
   "variants": [
    {
@@ -13612,6 +13755,7 @@
   "os_updates": null,
   "chipset": "Mediatek Dimensity 8450",
   "cpu": "Octa-core (1x3.25 GHz Cortex-A725 & 3x3.0 GHz Cortex-A725 & 4x2.1 GHz Cortex-A725)",
+  "gpu_name": "Mali-G720 MC7",
   "card_slot": false,
   "variants": [
    {
@@ -13709,6 +13853,7 @@
   "os_updates": null,
   "chipset": "Qualcomm Snapdragon 7 Gen 4",
   "cpu": "Octa-core (1x2.8 GHz Cortex-720 & 4x2.4 GHz Cortex-720 & 3x1.8 GHz Cortex-520)",
+  "gpu_name": "Adreno 722",
   "card_slot": false,
   "variants": [
    {
@@ -13814,6 +13959,7 @@
   "os_updates": null,
   "chipset": "Qualcomm Snapdragon 6 Gen 1",
   "cpu": "Octa-core (4x2.2 GHz Cortex-A78 & 4x1.8 GHz Cortex-A55)",
+  "gpu_name": "Adreno 710",
   "card_slot": true,
   "variants": [
    {
@@ -13919,6 +14065,7 @@
   "os_updates": null,
   "chipset": "Qualcomm Snapdragon 7 Gen 4",
   "cpu": "Octa-core (1x2.8 GHz Cortex-720 & 4x2.4 GHz Cortex-720 & 3x1.8 GHz Cortex-520)",
+  "gpu_name": "Adreno 722",
   "card_slot": false,
   "variants": [
    {
@@ -14016,6 +14163,7 @@
   "os_updates": null,
   "chipset": "Qualcomm Snapdragon 685",
   "cpu": "Octa-core (4x2.8 GHz Cortex-A73 & 4x1.9 GHz Cortex-A53)",
+  "gpu_name": "Adreno 610",
   "card_slot": true,
   "variants": [
    {
@@ -14115,6 +14263,7 @@
   "os_updates": 5,
   "chipset": "Mediatek Dimensity 9500",
   "cpu": "Octa-core (1x4.21 GHz C1-Ultra & 3x3.5 GHz C1-Premium & 4x2.7 GHz C1-Pro)",
+  "gpu_name": "Arm G1-Ultra",
   "card_slot": false,
   "variants": [
    {
@@ -14220,6 +14369,7 @@
   "os_updates": 5,
   "chipset": "Mediatek Dimensity 9500",
   "cpu": "Octa-core (1x4.21 GHz C1-Ultra & 3x3.5 GHz C1-Premium & 4x2.7 GHz C1-Pro)",
+  "gpu_name": "Arm G1-Ultra",
   "card_slot": false,
   "variants": [
    {
@@ -14329,6 +14479,7 @@
   "os_updates": null,
   "chipset": "Mediatek Dimensity 6300",
   "cpu": "Octa-core (2x2.4 GHz Cortex-A76 & 6x2.0 GHz Cortex-A55)",
+  "gpu_name": "Mali-G57 MC2",
   "card_slot": true,
   "variants": [
    {
@@ -14416,6 +14567,7 @@
   "os_updates": null,
   "chipset": "Mediatek Helio G100",
   "cpu": "Octa-core (2x2.2 GHz Cortex-A76 & 6x2.0 GHz Cortex-A55)",
+  "gpu_name": "Mali-G57 MC2",
   "card_slot": true,
   "variants": [
    {
@@ -14499,6 +14651,7 @@
   "os_updates": null,
   "chipset": "Qualcomm Snapdragon 7 Gen 3",
   "cpu": "Octa-core (1x2.63 GHz Cortex-A715 & 3x2.4 GHz Cortex-A715 & 4x1.8 GHz Cortex-A510)",
+  "gpu_name": "Adreno 720",
   "card_slot": false,
   "variants": [
    {
@@ -14586,6 +14739,7 @@
   "os_updates": null,
   "chipset": "Qualcomm Snapdragon 7 Gen 3",
   "cpu": "Octa-core (1x2.63 GHz Cortex-A715 & 3x2.4 GHz Cortex-A715 & 4x1.8 GHz Cortex-A510)",
+  "gpu_name": "Adreno 720",
   "card_slot": false,
   "variants": [
    {
@@ -14670,6 +14824,7 @@
   "os_updates": null,
   "chipset": "Qualcomm Snapdragon 6 Gen 1",
   "cpu": "Octa-core (4x2.2 GHz Cortex-A78 & 4x1.8 GHz Cortex-A55)",
+  "gpu_name": "Adreno 710",
   "card_slot": true,
   "variants": [
    {
@@ -14771,6 +14926,7 @@
   "os_updates": null,
   "chipset": "Mediatek Dimensity 6300",
   "cpu": "Octa-core (2x2.4 GHz Cortex-A76 & 6x2.0 GHz Cortex-A55)",
+  "gpu_name": "Mali-G57 MC2",
   "card_slot": true,
   "variants": [
    {
@@ -14858,6 +15014,7 @@
   "os_updates": null,
   "chipset": "Mediatek Dimensity 6300",
   "cpu": "Octa-core (2x2.4 GHz Cortex-A76 & 6x2.0 GHz Cortex-A55)",
+  "gpu_name": "Mali-G57 MC2",
   "card_slot": true,
   "variants": [
    {
@@ -14960,6 +15117,7 @@
   "os_updates": null,
   "chipset": "Qualcomm SM-6115 Snapdragon 6s 4G Gen1",
   "cpu": "Octa-core (4x2.1 GHz Cortex-A73 & 4x1.8 GHz Cortex-A53)",
+  "gpu_name": "Adreno 610",
   "card_slot": true,
   "variants": [
    {
@@ -15066,6 +15224,7 @@
   "os_updates": null,
   "chipset": "Qualcomm SM-6115 Snapdragon 6s 4G Gen1",
   "cpu": "Octa-core (4x2.1 GHz Cortex-A73 & 4x1.8 GHz Cortex-A53)",
+  "gpu_name": "Adreno 610",
   "card_slot": true,
   "variants": [
    {
@@ -15157,6 +15316,7 @@
   "os_updates": null,
   "chipset": "Mediatek Dimensity 8450",
   "cpu": "Octa-core (1x3.25 GHz Cortex-A725 & 3x3.0 GHz Cortex-A725 & 4x2.1 GHz Cortex-A725)",
+  "gpu_name": "Mali-G720 MC7",
   "card_slot": false,
   "variants": [
    {
@@ -15262,6 +15422,7 @@
   "os_updates": null,
   "chipset": "Mediatek Dimensity 8350",
   "cpu": "Octa-core (1x3.35 GHz Cortex-A715 & 3x3.20 GHz Cortex-A715 & 4x2.20 GHz Cortex-A510)",
+  "gpu_name": "Mali G615-MC6",
   "card_slot": false,
   "variants": [
    {
@@ -15375,6 +15536,7 @@
   "os_updates": null,
   "chipset": "Qualcomm Snapdragon 8 Elite",
   "cpu": "Octa-core (2x4.32 GHz Oryon V2 Phoenix L + 6x3.53 GHz Oryon V2 Phoenix M)",
+  "gpu_name": "Adreno 830",
   "card_slot": false,
   "variants": [
    {
@@ -15483,6 +15645,7 @@
   "os_updates": null,
   "chipset": "Mediatek Dimensity 9400+",
   "cpu": "Octa-core (1x3.73 GHz Cortex-X925 & 3x3.3 GHz Cortex-X4 & 4x2.4 GHz Cortex-A720)",
+  "gpu_name": "Immortalis-G925 MC12",
   "card_slot": false,
   "variants": [
    {
@@ -15588,6 +15751,7 @@
   "os_updates": null,
   "chipset": "Mediatek Dimensity 9400+",
   "cpu": "Octa-core (1x3.73 GHz Cortex-X925 & 3x3.3 GHz Cortex-X4 & 4x2.4 GHz Cortex-A720)",
+  "gpu_name": "Immortalis-G925 MC12",
   "card_slot": false,
   "variants": [
    {
@@ -15697,6 +15861,7 @@
   "os_updates": null,
   "chipset": "Mediatek Dimensity 6300",
   "cpu": "Octa-core (2x2.4 GHz Cortex-A76 & 6x2.0 GHz Cortex-A55)",
+  "gpu_name": "Mali-G57 MC2",
   "card_slot": true,
   "variants": [
    {
@@ -15784,6 +15949,7 @@
   "os_updates": null,
   "chipset": "Qualcomm SM-6115 Snapdragon 6s 4G Gen1",
   "cpu": "Octa-core (4x2.1 GHz Cortex-A73 & 4x1.8 GHz Cortex-A53)",
+  "gpu_name": "Adreno 610",
   "card_slot": true,
   "variants": [
    {
@@ -15867,6 +16033,7 @@
   "os_updates": null,
   "chipset": "Mediatek Dimensity 6300",
   "cpu": "Octa-core (2x2.4 GHz Cortex-A76 & 6x2.0 GHz Cortex-A55)",
+  "gpu_name": "Mali-G57 MC2",
   "card_slot": true,
   "variants": [
    {
@@ -15958,6 +16125,7 @@
   "os_updates": null,
   "chipset": "Qualcomm Snapdragon 8 Elite",
   "cpu": "7-core (2x4.32 GHz Oryon V2 Phoenix L + 5x3.53 GHz Oryon V2 Phoenix M)",
+  "gpu_name": "Adreno 830",
   "card_slot": false,
   "variants": [
    {
@@ -16059,6 +16227,7 @@
   "os_updates": null,
   "chipset": "Qualcomm Snapdragon 6 Gen 1",
   "cpu": "Octa-core (4x2.2 GHz Cortex-A78 & 4x1.8 GHz Cortex-A55)",
+  "gpu_name": "Adreno 710",
   "card_slot": true,
   "variants": [
    {
@@ -16164,6 +16333,7 @@
   "os_updates": null,
   "chipset": "Mediatek Helio G100",
   "cpu": "Octa-core (2x2.2 GHz Cortex-A76 & 6x2.0 GHz Cortex-A55)",
+  "gpu_name": "Mali-G57 MC2",
   "card_slot": true,
   "variants": [
    {
@@ -16261,6 +16431,7 @@
   "os_updates": 5,
   "chipset": "Mediatek Dimensity 9600 Pro",
   "cpu": "Octa-core (2x4.55 GHz & 3x4.35 GHz & 3x3.1 GHz)",
+  "gpu_name": "Mali-G2-Ultra-NX",
   "card_slot": false,
   "variants": [
    {
@@ -16370,6 +16541,7 @@
   "os_updates": 5,
   "chipset": "Mediatek Dimensity 9600 Pro",
   "cpu": "Octa-core (2x4.55 GHz & 3x4.35 GHz & 3x3.1 GHz)",
+  "gpu_name": "Mali-G2-Ultra-NX",
   "card_slot": false,
   "variants": [
    {
@@ -16471,6 +16643,7 @@
   "os_updates": 5,
   "chipset": "Mediatek Dimensity 9600M",
   "cpu": "Octa-core (1x4.21 GHz & 3x3.5 GHz & 4x2.7 GHz)",
+  "gpu_name": "ARM G1-Ultra",
   "card_slot": false,
   "variants": [
    {
@@ -16572,6 +16745,7 @@
   "os_updates": null,
   "chipset": "Mediatek Dimensity 7300e",
   "cpu": "Octa-core (4x2.5 GHz Cortex-A78 & 4x2.0 GHz Cortex-A55)",
+  "gpu_name": "Mali-G610",
   "card_slot": false,
   "variants": [
    {
@@ -16657,6 +16831,7 @@
   "os_updates": null,
   "chipset": "Unisoc T7300",
   "cpu": "Octa-core (2x2.2 GHz Cortex-A78 & 6x2.0 GHz Cortex-A55)",
+  "gpu_name": "Mali-G57 MP2",
   "card_slot": false,
   "variants": [
    {
@@ -16740,6 +16915,7 @@
   "os_updates": null,
   "chipset": "Qualcomm Snapdragon 4 Gen 2",
   "cpu": "Octa-core (2x2.2 GHz Cortex-A78 & 6x1.95 GHz Cortex-A55)",
+  "gpu_name": "Adreno 613",
   "card_slot": false,
   "variants": [
    {
@@ -16825,6 +17001,7 @@
   "os_updates": null,
   "chipset": "Qualcomm Snapdragon 8 Gen 5",
   "cpu": "Octa-core (2x3.8 GHz Oryon V3 Phoenix L + 6x3.32 GHz Oryon V3 Phoenix M)",
+  "gpu_name": "Adreno 829",
   "card_slot": false,
   "variants": [
    {
@@ -16922,6 +17099,7 @@
   "os_updates": null,
   "chipset": "Unisoc T7225",
   "cpu": "Octa-core (2x2.0 GHz Cortex-A75 & 6x1.8 GHz Cortex-A55)",
+  "gpu_name": "Mali-G52 MP1",
   "card_slot": true,
   "variants": [
    {
@@ -17009,6 +17187,7 @@
   "os_updates": null,
   "chipset": "Qualcomm Snapdragon 8s Gen 3",
   "cpu": "Octa-core (1x3.0 GHz Cortex-X4 & 4x2.8 GHz Cortex-A720 & 3x2.0 GHz Cortex-A520)",
+  "gpu_name": "Adreno 735",
   "card_slot": false,
   "variants": [
    {
@@ -17096,6 +17275,7 @@
   "os_updates": null,
   "chipset": "Mediatek Dimensity 7400 Turbo",
   "cpu": "Octa-core (4x2.5 GHz Cortex-A78 & 4x2.0 GHz Cortex-A55)",
+  "gpu_name": "Mali-G615 MC2",
   "card_slot": false,
   "variants": [
    {
@@ -17186,6 +17366,7 @@
   "os_updates": null,
   "chipset": "Qualcomm Snapdragon 4 Gen 2",
   "cpu": "Octa-core (2x2.2 GHz Cortex-A78 & 6x1.95 GHz Cortex-A55)",
+  "gpu_name": "Adreno 613",
   "card_slot": false,
   "variants": [
    {
@@ -17273,6 +17454,7 @@
   "os_updates": null,
   "chipset": "Qualcomm Snapdragon 4 Gen 2",
   "cpu": "Octa-core (2x2.2 GHz Cortex-A78 & 6x1.95 GHz Cortex-A55)",
+  "gpu_name": "Adreno 613",
   "card_slot": true,
   "variants": [
    {
@@ -17360,6 +17542,7 @@
   "os_updates": null,
   "chipset": "Qualcomm Snapdragon 4 Gen 2",
   "cpu": "Octa-core (2x2.2 GHz Cortex-A78 & 6x1.95 GHz Cortex-A55)",
+  "gpu_name": "Adreno 613",
   "card_slot": false,
   "variants": [
    {
@@ -17447,6 +17630,7 @@
   "os_updates": 5,
   "chipset": "Qualcomm Snapdragon 8 Gen 5",
   "cpu": "Octa-core (2x3.8 GHz Oryon V3 Phoenix L + 6x3.32 GHz Oryon V3 Phoenix M)",
+  "gpu_name": "Adreno 829",
   "card_slot": false,
   "variants": [
    {
@@ -17544,6 +17728,7 @@
   "os_updates": null,
   "chipset": "Qualcomm Snapdragon 8 Elite Gen 5",
   "cpu": "Octa-core (2x4.6 GHz Oryon V3 Phoenix L + 6x3.62 GHz Oryon V3 Phoenix M)",
+  "gpu_name": "Adreno 840",
   "card_slot": false,
   "variants": [
    {
@@ -17649,6 +17834,7 @@
   "os_updates": 5,
   "chipset": "Mediatek Dimensity 9500",
   "cpu": "Octa-core (1x4.21 GHz C1-Ultra & 3x3.5 GHz C1-Premium & 4x2.7 GHz C1-Pro)",
+  "gpu_name": "Arm G1-Ultra",
   "card_slot": false,
   "variants": [
    {
@@ -17754,6 +17940,7 @@
   "os_updates": null,
   "chipset": "Mediatek Dimensity 6300",
   "cpu": "Octa-core (2x2.4 GHz Cortex-A76 & 6x2.0 GHz Cortex-A55)",
+  "gpu_name": "Mali-G57 MC2",
   "card_slot": true,
   "variants": [
    {
@@ -17849,6 +18036,7 @@
   "os_updates": null,
   "chipset": "Mediatek Dimensity 6300",
   "cpu": "Octa-core (2x2.4 GHz Cortex-A76 & 6x2.0 GHz Cortex-A55)",
+  "gpu_name": "Mali-G57 MC2",
   "card_slot": true,
   "variants": [
    {
@@ -17936,6 +18124,7 @@
   "os_updates": null,
   "chipset": "Mediatek Dimensity 7360 Turbo",
   "cpu": "Octa-core (4x2.5 GHz Cortex-A78 & 4x2.0 GHz Cortex-A55)",
+  "gpu_name": "Mali-G615 MC2",
   "card_slot": false,
   "variants": [
    {
@@ -18019,6 +18208,7 @@
   "os_updates": null,
   "chipset": "Mediatek Dimensity 7360 Turbo",
   "cpu": "Octa-core (4x2.5 GHz Cortex-A78 & 4x2.0 GHz Cortex-A55)",
+  "gpu_name": "Mali-G615 MC2",
   "card_slot": false,
   "variants": [
    {
@@ -18117,6 +18307,7 @@
   "os_updates": null,
   "chipset": "Unisoc T7225",
   "cpu": "Octa-core (2x2.0 GHz Cortex-A75 & 6x1.8 GHz Cortex-A55)",
+  "gpu_name": "Mali-G52 MP1",
   "card_slot": true,
   "variants": [
    {
@@ -18200,6 +18391,7 @@
   "os_updates": 4,
   "chipset": "Qualcomm Snapdragon 8s Gen 3",
   "cpu": "Octa-core (1x3.0 GHz Cortex-X4 & 4x2.8 GHz Cortex-A720 & 3x2.0 GHz Cortex-A520)",
+  "gpu_name": "Adreno 735",
   "card_slot": false,
   "variants": [
    {
@@ -18301,6 +18493,7 @@
   "os_updates": 4,
   "chipset": "Qualcomm Snapdragon 7 Gen 4",
   "cpu": "Octa-core (1x2.8 GHz Cortex-720 & 4x2.4 GHz Cortex-720 & 3x1.8 GHz Cortex-520)",
+  "gpu_name": "Adreno 722",
   "card_slot": false,
   "variants": [
    {
@@ -18406,6 +18599,7 @@
   "os_updates": 5,
   "chipset": "Mediatek Dimensity 9400+",
   "cpu": "Octa-core (1x3.63 GHz Cortex-X925 & 3x3.3 GHz Cortex-X4 & 4x2.4 GHz Cortex-A720)",
+  "gpu_name": "Immortalis-G925",
   "card_slot": false,
   "variants": [
    {
@@ -18503,6 +18697,7 @@
   "os_updates": null,
   "chipset": "Qualcomm Snapdragon 6s 4G Gen 2",
   "cpu": "Octa-core (4x2.9 GHz Cortex-A73 & 4x1.9 GHz Cortex-A53)",
+  "gpu_name": "Adreno",
   "card_slot": false,
   "variants": [
    {
@@ -18594,6 +18789,7 @@
   "os_updates": null,
   "chipset": "Unisoc T7225",
   "cpu": "Octa-core (2x1.8 GHz Cortex-A75 & 6x1.8 GHz Cortex-A55)",
+  "gpu_name": "Mali-G52 MP1",
   "card_slot": true,
   "variants": [
    {
@@ -18689,6 +18885,7 @@
   "os_updates": null,
   "chipset": "Mediatek Dimensity 6300",
   "cpu": "Octa-core (2x2.4 GHz Cortex-A76 & 6x2.0 GHz Cortex-A55)",
+  "gpu_name": "Mali-G57 MC2",
   "card_slot": true,
   "variants": [
    {
@@ -18776,6 +18973,7 @@
   "os_updates": 5,
   "chipset": "Mediatek Dimensity 9500",
   "cpu": "Octa-core (1x4.21 GHz C1-Ultra & 3x3.5 GHz C1-Premium & 4x2.7 GHz C1-Pro)",
+  "gpu_name": "Arm G1-Ultra",
   "card_slot": false,
   "variants": [
    {
@@ -18877,6 +19075,7 @@
   "os_updates": 5,
   "chipset": "Mediatek Dimensity 9500",
   "cpu": "Octa-core (1x4.21 GHz C1-Ultra & 3x3.5 GHz C1-Premium & 4x2.7 GHz C1-Pro)",
+  "gpu_name": "Arm G1-Ultra",
   "card_slot": false,
   "variants": [
    {
@@ -18986,6 +19185,7 @@
   "os_updates": null,
   "chipset": "Qualcomm Snapdragon 8s Gen 3",
   "cpu": "Octa-core (1x3.0 GHz Cortex-X4 & 4x2.8 GHz Cortex-A720 & 3x2.0 GHz Cortex-A520)",
+  "gpu_name": "Adreno 735",
   "card_slot": false,
   "variants": [
    {
@@ -19079,6 +19279,7 @@
   "os_updates": 3,
   "chipset": "Mediatek Dimensity 7360 Turbo",
   "cpu": "Octa-core (4x2.5 GHz Cortex-A78 & 4x2.0 GHz Cortex-A55)",
+  "gpu_name": "Mali-G615 MC2",
   "card_slot": false,
   "variants": [
    {
@@ -19173,6 +19374,7 @@
   "os_updates": null,
   "chipset": "Mediatek Dimensity 7360 Turbo",
   "cpu": "Octa-core (4x2.5 GHz Cortex-A78 & 4x2.0 GHz Cortex-A55)",
+  "gpu_name": "Mali-G615 MC2",
   "card_slot": false,
   "variants": [
    {
@@ -19271,6 +19473,7 @@
   "os_updates": null,
   "chipset": "Qualcomm Snapdragon 685 - V2530 Qualcomm Snapdragon 6s 4G Gen 2 - V2549",
   "cpu": "Octa-core (4x2.8 GHz Cortex-A73 & 4x1.9 GHz Cortex-A53) - V2530 Octa-core (4x2.9 GHz Cortex-A73 & 4x1.9 GHz Cortex-A53) - V2549",
+  "gpu_name": "Adreno 610",
   "card_slot": false,
   "variants": [
    {
@@ -19361,6 +19564,7 @@
   "os_updates": null,
   "chipset": "Mediatek Dimensity 7300",
   "cpu": "Octa-core (4x2.5 GHz Cortex-A78 & 4x2.0 GHz Cortex-A55)",
+  "gpu_name": "Mali-G615 MC2",
   "card_slot": false,
   "variants": [
    {
@@ -19444,6 +19648,7 @@
   "os_updates": null,
   "chipset": "Qualcomm Snapdragon 4 Gen 2",
   "cpu": "Octa-core (2x2.2 GHz Cortex-A78 & 6x1.95 GHz Cortex-A55)",
+  "gpu_name": "Adreno 613",
   "card_slot": true,
   "variants": [
    {
@@ -19547,6 +19752,7 @@
   "os_updates": 4,
   "chipset": "Qualcomm Snapdragon 7 Gen 4",
   "cpu": "Octa-core (1x2.8 GHz Cortex-720 & 4x2.4 GHz Cortex-720 & 3x1.8 GHz Cortex-520)",
+  "gpu_name": "Adreno 722",
   "card_slot": false,
   "variants": [
    {
@@ -19656,6 +19862,7 @@
   "os_updates": null,
   "chipset": "Mediatek Dimensity 6300",
   "cpu": "Octa-core (2x2.4 GHz Cortex-A76 & 6x2.0 GHz Cortex-A55)",
+  "gpu_name": "Mali-G57 MC2",
   "card_slot": true,
   "variants": [
    {
@@ -19743,6 +19950,7 @@
   "os_updates": 4,
   "chipset": "Mediatek Dimensity 9300+",
   "cpu": "Octa-core (1x3.4 GHz Cortex-X4 & 3x2.85 GHz Cortex-X4 & 4x2.0 GHz Cortex-A720)",
+  "gpu_name": "Immortalis-G720 MC12",
   "card_slot": false,
   "variants": [
    {
@@ -19844,6 +20052,7 @@
   "os_updates": null,
   "chipset": "Unisoc Tiger T612",
   "cpu": "Octa-core (2x1.8 GHz Cortex-A75 & 6x1.8 GHz Cortex-A55)",
+  "gpu_name": "Mali-G57",
   "card_slot": true,
   "variants": [
    {
@@ -19939,6 +20148,7 @@
   "os_updates": null,
   "chipset": "Mediatek Dimensity 6300",
   "cpu": "Octa-core (2x2.4 GHz Cortex-A76 & 6x2.0 GHz Cortex-A55)",
+  "gpu_name": "Mali-G57 MC2",
   "card_slot": true,
   "variants": [
    {
@@ -20026,6 +20236,7 @@
   "os_updates": null,
   "chipset": "Qualcomm Snapdragon 8 Elite",
   "cpu": "Octa-core (2x4.32 GHz Oryon V2 Phoenix L + 6x3.53 GHz Oryon V2 Phoenix M)",
+  "gpu_name": "Adreno 830",
   "card_slot": false,
   "variants": [
    {
@@ -20131,6 +20342,7 @@
   "os_updates": 4,
   "chipset": "Mediatek Dimensity 9400+",
   "cpu": "Octa-core (1x3.73 GHz Cortex-X925 & 3x3.3 GHz Cortex-X4 & 4x2.4 GHz Cortex-A720)",
+  "gpu_name": "Immortalis-G925",
   "card_slot": false,
   "variants": [
    {
@@ -20240,6 +20452,7 @@
   "os_updates": null,
   "chipset": "Mediatek Dimensity 7300",
   "cpu": "Octa-core (4x2.5 GHz Cortex-A78 & 4x2.0 GHz Cortex-A55)",
+  "gpu_name": "Mali-G615 MC2",
   "card_slot": false,
   "variants": [
    {
@@ -20334,6 +20547,7 @@
   "os_updates": null,
   "chipset": "Qualcomm Snapdragon 4 Gen 2",
   "cpu": "Octa-core (2x2.2 GHz Cortex-A78 & 6x1.95 GHz Cortex-A55)",
+  "gpu_name": "Adreno 613",
   "card_slot": false,
   "variants": [
    {
@@ -20417,6 +20631,7 @@
   "os_updates": null,
   "chipset": "Mediatek Dimensity 6300",
   "cpu": "Octa-core (2x2.4 GHz Cortex-A76 & 6x2.0 GHz Cortex-A55)",
+  "gpu_name": "Mali-G57 MC2",
   "card_slot": false,
   "variants": [
    {
@@ -20511,6 +20726,7 @@
   "os_updates": null,
   "chipset": "Qualcomm Snapdragon 685",
   "cpu": "Octa-core (4x2.8 GHz Cortex-A73 & 4x1.9 GHz Cortex-A53)",
+  "gpu_name": "Adreno 610",
   "card_slot": true,
   "variants": [
    {
@@ -20594,6 +20810,7 @@
   "os_updates": null,
   "chipset": "Mediatek Dimensity 6300",
   "cpu": "Octa-core (2x2.4 GHz Cortex-A76 & 6x2.0 GHz Cortex-A55)",
+  "gpu_name": "Mali-G57 MC2",
   "card_slot": true,
   "variants": [
    {
@@ -20681,6 +20898,7 @@
   "os_updates": null,
   "chipset": "Unisoc T7225",
   "cpu": "Octa-core (2x2.0 GHz Cortex-A75 & 6x1.8 GHz Cortex-A55)",
+  "gpu_name": "Mali-G52 MP1",
   "card_slot": true,
   "variants": [
    {
@@ -20772,6 +20990,7 @@
   "os_updates": null,
   "chipset": "Qualcomm Snapdragon 685",
   "cpu": "Octa-core (4x2.8 GHz Cortex-A73 & 4x1.9 GHz Cortex-A53)",
+  "gpu_name": "Adreno 610",
   "card_slot": true,
   "variants": [
    {
@@ -20859,6 +21078,7 @@
   "os_updates": 3,
   "chipset": "Qualcomm Snapdragon 7 Gen 3",
   "cpu": "Octa-core (1x2.63 GHz Cortex-A715 & 3x2.4 GHz Cortex-A715 & 4x1.8 GHz Cortex-A510)",
+  "gpu_name": "Adreno 720",
   "card_slot": false,
   "variants": [
    {
@@ -20957,6 +21177,7 @@
   "os_updates": 7,
   "chipset": "Qualcomm Snapdragon 8 Elite Extreme Gen 6",
   "cpu": "Octa-core (2x5.01 GHz Prime + 3x4.03 GHz Performance + 3x3.74 GHz Performance)",
+  "gpu_name": "Adreno 850",
   "card_slot": false,
   "variants": [
    {
@@ -21062,6 +21283,7 @@
   "os_updates": null,
   "chipset": "Qualcomm Snapdragon 8 Elite Gen 5",
   "cpu": "Octa-core (2x4.6 GHz Oryon V3 Phoenix L + 6x3.62 GHz Oryon V3 Phoenix M)",
+  "gpu_name": "Adreno 840",
   "card_slot": false,
   "variants": [
    {
@@ -21161,6 +21383,7 @@
   "os_updates": null,
   "chipset": "Qualcomm Snapdragon 8 Elite Gen 5",
   "cpu": "Octa-core (2x4.6 GHz Oryon V3 Phoenix L + 6x3.62 GHz Oryon V3 Phoenix M)",
+  "gpu_name": "Adreno 840",
   "card_slot": false,
   "variants": [
    {
@@ -21264,6 +21487,7 @@
   "os_updates": null,
   "chipset": "Qualcomm Snapdragon 6 Gen 5",
   "cpu": "Octa-core (4x2.6 GHz Cortex-A78 & 4x2.0 GHz Cortex-A55)",
+  "gpu_name": "Adreno 812",
   "card_slot": false,
   "variants": [
    {
@@ -21352,6 +21576,7 @@
   "os_updates": null,
   "chipset": "Qualcomm Snapdragon 685",
   "cpu": "Octa-core (4x2.8 GHz Cortex-A73 & 4x1.9 GHz Cortex-A53)",
+  "gpu_name": "Adreno 610",
   "card_slot": false,
   "variants": [
    {
@@ -21429,6 +21654,7 @@
   "os_updates": null,
   "chipset": "Mediatek Helio G81 Ultra",
   "cpu": "Octa-core (2x2.0 GHz Cortex-A75 & 6x1.7 GHz Cortex-A55)",
+  "gpu_name": "Mali-G52 MC2",
   "card_slot": true,
   "variants": [
    {
@@ -21514,6 +21740,7 @@
   "os_updates": null,
   "chipset": "Qualcomm Snapdragon 4 Gen 4",
   "cpu": "Octa-core (2x2.3 GHz Cortex-A78 & 6x1.95 GHz Cortex-A55)",
+  "gpu_name": "Adreno 613",
   "card_slot": false,
   "variants": [
    {
@@ -21599,6 +21826,7 @@
   "os_updates": null,
   "chipset": "Qualcomm Snapdragon 4 Gen 4",
   "cpu": "Octa-core (2x2.3 GHz Cortex-A78 & 6x1.95 GHz Cortex-A55)",
+  "gpu_name": "Adreno 613",
   "card_slot": false,
   "variants": [
    {
@@ -21684,6 +21912,7 @@
   "os_updates": null,
   "chipset": "Mediatek Dimensity 7100 Elite",
   "cpu": "Octa-core (4x2.4 GHz Cortex-A78 & 4x2.0 GHz Cortex-A55)",
+  "gpu_name": "Mali-G610 MC2",
   "card_slot": false,
   "variants": [
    {
@@ -21772,6 +22001,7 @@
   "os_updates": null,
   "chipset": "Mediatek Helio G81 Ultra",
   "cpu": "Octa-core (2x2.0 GHz Cortex-A75 & 6x1.7 GHz Cortex-A55)",
+  "gpu_name": "Mali-G52 MC2",
   "card_slot": false,
   "variants": [
    {
@@ -21853,6 +22083,7 @@
   "os_updates": null,
   "chipset": "Mediatek Dimensity 6300",
   "cpu": "Octa-core (2x2.4 GHz Cortex-A76 & 6x2.0 GHz Cortex-A55)",
+  "gpu_name": "Mali-G57 MC2",
   "card_slot": true,
   "variants": [
    {
@@ -21930,6 +22161,7 @@
   "os_updates": 6,
   "chipset": "Qualcomm Snapdragon 8 Elite",
   "cpu": "Octa-core (2x4.32 GHz Oryon V2 Phoenix L + 6x3.53 GHz Oryon V2 Phoenix M)",
+  "gpu_name": "Adreno 830 (1200 MHz)",
   "card_slot": false,
   "variants": [
    {
@@ -22029,6 +22261,7 @@
   "os_updates": 6,
   "chipset": "Qualcomm Snapdragon 7 Gen 4",
   "cpu": "Octa-core (1x2.8 GHz Cortex-720 & 4x2.4 GHz Cortex-720 & 3x1.8 GHz Cortex-520)",
+  "gpu_name": "Adreno 722",
   "card_slot": false,
   "variants": [
    {
@@ -22129,6 +22362,7 @@
   "os_updates": null,
   "chipset": "Mediatek Helio G81",
   "cpu": "Octa-core (2x2.0 GHz Cortex-A75 & 6x1.7 GHz Cortex-A55)",
+  "gpu_name": "Mali-G52 MC2",
   "card_slot": true,
   "variants": [
    {
@@ -22210,6 +22444,7 @@
   "os_updates": null,
   "chipset": "Mediatek Helio G81",
   "cpu": "Octa-core (2x2.0 GHz Cortex-A75 & 6x1.7 GHz Cortex-A55)",
+  "gpu_name": "Mali-G52 MC2",
   "card_slot": true,
   "variants": [
    {
@@ -22291,6 +22526,7 @@
   "os_updates": 6,
   "chipset": "Mediatek Dimensity 7100 Elite",
   "cpu": "Octa-core (4x2.4 GHz Cortex-A78 & 4x2.0 GHz Cortex-A55)",
+  "gpu_name": "Mali-G610 MC2",
   "card_slot": false,
   "variants": [
    {
@@ -22383,6 +22619,7 @@
   "os_updates": null,
   "chipset": "Qualcomm Snapdragon 8 Elite Gen 5",
   "cpu": "Octa-core (2x4.6 GHz Oryon V3 Phoenix L + 6x3.62 GHz Oryon V3 Phoenix M)",
+  "gpu_name": "Adreno 840",
   "card_slot": false,
   "variants": [
    {
@@ -22478,6 +22715,7 @@
   "os_updates": null,
   "chipset": "Mediatek Dimensity 9500",
   "cpu": "Octa-core (1x4.21 GHz C1-Ultra & 3x3.5 GHz C1-Premium & 4x2.7 GHz C1-Pro)",
+  "gpu_name": "Arm G1-Ultra",
   "card_slot": false,
   "variants": [
    {
@@ -22581,6 +22819,7 @@
   "os_updates": null,
   "chipset": "Qualcomm Snapdragon 6 Gen 4",
   "cpu": "Octa-core (1x2.3 GHz Cortex-A720s & 3x2.2 GHz Cortex-A720s & 4x1.8 GHz Cortex-A520s)",
+  "gpu_name": "Adreno 810",
   "card_slot": false,
   "variants": [
    {
@@ -22669,6 +22908,7 @@
   "os_updates": null,
   "chipset": "Qualcomm Snapdragon 8s Gen 4",
   "cpu": "Octa-core (1x3.21 GHz Cortex-X4 & 3x3.0 GHz Cortex-A720 & 2x2.8 GHz Cortex-A720 & 2x2.0 GHz Cortex-A720)",
+  "gpu_name": "Adreno 825",
   "card_slot": false,
   "variants": [
    {
@@ -22761,6 +23001,7 @@
   "os_updates": 7,
   "chipset": "Qualcomm Snapdragon 8 Elite Gen 5",
   "cpu": "Octa-core (2x4.6 GHz Oryon V3 Phoenix L + 6x3.62 GHz Oryon V3 Phoenix M)",
+  "gpu_name": "Adreno 840",
   "card_slot": false,
   "variants": [
    {
@@ -22866,6 +23107,7 @@
   "os_updates": 7,
   "chipset": "Qualcomm Snapdragon 8 Elite Gen 5",
   "cpu": "Octa-core (2x4.6 GHz Oryon V3 Phoenix L + 6x3.62 GHz Oryon V3 Phoenix M)",
+  "gpu_name": "Adreno 840",
   "card_slot": false,
   "variants": [
    {
@@ -22971,6 +23213,7 @@
   "os_updates": null,
   "chipset": "Mediatek Helio G81",
   "cpu": "Octa-core (2x2.0 GHz Cortex-A75 & 6x1.7 GHz Cortex-A55)",
+  "gpu_name": "Mali-G52 MC2",
   "card_slot": true,
   "variants": [
    {
@@ -23060,6 +23303,7 @@
   "os_updates": null,
   "chipset": "Qualcomm Snapdragon 685",
   "cpu": "Octa-core (4x2.8 GHz Cortex-A73 & 4x1.9 GHz Cortex-A53)",
+  "gpu_name": "Adreno 610",
   "card_slot": true,
   "variants": [
    {
@@ -23149,6 +23393,7 @@
   "os_updates": null,
   "chipset": "Mediatek Helio G81 Ultra",
   "cpu": "Octa-core (2x2.0 GHz Cortex-A75 & 6x1.7 GHz Cortex-A55)",
+  "gpu_name": "Mali-G52 MC2",
   "card_slot": true,
   "variants": [
    {
@@ -23234,6 +23479,7 @@
   "os_updates": 6,
   "chipset": "Qualcomm Snapdragon 8 Gen 3",
   "cpu": "Octa-core (1x3.0 GHz Cortex-X4 & 5x2.95 GHz Cortex-A720 & 2x2.0 GHz Cortex-A520)",
+  "gpu_name": "Adreno 750",
   "card_slot": false,
   "variants": [
    {
@@ -23329,6 +23575,7 @@
   "os_updates": 6,
   "chipset": "Qualcomm Snapdragon 7 Gen 3",
   "cpu": "Octa-core (1x2.63 GHz Cortex-A715 & 3x2.4 GHz Cortex-A715 & 4x1.8 GHz Cortex-A510)",
+  "gpu_name": "Adreno 720",
   "card_slot": false,
   "variants": [
    {
@@ -23425,6 +23672,7 @@
   "os_updates": 6,
   "chipset": "Mediatek Dimensity 7025 Ultra",
   "cpu": "Octa-core (2x2.5 GHz Cortex-A78 & 6x2.0 GHz Cortex-A55)",
+  "gpu_name": "IMG BXM-8-256",
   "card_slot": false,
   "variants": [
    {
@@ -23513,6 +23761,7 @@
   "os_updates": null,
   "chipset": "Qualcomm Snapdragon 6 Gen 1",
   "cpu": "Octa-core (4x2.2 GHz Cortex-A78 & 4x1.8 GHz Cortex-A55)",
+  "gpu_name": "Adreno 710",
   "card_slot": false,
   "variants": [
    {
@@ -23617,6 +23866,7 @@
   "os_updates": 2,
   "chipset": "Mediatek Dimensity 6300",
   "cpu": "Octa-core (2x2.4 GHz Cortex-A76 & 6x2.0 GHz Cortex-A55)",
+  "gpu_name": "Mali-G57 MC2",
   "card_slot": true,
   "variants": [
    {
@@ -23704,6 +23954,7 @@
   "os_updates": null,
   "chipset": "Mediatek Dimensity 6300",
   "cpu": "Octa-core (2x2.4 GHz Cortex-A76 & 6x2.0 GHz Cortex-A55)",
+  "gpu_name": "Mali-G57 MC2",
   "card_slot": true,
   "variants": [
    {
@@ -23791,6 +24042,7 @@
   "os_updates": null,
   "chipset": "Unisoc T7250",
   "cpu": "Octa-core (2x1.8 GHz Cortex-A75 & 6x1.6 GHz Cortex-A55)",
+  "gpu_name": "Mali-G57 MP1",
   "card_slot": true,
   "variants": [
    {
@@ -23886,6 +24138,7 @@
   "os_updates": null,
   "chipset": "Unisoc T7250",
   "cpu": "Octa-core (2x1.8 GHz Cortex-A75 & 6x1.6 GHz Cortex-A55)",
+  "gpu_name": "Mali-G57 MP1",
   "card_slot": true,
   "variants": [
    {
@@ -23977,6 +24230,7 @@
   "os_updates": null,
   "chipset": "Mediatek Helio G92 Max",
   "cpu": "Octa-core (2x2.4 GHz Cortex-A76 & 6x2.0 GHz Cortex-A55)",
+  "gpu_name": "Mali-G52 MC2",
   "card_slot": true,
   "variants": [
    {
@@ -24064,6 +24318,7 @@
   "os_updates": null,
   "chipset": "Mediatek Dimensity 6300",
   "cpu": "Octa-core (2x2.4 GHz Cortex-A76 & 6x2.0 GHz Cortex-A55)",
+  "gpu_name": "Mali-G57 MC2",
   "card_slot": true,
   "variants": [
    {
@@ -24151,6 +24406,7 @@
   "os_updates": null,
   "chipset": "Unisoc T7250",
   "cpu": "Octa-core (2x1.8 GHz Cortex-A75 & 6x1.6 GHz Cortex-A55)",
+  "gpu_name": "Mali-G57 MP1",
   "card_slot": true,
   "variants": [
    {
@@ -24234,6 +24490,7 @@
   "os_updates": null,
   "chipset": "Mediatek Dimensity 6300",
   "cpu": "Octa-core (2x2.4 GHz Cortex-A76 & 6x2.0 GHz Cortex-A55)",
+  "gpu_name": "Mali-G57 MC2",
   "card_slot": true,
   "variants": [
    {
@@ -24321,6 +24578,7 @@
   "os_updates": null,
   "chipset": "Mediatek Dimensity 6400 Turbo",
   "cpu": "Octa-core (2x2.5 GHz Cortex-A76 & 6x2.0 GHz Cortex-A55)",
+  "gpu_name": "Mali-G57 MC2",
   "card_slot": true,
   "variants": [
    {
@@ -24408,6 +24666,7 @@
   "os_updates": null,
   "chipset": "Qualcomm Snapdragon 685",
   "cpu": "Octa-core (4x2.8 GHz Cortex-A73 & 4x1.9 GHz Cortex-A53)",
+  "gpu_name": "Adreno 610",
   "card_slot": true,
   "variants": [
    {
@@ -24493,6 +24752,7 @@
   "os_updates": null,
   "chipset": "Qualcomm Snapdragon 7 Gen 4",
   "cpu": "Octa-core (1x2.8 GHz Cortex-720 & 4x2.4 GHz Cortex-720 & 3x1.8 GHz Cortex-520)",
+  "gpu_name": "Adreno 722",
   "card_slot": false,
   "variants": [
    {
@@ -24602,6 +24862,7 @@
   "os_updates": null,
   "chipset": "Mediatek Dimensity 7300 Max",
   "cpu": "Octa-core (4x2.5 GHz Cortex-A78 & 4x2.0 GHz Cortex-A55)",
+  "gpu_name": "Mali-G615 MC2",
   "card_slot": false,
   "variants": [
    {
@@ -24700,6 +24961,7 @@
   "os_updates": null,
   "chipset": "Qualcomm Snapdragon 685",
   "cpu": "Octa-core (4x2.8 GHz Cortex-A73 & 4x1.9 GHz Cortex-A53)",
+  "gpu_name": "Adreno 610",
   "card_slot": true,
   "variants": [
    {
@@ -24785,6 +25047,7 @@
   "os_updates": null,
   "chipset": "Mediatek Dimensity 6300",
   "cpu": "Octa-core (2x2.4 GHz Cortex-A76 & 6x2.0 GHz Cortex-A55)",
+  "gpu_name": "Mali-G57 MC2",
   "card_slot": true,
   "variants": [
    {
@@ -24874,6 +25137,7 @@
   "os_updates": 4,
   "chipset": "Qualcomm Snapdragon 8 Elite Gen 5",
   "cpu": "Octa-core (2x4.6 GHz Oryon V3 Phoenix L + 6x3.62 GHz Oryon V3 Phoenix M)",
+  "gpu_name": "Adreno 840",
   "card_slot": false,
   "variants": [
    {
@@ -24983,6 +25247,7 @@
   "os_updates": null,
   "chipset": "Mediatek Dimensity 7300 Energy",
   "cpu": "Octa-core (4x2.5 GHz Cortex-A78 & 4x2.0 GHz Cortex-A55)",
+  "gpu_name": "Mali-G615 MC2",
   "card_slot": true,
   "variants": [
    {
@@ -25068,6 +25333,7 @@
   "os_updates": null,
   "chipset": "Mediatek Dimensity 7300+",
   "cpu": "Octa-core (4x2.6 GHz Cortex-A78 & 4x2.0 GHz Cortex-A55)",
+  "gpu_name": "Mali-G615 MC2",
   "card_slot": false,
   "variants": [
    {
@@ -25154,6 +25420,7 @@
   "os_updates": 3,
   "chipset": "Mediatek Dimensity 6400 Max",
   "cpu": "Octa-core (2x2.5 GHz Cortex-A76 & 6x2.0 GHz Cortex-A55)",
+  "gpu_name": "Mali-G57 MC2",
   "card_slot": true,
   "variants": [
    {
@@ -25252,6 +25519,7 @@
   "os_updates": 3,
   "chipset": "Qualcomm Snapdragon 7 Gen 4",
   "cpu": "Octa-core (1x2.8 GHz Cortex-720 & 4x2.4 GHz Cortex-720 & 3x1.8 GHz Cortex-520)",
+  "gpu_name": "Adreno 722",
   "card_slot": false,
   "variants": [
    {
@@ -25350,6 +25618,7 @@
   "os_updates": null,
   "chipset": "Unisoc T7250",
   "cpu": "Octa-core (2x1.8 GHz Cortex-A75 & 6x1.6 GHz Cortex-A55)",
+  "gpu_name": "Mali-G57 MP1",
   "card_slot": true,
   "variants": [
    {
@@ -25439,6 +25708,7 @@
   "os_updates": null,
   "chipset": "Unisoc T7250",
   "cpu": "Octa-core (2x1.8 GHz Cortex-A75 & 6x1.6 GHz Cortex-A55)",
+  "gpu_name": "Mali-G57 MP1",
   "card_slot": true,
   "variants": [
    {
@@ -25524,6 +25794,7 @@
   "os_updates": null,
   "chipset": "Mediatek Dimensity 6300",
   "cpu": "Octa-core (2x2.4 GHz Cortex-A76 & 6x2.0 GHz Cortex-A55)",
+  "gpu_name": "Mali-G57 MC2",
   "card_slot": true,
   "variants": [
    {
@@ -25605,6 +25876,7 @@
   "os_updates": null,
   "chipset": "Unisoc T7250",
   "cpu": "Octa-core (2x1.8 GHz Cortex-A75 & 6x1.6 GHz Cortex-A55)",
+  "gpu_name": "Mali-G57 MP1",
   "card_slot": true,
   "variants": [
    {
@@ -25702,6 +25974,7 @@
   "os_updates": 6,
   "chipset": "Mediatek Dimensity 8400 Max",
   "cpu": "Octa-core (1x3.25 GHz Cortex-A725 & 3x3.0 GHz Cortex-A725 & 4x2.1 GHz Cortex-A725)",
+  "gpu_name": "Mali-G720 MC7",
   "card_slot": false,
   "variants": [
    {
@@ -25802,6 +26075,7 @@
   "os_updates": 4,
   "chipset": "Mediatek Dimensity 9400e",
   "cpu": "Octa-core (1x3.4 GHz Cortex-X4 & 3x2.85 GHz Cortex-X4 & 4x2.0 GHz Cortex-A720)",
+  "gpu_name": "Immortalis-G720 MC12",
   "card_slot": false,
   "variants": [
    {
@@ -25907,6 +26181,7 @@
   "os_updates": null,
   "chipset": "Mediatek Dimensity 6300",
   "cpu": "Octa-core (2x2.4 GHz Cortex-A76 & 6x2.0 GHz Cortex-A55)",
+  "gpu_name": "Mali-G57 MC2",
   "card_slot": true,
   "variants": [
    {
@@ -25992,6 +26267,7 @@
   "os_updates": 3,
   "chipset": "Mediatek Dimensity 6300",
   "cpu": "Octa-core (2x2.4 GHz Cortex-A76 & 6x2.0 GHz Cortex-A55)",
+  "gpu_name": "Mali-G57 MC2",
   "card_slot": false,
   "variants": [
    {
@@ -26084,6 +26360,7 @@
   "os_updates": null,
   "chipset": "Qualcomm Snapdragon 6 Gen 4",
   "cpu": "Octa-core (1x2.3 GHz Cortex-A720s & 3x2.2 GHz Cortex-A720s & 4x1.8 GHz Cortex-A520s)",
+  "gpu_name": "Adreno 810",
   "card_slot": true,
   "variants": [
    {
@@ -26169,6 +26446,7 @@
   "os_updates": null,
   "chipset": "Mediatek Helio G81 Ultra",
   "cpu": "Octa-core (2x2.0 GHz Cortex-A75 & 6x1.8 GHz Cortex-A55)",
+  "gpu_name": "Mali-G52 MC2",
   "card_slot": true,
   "variants": [
    {
@@ -26254,6 +26532,7 @@
   "os_updates": null,
   "chipset": "Qualcomm Snapdragon 7s Gen 2",
   "cpu": "Octa-core (4x2.40 GHz Cortex-A78 & 4x1.95 GHz Cortex-A55)",
+  "gpu_name": "Adreno 710",
   "card_slot": false,
   "variants": [
    {
@@ -26342,6 +26621,7 @@
   "os_updates": null,
   "chipset": "Mediatek Dimensity 6300",
   "cpu": "Octa-core (2x2.4 GHz Cortex-A76 & 6x2.0 GHz Cortex-A55)",
+  "gpu_name": "Mali-G57 MC2",
   "card_slot": true,
   "variants": [
    {
@@ -26427,6 +26707,7 @@
   "os_updates": 3,
   "chipset": "Mediatek Dimensity 7300 Energy",
   "cpu": "Octa-core (4x2.5 GHz Cortex-A78 & 4x2.0 GHz Cortex-A55)",
+  "gpu_name": "Mali-G615 MC2",
   "card_slot": false,
   "variants": [
    {
@@ -26516,6 +26797,7 @@
   "os_updates": 3,
   "chipset": "Qualcomm Snapdragon 7s Gen 3",
   "cpu": "Octa-core (1x2.5 GHz Cortex-A720 & 3x2.4 GHz Cortex-A720 & 4x1.8 GHz Cortex-A520)",
+  "gpu_name": "Adreno 810",
   "card_slot": false,
   "variants": [
    {
@@ -26619,6 +26901,7 @@
   "os_updates": null,
   "chipset": "Qualcomm Snapdragon 7s Gen 4",
   "cpu": "Octa-core (1x2.7 GHz Cortex-A720 & 3x2.4 GHz Cortex-A720 & 4x1.8 GHz Cortex-A520)",
+  "gpu_name": "Adreno 810",
   "card_slot": true,
   "variants": [
    {
@@ -26702,6 +26985,7 @@
   "os_updates": null,
   "chipset": "Qualcomm Snapdragon 8s Gen 4",
   "cpu": "Octa-core (1x3.21 GHz Cortex-X4 & 3x3.0 GHz Cortex-A720 & 2x2.8 GHz Cortex-A720 & 2x2.0 GHz Cortex-A720)",
+  "gpu_name": "Adreno 825",
   "card_slot": false,
   "variants": [
    {
@@ -26796,6 +27080,7 @@
   "os_updates": null,
   "chipset": "Qualcomm Snapdragon 8 Elite Gen 5",
   "cpu": "Octa-core (2x4.6 GHz Oryon V3 Phoenix L + 6x3.62 GHz Oryon V3 Phoenix M)",
+  "gpu_name": "Adreno 840",
   "card_slot": false,
   "variants": [
    {
@@ -26898,6 +27183,7 @@
   "os_updates": null,
   "chipset": "Qualcomm Snapdragon 8 Gen 5",
   "cpu": "Octa-core (2x3.8 GHz Oryon V3 Phoenix L + 6x3.32 GHz Oryon V3 Phoenix M)",
+  "gpu_name": "Adreno 829",
   "card_slot": false,
   "variants": [
    {
@@ -26992,6 +27278,7 @@
   "os_updates": null,
   "chipset": "Qualcomm Snapdragon 8 Elite Gen 5",
   "cpu": "Octa-core (2x4.6 GHz Oryon V3 Phoenix L + 6x3.62 GHz Oryon V3 Phoenix M)",
+  "gpu_name": "Adreno 840",
   "card_slot": false,
   "variants": [
    {
@@ -27101,6 +27388,7 @@
   "os_updates": 4,
   "chipset": "Qualcomm Snapdragon 8s Gen 3",
   "cpu": "Octa-core (1x3.0 GHz Cortex-X4 & 4x2.8 GHz Cortex-A720 & 3x2.0 GHz Cortex-A520)",
+  "gpu_name": "Adreno 735",
   "card_slot": false,
   "variants": [
    {
@@ -27195,6 +27483,7 @@
   "os_updates": null,
   "chipset": "Mediatek Dimensity 8350 Apex",
   "cpu": "Octa-core (1x3.35 GHz Cortex-A715 & 3x3.20 GHz Cortex-A715 & 4x2.20 GHz Cortex-A510)",
+  "gpu_name": "Mali G615-MC6",
   "card_slot": true,
   "variants": [
    {
@@ -27289,6 +27578,7 @@
   "os_updates": null,
   "chipset": "Qualcomm Snapdragon 8 Elite",
   "cpu": "Octa-core (2x4.32 GHz Oryon V2 Phoenix L + 6x3.53 GHz Oryon V2 Phoenix M)",
+  "gpu_name": "Adreno 830",
   "card_slot": false,
   "variants": [
    {
@@ -27379,6 +27669,7 @@
   "os_updates": null,
   "chipset": "Qualcomm Snapdragon 8 Elite",
   "cpu": "Octa-core (2x4.32 GHz Oryon V2 Phoenix L + 6x3.53 GHz Oryon V2 Phoenix M)",
+  "gpu_name": "Adreno 830",
   "card_slot": false,
   "variants": [
    {
@@ -27481,6 +27772,7 @@
   "os_updates": 4,
   "chipset": "Qualcomm Snapdragon 8 Gen 3",
   "cpu": "Octa-core (1x3.3 GHz Cortex-X4 & 3x3.2 GHz Cortex-A720 & 2x3.0 GHz Cortex-A720 & 2x2.3 GHz Cortex-A520)",
+  "gpu_name": "Adreno 750",
   "card_slot": false,
   "variants": [
    {
@@ -27578,6 +27870,7 @@
   "os_updates": 3,
   "chipset": "Qualcomm Snapdragon 6 Gen 4",
   "cpu": "Octa-core (1x2.3 GHz Cortex-A720s & 3x2.2 GHz Cortex-A720s & 4x1.8 GHz Cortex-A520s)",
+  "gpu_name": "Adreno 810",
   "card_slot": false,
   "variants": [
    {
@@ -27668,6 +27961,7 @@
   "os_updates": 3,
   "chipset": "Qualcomm Snapdragon 7 Gen 4",
   "cpu": "Octa-core (1x2.8 GHz Cortex-720 & 4x2.4 GHz Cortex-720 & 3x1.8 GHz Cortex-520)",
+  "gpu_name": "Adreno 722",
   "card_slot": false,
   "variants": [
    {
@@ -27769,6 +28063,7 @@
   "os_updates": 3,
   "chipset": "Qualcomm Snapdragon 7s Gen 4",
   "cpu": "Octa-core (1x2.7 GHz Cortex-A720 & 3x2.4 GHz Cortex-A720 & 4x1.8 GHz Cortex-A520)",
+  "gpu_name": "Adreno 810",
   "card_slot": false,
   "variants": [
    {
@@ -27870,6 +28165,7 @@
   "os_updates": 3,
   "chipset": "Mediatek Dimensity 7300 Pro",
   "cpu": "Octa-core (4x2.5 GHz Cortex-A78 & 4x2.0 GHz Cortex-A55)",
+  "gpu_name": "Mali-G615 MC2",
   "card_slot": true,
   "variants": [
    {
@@ -27965,6 +28261,7 @@
   "os_updates": 5,
   "chipset": "Qualcomm Snapdragon 8s Gen 4",
   "cpu": "Octa-core (1x3.21 GHz Cortex-X4 & 3x3.0 GHz Cortex-A720 & 2x2.8 GHz Cortex-A720 & 2x2.0 GHz Cortex-A720)",
+  "gpu_name": "Adreno 825",
   "card_slot": false,
   "variants": [
    {
@@ -28062,6 +28359,7 @@
   "os_updates": 3,
   "chipset": "Mediatek Dimensity 7300 Pro",
   "cpu": "Octa-core (4x2.5 GHz Cortex-A78 & 4x2.0 GHz Cortex-A55)",
+  "gpu_name": "Mali-G615 MC2",
   "card_slot": true,
   "variants": [
    {
@@ -28157,6 +28455,7 @@
   "os_updates": 3,
   "chipset": "Qualcomm Snapdragon 7s Gen 3",
   "cpu": "Octa-core (1x2.5 GHz Cortex-A720 & 3x2.4 GHz Cortex-A720 & 4x1.8 GHz Cortex-A520)",
+  "gpu_name": "Adreno 810",
   "card_slot": false,
   "variants": [
    {
@@ -28256,6 +28555,7 @@
   "os_updates": 3,
   "chipset": "Qualcomm Snapdragon 7s Gen 3",
   "cpu": "Octa-core (1x2.5 GHz Cortex-A720 & 3x2.4 GHz Cortex-A720 & 4x1.8 GHz Cortex-A520)",
+  "gpu_name": "Adreno 810",
   "card_slot": false,
   "variants": [
    {
@@ -28357,6 +28657,7 @@
   "os_updates": null,
   "chipset": "Mediatek Helio G91 Ultra",
   "cpu": "Octa-core (2x2.0 GHz Cortex-A75 & 6x1.8 GHz Cortex-A55)",
+  "gpu_name": "Mali-G52 MC2",
   "card_slot": true,
   "variants": [
    {
@@ -28455,6 +28756,7 @@
   "os_updates": null,
   "chipset": "Mediatek Dimensity 8300 Ultra",
   "cpu": "Octa-core (1x3.35 GHz Cortex-A715 & 3x3.20 GHz Cortex-A715 & 4x2.20 GHz Cortex-A510)",
+  "gpu_name": "Mali G615-MC6",
   "card_slot": false,
   "variants": [
    {
@@ -28560,6 +28862,7 @@
   "os_updates": null,
   "chipset": "Apple A15 Bionic",
   "cpu": "Hexa-core (2x3.23 GHz Avalanche + 4x1.82 GHz Blizzard)",
+  "gpu_name": "Apple GPU (4-core graphics)",
   "card_slot": false,
   "variants": [
    {
@@ -28654,6 +28957,7 @@
   "os_updates": null,
   "chipset": "Apple A15 Bionic",
   "cpu": "Hexa-core (2x3.23 GHz Avalanche + 4x1.82 GHz Blizzard)",
+  "gpu_name": "Apple GPU (5-core graphics)",
   "card_slot": false,
   "variants": [
    {
@@ -28748,6 +29052,7 @@
   "os_updates": null,
   "chipset": "Apple A16 Bionic",
   "cpu": "Hexa-core (2x3.46 GHz Everest + 4x2.02 GHz Sawtooth)",
+  "gpu_name": "Apple GPU (5-core graphics)",
   "card_slot": false,
   "variants": [
    {
@@ -28842,6 +29147,7 @@
   "os_updates": null,
   "chipset": "Apple A18",
   "cpu": "Hexa-core (2x4.04 GHz + 4x2.20 GHz)",
+  "gpu_name": "Apple GPU (5-core graphics)",
   "card_slot": false,
   "variants": [
    {
@@ -28936,6 +29242,7 @@
   "os_updates": null,
   "chipset": "Apple A18",
   "cpu": "Hexa-core (2x4.04 GHz + 4x2.20 GHz)",
+  "gpu_name": "Apple GPU (5-core graphics)",
   "card_slot": false,
   "variants": [
    {
@@ -29030,6 +29337,7 @@
   "os_updates": null,
   "chipset": "Apple A18 Pro",
   "cpu": "Hexa-core (2x4.05 GHz + 4x2.42 GHz)",
+  "gpu_name": "Apple GPU (6-core graphics)",
   "card_slot": false,
   "variants": [
    {
@@ -29135,6 +29443,7 @@
   "os_updates": null,
   "chipset": "Apple A18 Pro",
   "cpu": "Hexa-core (2x4.05 GHz + 4x2.42 GHz)",
+  "gpu_name": "Apple GPU (6-core graphics)",
   "card_slot": false,
   "variants": [
    {
@@ -29236,6 +29545,7 @@
   "os_updates": 7,
   "chipset": "Exynos 2400e",
   "cpu": "10-core (1x3.1 GHz + 2x2.9 GHz + 3x2.6 GHz + 4x1.95 GHz)",
+  "gpu_name": "Xclipse 940",
   "card_slot": false,
   "variants": [
    {
@@ -29335,6 +29645,7 @@
   "os_updates": 7,
   "chipset": "Qualcomm Snapdragon 8 Gen 3",
   "cpu": "8-core (1x3.39GHz Cortex-X4 & 3x3.1GHz Cortex-A720 & 2x2.9GHz Cortex-A720 & 2x2.2GHz Cortex-A520)",
+  "gpu_name": "Adreno 750 (1 GHz)",
   "card_slot": false,
   "variants": [
    {
@@ -29443,6 +29754,7 @@
   "os_updates": null,
   "chipset": "Mediatek Helio G85",
   "cpu": "Octa-core (2x2.0 GHz Cortex-A75 & 6x1.8 GHz Cortex-A55)",
+  "gpu_name": "Mali-G52 MC2",
   "card_slot": true,
   "variants": [
    {
@@ -29526,6 +29838,7 @@
   "os_updates": null,
   "chipset": "Mediatek Dimensity 7050",
   "cpu": "Octa-core (2x2.6 GHz Cortex-A78 & 6x2.0 GHz Cortex-A55)",
+  "gpu_name": "Mali-G68 MC4",
   "card_slot": true,
   "variants": [
    {
@@ -29619,6 +29932,7 @@
   "os_updates": 3,
   "chipset": "Mediatek Dimensity 7300 Energy",
   "cpu": "Octa-core (4x2.5 GHz Cortex-A78 & 4x2.0 GHz Cortex-A55)",
+  "gpu_name": "Mali-G615 MC2",
   "card_slot": true,
   "variants": [
    {
@@ -29720,6 +30034,7 @@
   "os_updates": 3,
   "chipset": "Mediatek Dimensity 7300 Energy",
   "cpu": "Octa-core (4x2.5 GHz Cortex-A78 & 4x2.0 GHz Cortex-A55)",
+  "gpu_name": "Mali-G615 MC2",
   "card_slot": true,
   "variants": [
    {
@@ -29817,6 +30132,7 @@
   "os_updates": null,
   "chipset": "Mediatek Dimensity 8350",
   "cpu": "Octa-core (1x3.35 GHz Cortex-A715 & 3x3.20 GHz Cortex-A715 & 4x2.20 GHz Cortex-A510)",
+  "gpu_name": "Mali G615-MC6",
   "card_slot": false,
   "variants": [
    {
@@ -29927,6 +30243,7 @@
   "os_updates": 5,
   "chipset": "Mediatek Dimensity 9400",
   "cpu": "Octa-core (1x3.63 GHz Cortex-X925 & 3x3.3 GHz Cortex-X4 & 4x2.4 GHz Cortex-A720)",
+  "gpu_name": "Immortalis-G925",
   "card_slot": false,
   "variants": [
    {
@@ -30036,6 +30353,7 @@
   "os_updates": 5,
   "chipset": "Mediatek Dimensity 9400",
   "cpu": "Octa-core (1x3.63 GHz Cortex-X925 & 3x3.3 GHz Cortex-X4 & 4x2.4 GHz Cortex-A720)",
+  "gpu_name": "Immortalis-G925",
   "card_slot": false,
   "variants": [
    {
@@ -30148,6 +30466,7 @@
   "os_updates": 7,
   "chipset": "Google Tensor G3",
   "cpu": "Nona-core (1x2.91 GHz Cortex-X3 & 4x2.37 GHz Cortex-A715 & 4x1.70 GHz Cortex-A510)",
+  "gpu_name": "Mali-G715 MP7",
   "card_slot": false,
   "variants": [
    {
@@ -30245,6 +30564,7 @@
   "os_updates": 7,
   "chipset": "Google Tensor G4",
   "cpu": "Octa-core (1x3.1 GHz Cortex-X4 & 3x2.6 GHz Cortex-A720 & 4x1.92 GHz Cortex-A520)",
+  "gpu_name": "Mali-G715 MC7",
   "card_slot": false,
   "variants": [
    {
@@ -30335,6 +30655,7 @@
   "os_updates": 7,
   "chipset": "Google Tensor G4",
   "cpu": "Octa-core (1x3.1 GHz Cortex-X4 & 3x2.6 GHz Cortex-A720 & 4x1.92 GHz Cortex-A520)",
+  "gpu_name": "Mali-G715 MC7",
   "card_slot": false,
   "variants": [
    {
@@ -30440,6 +30761,7 @@
   "os_updates": 7,
   "chipset": "Google Tensor G4",
   "cpu": "Octa-core (1x3.1 GHz Cortex-X4 & 3x2.6 GHz Cortex-A720 & 4x1.92 GHz Cortex-A520)",
+  "gpu_name": "Mali-G715 MC7",
   "card_slot": false,
   "variants": [
    {
@@ -30545,6 +30867,7 @@
   "os_updates": 4,
   "chipset": "Qualcomm Snapdragon 7+ Gen 3",
   "cpu": "Octa-core (1x2.8 GHz Cortex-X4 & 4x2.6 GHz Cortex-A720 & 3x1.9 GHz Cortex-A520)",
+  "gpu_name": "Adreno 732",
   "card_slot": false,
   "variants": [
    {
@@ -30644,6 +30967,7 @@
   "os_updates": 3,
   "chipset": "Qualcomm Snapdragon 8 Gen 2",
   "cpu": "Octa-core (1x3.2 GHz Cortex-X3 & 2x2.8 GHz Cortex-A715 & 2x2.8 GHz Cortex-A710 & 3x2.0 GHz Cortex-A510)",
+  "gpu_name": "Adreno 740",
   "card_slot": false,
   "variants": [
    {
@@ -30749,6 +31073,7 @@
   "os_updates": 4,
   "chipset": "Qualcomm Snapdragon 8 Elite",
   "cpu": "Octa-core (2x4.32 GHz Oryon V2 Phoenix L + 6x3.53 GHz Oryon V2 Phoenix M)",
+  "gpu_name": "Adreno 830",
   "card_slot": false,
   "variants": [
    {
@@ -30854,6 +31179,7 @@
   "os_updates": 3,
   "chipset": "Mediatek Dimensity 7200 Pro",
   "cpu": "Octa-core (2x2.8 GHz Cortex-A715 & 6x 2.0 Cortex-A510)",
+  "gpu_name": "Mali-G610 MC4",
   "card_slot": false,
   "variants": [
    {
@@ -30946,6 +31272,7 @@
   "os_updates": null,
   "chipset": "Mediatek Helio G85",
   "cpu": "Octa-core (2x2.0 GHz Cortex-A75 & 6x1.8 GHz Cortex-A55)",
+  "gpu_name": "Mali-G52 MC2",
   "card_slot": true,
   "variants": [
    {
@@ -31029,6 +31356,7 @@
   "os_updates": null,
   "chipset": "Mediatek Dimensity 6300",
   "cpu": "Octa-core (2x2.4 GHz Cortex-A76 & 6x2.0 GHz Cortex-A55)",
+  "gpu_name": "Mali-G57 MC2",
   "card_slot": true,
   "variants": [
    {
@@ -31120,6 +31448,7 @@
   "os_updates": null,
   "chipset": "Qualcomm Snapdragon 4 Gen 2",
   "cpu": "Octa-core (2x2.2 GHz Cortex-A78 & 6x1.95 GHz Cortex-A55)",
+  "gpu_name": "Adreno 613",
   "card_slot": true,
   "variants": [
    {
@@ -31199,6 +31528,7 @@
   "os_updates": null,
   "chipset": "Qualcomm Snapdragon 6 Gen 1",
   "cpu": "Octa-core (4x2.2 GHz Cortex-A78 & 4x1.8 GHz Cortex-A55)",
+  "gpu_name": "Adreno 710",
   "card_slot": true,
   "variants": [
    {
@@ -31296,6 +31626,7 @@
   "os_updates": null,
   "chipset": "Qualcomm Snapdragon 7 Gen 3",
   "cpu": "Octa-core (1x2.63 GHz Cortex-A715 & 3x2.4 GHz Cortex-A715 & 4x1.8 GHz Cortex-A510)",
+  "gpu_name": "Adreno 720",
   "card_slot": false,
   "variants": [
    {
@@ -31394,6 +31725,7 @@
   "os_updates": null,
   "chipset": "Qualcomm Snapdragon 6 Gen 1",
   "cpu": "Octa-core (4x2.2 GHz Cortex-A78 & 4x1.8 GHz Cortex-A55)",
+  "gpu_name": "Adreno 710",
   "card_slot": false,
   "variants": [
    {
@@ -31486,6 +31818,7 @@
   "os_updates": 4,
   "chipset": "Qualcomm Snapdragon 8s Gen 3",
   "cpu": "Octa-core (1x3.0 GHz Cortex-X4 & 4x2.8 GHz Cortex-A720 & 3x2.0 GHz Cortex-A520)",
+  "gpu_name": "Adreno 735",
   "card_slot": false,
   "variants": [
    {
@@ -31589,6 +31922,7 @@
   "os_updates": 4,
   "chipset": "Qualcomm Snapdragon 8 Gen 3",
   "cpu": "Octa-core (1x3.3 GHz Cortex-X4 & 3x3.2 GHz Cortex-A720 & 2x3.0 GHz Cortex-A720 & 2x2.3 GHz Cortex-A520)",
+  "gpu_name": "Adreno 750",
   "card_slot": false,
   "variants": [
    {
@@ -31698,6 +32032,7 @@
   "os_updates": 7,
   "chipset": "Qualcomm Snapdragon 8 Elite",
   "cpu": "Octa-core (2x4.32 GHz Oryon V2 Phoenix L + 6x3.53 GHz Oryon V2 Phoenix M)",
+  "gpu_name": "Adreno 830",
   "card_slot": false,
   "variants": [
    {
@@ -31803,6 +32138,7 @@
   "os_updates": null,
   "chipset": "Mediatek Dimensity 7300 Energy",
   "cpu": "Octa-core (4x2.5 GHz Cortex-A78 & 4x2.0 GHz Cortex-A55)",
+  "gpu_name": "Mali-G615 MC2",
   "card_slot": true,
   "variants": [
    {
@@ -31894,6 +32230,7 @@
   "os_updates": 3,
   "chipset": "Qualcomm Snapdragon 8s Gen 3",
   "cpu": "Octa-core (1x3.0 GHz Cortex-X4 & 4x2.8 GHz Cortex-A720 & 3x2.0 GHz Cortex-A520)",
+  "gpu_name": "Adreno 735",
   "card_slot": false,
   "variants": [
    {
@@ -31995,6 +32332,7 @@
   "os_updates": 4,
   "chipset": "Qualcomm Snapdragon 8 Elite",
   "cpu": "Octa-core (2x4.32 GHz Oryon V2 Phoenix L + 6x3.53 GHz Oryon V2 Phoenix M)",
+  "gpu_name": "Adreno 830",
   "card_slot": false,
   "variants": [
    {
@@ -32104,6 +32442,7 @@
   "os_updates": null,
   "chipset": "Mediatek Dimensity 6300",
   "cpu": "Octa-core (2x2.4 GHz Cortex-A76 & 6x2.0 GHz Cortex-A55)",
+  "gpu_name": "Mali-G57 MC2",
   "card_slot": true,
   "variants": [
    {
@@ -32209,6 +32548,7 @@
   "os_updates": 3,
   "chipset": "Mediatek Dimensity 7350 Pro",
   "cpu": "Octa-core (2x3.0 GHz Cortex-A715 & 6x 2.0 GHz Cortex-A510)",
+  "gpu_name": "Mali-G610 MC4",
   "card_slot": false,
   "variants": [
    {
@@ -32297,6 +32637,7 @@
   "os_updates": null,
   "chipset": "Qualcomm Snapdragon 7s Gen 2",
   "cpu": "Octa-core (4x2.40 GHz Cortex-A78 & 4x1.95 GHz Cortex-A55)",
+  "gpu_name": "Adreno 710",
   "card_slot": false,
   "variants": [
    {

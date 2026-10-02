@@ -72,12 +72,24 @@ function rows(categories, preset) {
     { label: 'Geekbench 6', get: sp('gb6'), better: 'high', fmt: (v) => fmtNum(v) },
     { label: '3DMark WLE', get: sp('gpu'), better: 'high', fmt: (v) => fmtNum(v) },
     {
+      label: 'Keeps under load',
+      get: sp('gpu_stability'),
+      better: 'high',
+      fmt: (v) => (isNum(v) ? `${Math.round(v * 100)}%` : '—'),
+    },
+    {
       label: 'Battery, active use',
       get: sp('battery_h'),
       better: 'high',
       fmt: (v) => (isNum(v) ? `${fmtNum(v, 1)} h` : '—'),
     },
     { label: 'Main camera sensor', get: sp('main_sensor_in'), better: 'high', fmt: (v) => sensorFormat(v) || '—' },
+    {
+      label: 'DXOMARK camera',
+      get: (p) => (p.specs?.dxomark_from ? null : p.specs?.dxomark),
+      better: 'high',
+      fmt: (v) => (isNum(v) ? String(v) : 'Not tested'),
+    },
     {
       label: 'Telephoto zoom',
       get: sp('tele_zoom'),

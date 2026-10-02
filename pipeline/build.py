@@ -23,7 +23,7 @@ from collections import defaultdict
 from pathlib import Path
 
 from . import config as C
-from . import scoring, value
+from . import labs, scoring, value
 from .enrich import enrich
 from .prices import LEGACY_DATE, load_rows
 
@@ -146,6 +146,15 @@ def summary(p: dict, variant: dict) -> dict:
         "main_sensor_est": p.get("main_sensor_est"),
         "battery_cycles": p.get("battery_cycles"), "pwm_hz": p.get("pwm_hz"),
         "secure_unlock": p.get("secure_unlock"),
+        "camera_hw": round(scoring.camera_hardware(p), 2),
+        "dxomark": (p.get("camera_lab") or {}).get("dxomark"),
+        "dxomark_protocol": (p.get("camera_lab") or {}).get("protocol"),
+        "dxomark_url": (p.get("camera_lab") or {}).get("url"),
+        "dxomark_from": (p.get("camera_lab") or {}).get("from"),
+        "gpu_stability": None if p.get("gpu_stability") is None else round(p["gpu_stability"], 3),
+        "stability_source": p.get("stability_source"),
+        "stress_url": (p.get("stress") or {}).get("url"),
+        "max_temp_c": (p.get("stress") or {}).get("max_temp_c"),
         "storage_type": scoring.storage_type(p, variant), "storage_type_est": not p.get("storage_types"),
         "weight_g": p.get("weight_g"), "thickness_mm": p.get("thickness_mm"),
         "has_5g": p.get("has_5g"), "nfc": p.get("nfc"), "stereo": p.get("stereo"), "jack": p.get("jack"),
@@ -176,14 +185,38 @@ def _sensor_label(inches: float) -> str:
     return f'{inches:.1f}"' if inches >= 0.95 else f'1/{1 / inches:.2f}"'
 
 
+def lab_notes(p: dict) -> dict[str, str]:
+    """Lab results behind a score that aren't estimates (shown under the category)."""
+    notes = {}
+    lab = p.get("camera_lab") or {}
+    if lab and not lab.get("from"):
+        notes["camera"] = (f"DXOMARK camera score {lab['dxomark']} (protocol v{lab['protocol']}), "
+                           f"blended half-and-half with the hardware score")
+    if p.get("stability_source") == "tested":
+        notes["performance"] = (f"Keeps {p['gpu_stability']:.0%} of its peak graphics in Notebookcheck's "
+                                f"{p['stress']['test']}")
+    elif p.get("stability_source") == "overheated":
+        notes["performance"] = (f"{p['stress']['note'] or 'Overheated in the stress test'}; scored at the lowest "
+                                f"stability seen ({p['gpu_stability']:.0%})")
+    return notes
+
+
 def estimated_reasons(p: dict, variant: dict) -> dict[str, str]:
     reasons = {}
     est = p["estimated"]
     if "camera" in est:
-        main = next(l for l in p["lenses"] if l["role"] == "wide")
-        reasons["camera"] = (f"Main sensor size not published; assumed {_sensor_label(main['sensor_in'])}, typical "
-                             f"for a {main['mp']:g} MP main camera on phones with similar performance" if p.get("main_sensor_est")
-                             else "Main sensor size not published; the smallest size class assumed")
+        parts = []
+        main = next((l for l in p.get("lenses") or [] if l["role"] == "wide"), None)
+        if main and p.get("main_sensor_est"):
+            parts.append(f"Main sensor size not published; assumed {_sensor_label(main['sensor_in'])}, typical "
+                         f"for a {main['mp']:g} MP main camera on phones with similar performance")
+        elif main and not main.get("sensor_in"):
+            parts.append("Main sensor size not published; the smallest size class assumed")
+        lab = p.get("camera_lab") or {}
+        if lab.get("from"):
+            parts.append(f"Not tested by DXOMARK; processing adjusted from its test of the {lab['from']} "
+                         f"({lab['why']}{', half weight' if lab['share'] < 1 else ''})")
+        reasons["camera"] = "; ".join(parts)
     if "display" in est:
         reasons["display"] = ("Brightness not lab-measured; 60% of the claimed peak used" if p.get("peak_nits")
                               else "Brightness not published")
@@ -204,8 +237,14 @@ def estimated_reasons(p: dict, variant: dict) -> dict[str, str]:
                                f"{src[len('same series ('):-1]}" if src.startswith("same series")
                                else f"No update promise stated; {n} years assumed (typical for {p['brand']})")
     if "performance" in est:
+        stress = None
+        like = {"same chipset": "phones with the same chipset",
+                "same brand": f"{p['brand']} phones with similar graphics performance",
+                "similar performance": "phones with similar graphics performance"}.get(p.get("stability_source"))
+        if like and (p.get("gpu_stability") or 1) < C.STABILITY_FLAG_BELOW:
+            stress = f"Not stress-tested; assumed to keep {p['gpu_stability']:.0%} of peak graphics like {like}"
         reasons["performance"] = "; ".join(filter(None, (_bench_reason("GeekBench", p.get("gb6_source")),
-                                                         _bench_reason("3DMark", p.get("gpu_source")))))
+                                                         _bench_reason("3DMark", p.get("gpu_source")), stress)))
     if "battery" in p["estimated"]:
         reasons["battery"] = ("Battery life not tested yet" if p.get("battery_source") == "unknown"
                               else f"Battery life not lab-tested: {p['battery_source']}")
@@ -227,6 +266,7 @@ def crawl_status(date: str) -> dict:
 def build() -> dict:
     records, stats = enrich(json.loads(SPECS.read_text(encoding="utf-8")))
     records = [r for r in records if not r.get("is_foldable")]
+    lab_info = labs.apply(records)
     by_id = {r["id"]: r for r in records}
     rows = load_rows()
     latest, offers = current_offers(rows)
@@ -254,6 +294,7 @@ def build() -> dict:
             "categories": {k: round(v, 2) for k, v in cats.items()},
             "estimated": p["estimated"],
             "estimated_reasons": estimated_reasons(p, variant),
+            "notes": lab_notes(p),
             "specs": summary(p, variant),
             "_cats": cats, "_price": typical,
         })
@@ -305,6 +346,7 @@ def build() -> dict:
                 "variant": variant, "last_price": h[-1] if h else None,
                 "categories": {k: round(v, 2) for k, v in cats.items()},
                 "estimated": p["estimated"], "estimated_reasons": estimated_reasons(p, variant),
+                "notes": lab_notes(p),
                 "scores": {pr: {"spec": round(scoring.spec_score(cats, pr), 2)} for pr in C.PRESETS},
                 "specs": summary(p, variant),
             })
@@ -319,6 +361,7 @@ def build() -> dict:
                     for k, v in C.PRESETS.items()},
         "tiers": [{"key": k, "min": lo, "max": hi if hi < 10**8 else None} for k, lo, hi in C.TIERS],
         "value_models": models,
+        "labs": lab_info,
         "enrichment": {"chips_with_benchmarks": stats["chips_with_benchmarks"],
                        "chips_with_gpu_benchmarks": stats["chips_with_gpu_benchmarks"]},
         "crawl": {"complete_brands": sorted(complete),

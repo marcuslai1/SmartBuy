@@ -287,6 +287,7 @@ def parse_spec(html: str, url: str) -> dict:
         "os_updates": _num(r"up to (\d+) major", os_text, int),
         "chipset": chipset,
         "cpu": g("Platform/CPU") or None,
+        "gpu_name": g("Platform/GPU") or None,
         # memory
         "card_slot": not g("Memory/Card slot").lower().startswith("no") if g("Memory/Card slot") else None,
         "variants": parse_variants(g("Memory/Internal")),

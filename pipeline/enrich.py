@@ -123,25 +123,34 @@ def _nearest_median(x: float, pairs: list[tuple[float, float]], k: int = 7) -> f
     return statistics.median(y for _, y in near)
 
 
-def _chip_values(records: list[dict], field: str) -> dict[str, list[int]]:
+def _gpu_key(r: dict) -> str | None:
+    """Chip plus GPU configuration: binned chips share a name but not a GPU
+    ('Apple A18' with 4 vs 5 graphics cores in the iPhone 16e vs iPhone 16)."""
+    chip = _chip_key(r.get("chipset"))
+    gpu = re.sub(r"\s+", " ", (r.get("gpu_name") or "").lower()).strip()
+    return f"{chip}|{gpu}" if chip and gpu else chip
+
+
+def _chip_values(records: list[dict], field: str, key=lambda r: _chip_key(r.get("chipset"))) -> dict[str, list[int]]:
     by_chip: dict[str, list[int]] = {}
     for r in records:
-        if r.get(field) and _chip_key(r.get("chipset")):
-            by_chip.setdefault(_chip_key(r["chipset"]), []).append(r[field])
+        if r.get(field) and key(r):
+            by_chip.setdefault(key(r), []).append(r[field])
     return by_chip
 
 
-def _chip_medians(records: list[dict], field: str) -> dict[str, int]:
-    return {k: int(statistics.median(v)) for k, v in _chip_values(records, field).items()}
+def _chip_medians(records: list[dict], field: str, key=lambda r: _chip_key(r.get("chipset"))) -> dict[str, int]:
+    return {k: int(statistics.median(v)) for k, v in _chip_values(records, field, key).items()}
 
 
-def _lab_result(r: dict, field: str, by_chip: dict[str, list[int]]) -> tuple[int, str] | None:
+def _lab_result(r: dict, field: str, by_chip: dict[str, list[int]], key: str | None = None) -> tuple[int, str] | None:
     """The phone's own lab result, unless at least two other phones share its chip
-    and it's more than LAB_OUTLIER away from their median."""
+    (and, for GPU results, its GPU configuration) and it's more than LAB_OUTLIER
+    away from their median."""
     v = r.get(field)
     if not v:
         return None
-    others = list(by_chip.get(_chip_key(r.get("chipset")), []))
+    others = list(by_chip.get(key or _chip_key(r.get("chipset")), []))
     if v in others:
         others.remove(v)
     if len(others) >= 2:
@@ -232,7 +241,8 @@ def _from_chip(key: str | None, table: dict[str, int]) -> tuple[int, str] | None
 
 def enrich(records: list[dict]) -> tuple[list[dict], dict]:
     gb6_by_chip = _chip_values(records, "geekbench6")
-    gpu_by_chip = _chip_values(records, "wildlife_extreme")
+    gpu_by_chip = _chip_values(records, "wildlife_extreme", _gpu_key)
+    gpu_by_config = _chip_medians(records, "wildlife_extreme", _gpu_key)
     chip_gb6 = _chip_medians(records, "geekbench6")
     chip_gpu = _chip_medians(records, "wildlife_extreme")
     canon = [canonical(r) for r in records]
@@ -264,8 +274,10 @@ def enrich(records: list[dict]) -> tuple[list[dict], dict]:
         else:
             r["gb6"], r["gb6_source"] = None, "unknown"
 
-        if _lab_result(r, "wildlife_extreme", gpu_by_chip):
-            r["gpu"], r["gpu_source"] = _lab_result(r, "wildlife_extreme", gpu_by_chip)
+        if _lab_result(r, "wildlife_extreme", gpu_by_chip, _gpu_key(r)):
+            r["gpu"], r["gpu_source"] = _lab_result(r, "wildlife_extreme", gpu_by_chip, _gpu_key(r))
+        elif chip and gpu_by_config.get(_gpu_key(r)):
+            r["gpu"], r["gpu_source"] = gpu_by_config[_gpu_key(r)], "same chipset"
         elif _from_chip(chip, chip_gpu):
             r["gpu"], r["gpu_source"] = _from_chip(chip, chip_gpu)
         elif len(both_gpu) >= 8 and r["gb6"]:

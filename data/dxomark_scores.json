@@ -1,0 +1,2220 @@
+{
+ "source": "https://www.dxomark.com/dakdata/api/full-smartphones-scores.json",
+ "fetched": "2026-10-02",
+ "phones": [
+  {
+   "brand": "Apple",
+   "model": "iPhone 11 Pro Max",
+   "name": "Apple iPhone 11 Pro Max",
+   "url": "https://www.dxomark.com/smartphones/Apple/iPhone-11-Pro-Max",
+   "camera": 122,
+   "protocol": "5",
+   "updated": "2022-11-14"
+  },
+  {
+   "brand": "Apple",
+   "model": "iPhone 11",
+   "name": "Apple iPhone 11",
+   "url": "https://www.dxomark.com/smartphones/Apple/iPhone-11",
+   "camera": 116,
+   "protocol": "5",
+   "updated": "2022-09-19"
+  },
+  {
+   "brand": "Huawei",
+   "model": "P40 Pro",
+   "name": "Huawei P40 Pro",
+   "url": "https://www.dxomark.com/smartphones/Huawei/P40-Pro",
+   "camera": 129,
+   "protocol": "5",
+   "updated": "2022-09-19"
+  },
+  {
+   "brand": "OnePlus",
+   "model": "8 Pro",
+   "name": "OnePlus 8 Pro",
+   "url": "https://www.dxomark.com/smartphones/OnePlus/8-Pro",
+   "camera": 113,
+   "protocol": "5",
+   "updated": "2022-09-19"
+  },
+  {
+   "brand": "Xiaomi",
+   "model": "Mi 10 Ultra",
+   "name": "Xiaomi Mi 10 Ultra",
+   "url": "https://www.dxomark.com/smartphones/Xiaomi/Mi-10-Ultra",
+   "camera": 129,
+   "protocol": "5",
+   "updated": "2022-09-19"
+  },
+  {
+   "brand": "Vivo",
+   "model": "X50 Pro+",
+   "name": "Vivo X50 Pro+",
+   "url": "https://www.dxomark.com/smartphones/Vivo/X50-Pro+",
+   "camera": 125,
+   "protocol": "5",
+   "updated": "2022-09-19"
+  },
+  {
+   "brand": "Huawei",
+   "model": "P40",
+   "name": "Huawei P40",
+   "url": "https://www.dxomark.com/smartphones/Huawei/P40",
+   "camera": 102,
+   "protocol": "5",
+   "updated": "2022-11-30"
+  },
+  {
+   "brand": "Huawei",
+   "model": "Mate 40 Pro",
+   "name": "Huawei Mate 40 Pro",
+   "url": "https://www.dxomark.com/smartphones/Huawei/Mate-40-Pro",
+   "camera": 135,
+   "protocol": "5",
+   "updated": "2022-11-30"
+  },
+  {
+   "brand": "Google",
+   "model": "Pixel 5",
+   "name": "Google Pixel 5",
+   "url": "https://www.dxomark.com/smartphones/Google/Pixel-5",
+   "camera": 109,
+   "protocol": "5",
+   "updated": "2022-09-19"
+  },
+  {
+   "brand": "Apple",
+   "model": "iPhone 12",
+   "name": "Apple iPhone 12",
+   "url": "https://www.dxomark.com/smartphones/Apple/iPhone-12",
+   "camera": 117,
+   "protocol": "5",
+   "updated": "2022-09-19"
+  },
+  {
+   "brand": "Apple",
+   "model": "iPhone 12 Pro",
+   "name": "Apple iPhone 12 Pro",
+   "url": "https://www.dxomark.com/smartphones/Apple/iPhone-12-Pro",
+   "camera": 127,
+   "protocol": "5",
+   "updated": "2022-11-30"
+  },
+  {
+   "brand": "Google",
+   "model": "Pixel 4a",
+   "name": "Google Pixel 4a",
+   "url": "https://www.dxomark.com/smartphones/Google/Pixel-4a",
+   "camera": 100,
+   "protocol": "5",
+   "updated": "2022-09-19"
+  },
+  {
+   "brand": "Apple",
+   "model": "iPhone 12 Pro Max",
+   "name": "Apple iPhone 12 Pro Max",
+   "url": "https://www.dxomark.com/smartphones/Apple/iPhone-12-Pro-Max",
+   "camera": 131,
+   "protocol": "5",
+   "updated": "2022-09-19"
+  },
+  {
+   "brand": "Huawei",
+   "model": "Mate 40 Pro+",
+   "name": "Huawei Mate 40 Pro+",
+   "url": "https://www.dxomark.com/smartphones/Huawei/Mate-40-Pro+",
+   "camera": 139,
+   "protocol": "5",
+   "updated": "2022-09-19"
+  },
+  {
+   "brand": "Apple",
+   "model": "iPhone 12 mini",
+   "name": "Apple iPhone 12 mini",
+   "url": "https://www.dxomark.com/smartphones/Apple/iPhone-12-mini",
+   "camera": 117,
+   "protocol": "5",
+   "updated": "2022-09-19"
+  },
+  {
+   "brand": "Samsung",
+   "model": "Galaxy S21 Ultra 5G (Exynos)",
+   "name": "Samsung Galaxy S21 Ultra 5G (Exynos)",
+   "url": "https://www.dxomark.com/smartphones/Samsung/Galaxy-S21-Ultra-5G-(Exynos)",
+   "camera": 115,
+   "protocol": "5",
+   "updated": "2022-11-14"
+  },
+  {
+   "brand": "Xiaomi",
+   "model": "Mi 11 Ultra",
+   "name": "Xiaomi Mi 11 Ultra",
+   "url": "https://www.dxomark.com/smartphones/Xiaomi/Mi-11-Ultra",
+   "camera": 141,
+   "protocol": "5",
+   "updated": "2022-09-19"
+  },
+  {
+   "brand": "Samsung",
+   "model": "Galaxy S21 Ultra 5G (Snapdragon)",
+   "name": "Samsung Galaxy S21 Ultra 5G (Snapdragon)",
+   "url": "https://www.dxomark.com/smartphones/Samsung/Galaxy-S21-Ultra-5G-(Snapdragon)",
+   "camera": 117,
+   "protocol": "5",
+   "updated": "2022-11-30"
+  },
+  {
+   "brand": "Samsung",
+   "model": "Galaxy S21 5G (Exynos)",
+   "name": "Samsung Galaxy S21 5G (Exynos)",
+   "url": "https://www.dxomark.com/smartphones/Samsung/Galaxy-S21-5G-(Exynos)",
+   "camera": 111,
+   "protocol": "5",
+   "updated": "2022-09-19"
+  },
+  {
+   "brand": "Samsung",
+   "model": "Galaxy S21+ 5G (Exynos)",
+   "name": "Samsung Galaxy S21+ 5G (Exynos)",
+   "url": "https://www.dxomark.com/smartphones/Samsung/Galaxy-S21+-5G-(Exynos)",
+   "camera": 111,
+   "protocol": "5",
+   "updated": "2022-09-19"
+  },
+  {
+   "brand": "Samsung",
+   "model": "Galaxy S21 5G (Snapdragon)",
+   "name": "Samsung Galaxy S21 5G (Snapdragon)",
+   "url": "https://www.dxomark.com/smartphones/Samsung/Galaxy-S21-5G-(Snapdragon)",
+   "camera": 117,
+   "protocol": "5",
+   "updated": "2022-09-19"
+  },
+  {
+   "brand": "Vivo",
+   "model": "X60 Pro+",
+   "name": "Vivo X60 Pro+",
+   "url": "https://www.dxomark.com/smartphones/Vivo/X60-Pro+",
+   "camera": 126,
+   "protocol": "5",
+   "updated": "2022-09-19"
+  },
+  {
+   "brand": "Oppo",
+   "model": "Find X3 Neo",
+   "name": "Oppo Find X3 Neo",
+   "url": "https://www.dxomark.com/smartphones/Oppo/Find-X3-Neo",
+   "camera": 106,
+   "protocol": "5",
+   "updated": "2022-09-19"
+  },
+  {
+   "brand": "Oppo",
+   "model": "Find X3 Pro",
+   "name": "Oppo Find X3 Pro",
+   "url": "https://www.dxomark.com/smartphones/Oppo/Find-X3-Pro",
+   "camera": 128,
+   "protocol": "5",
+   "updated": "2022-09-19"
+  },
+  {
+   "brand": "Oppo",
+   "model": "Reno4 5G",
+   "name": "Oppo Reno4 5G",
+   "url": "https://www.dxomark.com/smartphones/Oppo/Reno4-5G",
+   "camera": 94,
+   "protocol": "5",
+   "updated": "2022-09-19"
+  },
+  {
+   "brand": "Samsung",
+   "model": "Galaxy A52 5G",
+   "name": "Samsung Galaxy A52 5G",
+   "url": "https://www.dxomark.com/smartphones/Samsung/Galaxy-A52-5G",
+   "camera": 88,
+   "protocol": "5",
+   "updated": "2022-09-19"
+  },
+  {
+   "brand": "OnePlus",
+   "model": "9 Pro",
+   "name": "OnePlus 9 Pro",
+   "url": "https://www.dxomark.com/smartphones/OnePlus/9-Pro",
+   "camera": 122,
+   "protocol": "5",
+   "updated": "2022-11-14"
+  },
+  {
+   "brand": "Samsung",
+   "model": "Galaxy S21+ 5G (Snapdragon)",
+   "name": "Samsung Galaxy S21+ 5G (Snapdragon)",
+   "url": "https://www.dxomark.com/smartphones/Samsung/Galaxy-S21+-5G-(Snapdragon)",
+   "camera": 115,
+   "protocol": "5",
+   "updated": "2022-11-14"
+  },
+  {
+   "brand": "Asus",
+   "model": "Zenfone 8",
+   "name": "Asus Zenfone 8",
+   "url": "https://www.dxomark.com/smartphones/Asus/Zenfone-8",
+   "camera": 116,
+   "protocol": "5",
+   "updated": "2022-09-19"
+  },
+  {
+   "brand": "Oppo",
+   "model": "A94 5G",
+   "name": "Oppo A94 5G",
+   "url": "https://www.dxomark.com/smartphones/Oppo/A94-5G",
+   "camera": 93,
+   "protocol": "5",
+   "updated": "2022-09-19"
+  },
+  {
+   "brand": "Samsung",
+   "model": "Galaxy A72",
+   "name": "Samsung Galaxy A72",
+   "url": "https://www.dxomark.com/smartphones/Samsung/Galaxy-A72",
+   "camera": 92,
+   "protocol": "5",
+   "updated": "2022-09-19"
+  },
+  {
+   "brand": "Asus",
+   "model": "Smartphone for Snapdragon Insiders",
+   "name": "Asus Smartphone for Snapdragon Insiders",
+   "url": "https://www.dxomark.com/smartphones/Asus/Smartphone-for-Snapdragon-Insiders",
+   "camera": 127,
+   "protocol": "5",
+   "updated": "2022-09-19"
+  },
+  {
+   "brand": "Vivo",
+   "model": "X60 Pro 5G (Exynos)",
+   "name": "Vivo X60 Pro 5G (Exynos)",
+   "url": "https://www.dxomark.com/smartphones/Vivo/X60-Pro-5G-(Exynos)",
+   "camera": 108,
+   "protocol": "5",
+   "updated": "2022-09-19"
+  },
+  {
+   "brand": "Huawei",
+   "model": "P50 Pro",
+   "name": "Huawei P50 Pro",
+   "url": "https://www.dxomark.com/smartphones/Huawei/P50-Pro",
+   "camera": 143,
+   "protocol": "5",
+   "updated": "2022-09-19"
+  },
+  {
+   "brand": "ZTE",
+   "model": "Axon 30 Ultra",
+   "name": "ZTE Axon 30 Ultra",
+   "url": "https://www.dxomark.com/smartphones/ZTE/Axon-30-Ultra",
+   "camera": 96,
+   "protocol": "5",
+   "updated": "2022-11-14"
+  },
+  {
+   "brand": "OnePlus",
+   "model": "Nord CE 5G",
+   "name": "OnePlus Nord CE 5G",
+   "url": "https://www.dxomark.com/smartphones/OnePlus/Nord-CE-5G",
+   "camera": 84,
+   "protocol": "5",
+   "updated": "2022-09-20"
+  },
+  {
+   "brand": "Vivo",
+   "model": "X60 Pro 5G (Snapdragon)",
+   "name": "Vivo X60 Pro 5G (Snapdragon)",
+   "url": "https://www.dxomark.com/smartphones/Vivo/X60-Pro-5G-(Snapdragon)",
+   "camera": 116,
+   "protocol": "5",
+   "updated": "2022-09-19"
+  },
+  {
+   "brand": "Samsung",
+   "model": "Galaxy A22 5G",
+   "name": "Samsung Galaxy A22 5G",
+   "url": "https://www.dxomark.com/smartphones/Samsung/Galaxy-A22-5G",
+   "camera": 48,
+   "protocol": "5",
+   "updated": "2022-09-19"
+  },
+  {
+   "brand": "Xiaomi",
+   "model": "Mi 11 Pro",
+   "name": "Xiaomi Mi 11 Pro",
+   "url": "https://www.dxomark.com/smartphones/Xiaomi/Mi-11-Pro",
+   "camera": 124,
+   "protocol": "5",
+   "updated": "2022-09-19"
+  },
+  {
+   "brand": "Sony",
+   "model": "Xperia 1 III",
+   "name": "Sony Xperia 1 III",
+   "url": "https://www.dxomark.com/smartphones/Sony/Xperia-1-III",
+   "camera": 105,
+   "protocol": "5",
+   "updated": "2022-09-20"
+  },
+  {
+   "brand": "Oppo",
+   "model": "Reno6 5G",
+   "name": "Oppo Reno6 5G",
+   "url": "https://www.dxomark.com/smartphones/Oppo/Reno6-5G",
+   "camera": 89,
+   "protocol": "5",
+   "updated": "2022-11-14"
+  },
+  {
+   "brand": "Apple",
+   "model": "iPhone 13 Pro",
+   "name": "Apple iPhone 13 Pro",
+   "url": "https://www.dxomark.com/smartphones/Apple/iPhone-13-Pro",
+   "camera": 141,
+   "protocol": "5",
+   "updated": "2022-09-19"
+  },
+  {
+   "brand": "Apple",
+   "model": "iPhone 13 mini",
+   "name": "Apple iPhone 13 mini",
+   "url": "https://www.dxomark.com/smartphones/Apple/iPhone-13-mini",
+   "camera": 125,
+   "protocol": "5",
+   "updated": "2022-09-19"
+  },
+  {
+   "brand": "Apple",
+   "model": "iPhone 13 Pro Max",
+   "name": "Apple iPhone 13 Pro Max",
+   "url": "https://www.dxomark.com/smartphones/Apple/iPhone-13-Pro-Max",
+   "camera": 141,
+   "protocol": "5",
+   "updated": "2022-09-19"
+  },
+  {
+   "brand": "Apple",
+   "model": "iPhone 13",
+   "name": "Apple iPhone 13",
+   "url": "https://www.dxomark.com/smartphones/Apple/iPhone-13",
+   "camera": 125,
+   "protocol": "5",
+   "updated": "2022-09-19"
+  },
+  {
+   "brand": "Google",
+   "model": "Pixel 6 Pro",
+   "name": "Google Pixel 6 Pro",
+   "url": "https://www.dxomark.com/smartphones/Google/Pixel-6-Pro",
+   "camera": 134,
+   "protocol": "5",
+   "updated": "2022-09-19"
+  },
+  {
+   "brand": "Google",
+   "model": "Pixel 6",
+   "name": "Google Pixel 6",
+   "url": "https://www.dxomark.com/smartphones/Google/Pixel-6",
+   "camera": 126,
+   "protocol": "5",
+   "updated": "2022-09-19"
+  },
+  {
+   "brand": "Samsung",
+   "model": "Galaxy A52s 5G",
+   "name": "Samsung Galaxy A52s 5G",
+   "url": "https://www.dxomark.com/smartphones/Samsung/Galaxy-A52s-5G",
+   "camera": 88,
+   "protocol": "5",
+   "updated": "2022-09-19"
+  },
+  {
+   "brand": "Xiaomi",
+   "model": "11T Pro",
+   "name": "Xiaomi 11T Pro",
+   "url": "https://www.dxomark.com/smartphones/Xiaomi/11T-Pro",
+   "camera": 108,
+   "protocol": "5",
+   "updated": "2022-09-19"
+  },
+  {
+   "brand": "Vivo",
+   "model": "X70 Pro+",
+   "name": "Vivo X70 Pro+",
+   "url": "https://www.dxomark.com/smartphones/Vivo/X70-Pro+",
+   "camera": 134,
+   "protocol": "5",
+   "updated": "2022-09-19"
+  },
+  {
+   "brand": "Vivo",
+   "model": "X70 Pro (MediaTek)",
+   "name": "Vivo X70 Pro (MediaTek)",
+   "url": "https://www.dxomark.com/smartphones/Vivo/X70-Pro-(MediaTek)",
+   "camera": 126,
+   "protocol": "5",
+   "updated": "2022-09-19"
+  },
+  {
+   "brand": "Oppo",
+   "model": "A16s 5G",
+   "name": "Oppo A16s 5G",
+   "url": "https://www.dxomark.com/smartphones/Oppo/A16s-5G",
+   "camera": 46,
+   "protocol": "5",
+   "updated": "2022-09-20"
+  },
+  {
+   "brand": "Fairphone",
+   "model": "4",
+   "name": "Fairphone 4",
+   "url": "https://www.dxomark.com/smartphones/Fairphone/4",
+   "camera": 69,
+   "protocol": "5",
+   "updated": "2023-02-06"
+  },
+  {
+   "brand": "Samsung",
+   "model": "Galaxy S21 FE 5G (Snapdragon)",
+   "name": "Samsung Galaxy S21 FE 5G (Snapdragon)",
+   "url": "https://www.dxomark.com/smartphones/Samsung/Galaxy-S21-FE-5G-(Snapdragon)",
+   "camera": 117,
+   "protocol": "5",
+   "updated": "2022-09-19"
+  },
+  {
+   "brand": "Samsung",
+   "model": "Galaxy S22 (Exynos)",
+   "name": "Samsung Galaxy S22 (Exynos)",
+   "url": "https://www.dxomark.com/smartphones/Samsung/Galaxy-S22-(Exynos)",
+   "camera": 120,
+   "protocol": "5",
+   "updated": "2022-09-19"
+  },
+  {
+   "brand": "Samsung",
+   "model": "Galaxy S22+ (Exynos)",
+   "name": "Samsung Galaxy S22+ (Exynos)",
+   "url": "https://www.dxomark.com/smartphones/Samsung/Galaxy-S22+-(Exynos)",
+   "camera": 125,
+   "protocol": "5",
+   "updated": "2022-11-14"
+  },
+  {
+   "brand": "Xiaomi",
+   "model": "Redmi Note 11",
+   "name": "Xiaomi Redmi Note 11",
+   "url": "https://www.dxomark.com/smartphones/Xiaomi/Redmi-Note-11",
+   "camera": 60,
+   "protocol": "5",
+   "updated": "2022-09-19"
+  },
+  {
+   "brand": "Xiaomi",
+   "model": "12 Pro",
+   "name": "Xiaomi 12 Pro",
+   "url": "https://www.dxomark.com/smartphones/Xiaomi/12-Pro",
+   "camera": 129,
+   "protocol": "5",
+   "updated": "2022-09-19"
+  },
+  {
+   "brand": "Xiaomi",
+   "model": "12",
+   "name": "Xiaomi 12",
+   "url": "https://www.dxomark.com/smartphones/Xiaomi/12",
+   "camera": 113,
+   "protocol": "5",
+   "updated": "2022-09-19"
+  },
+  {
+   "brand": "Samsung",
+   "model": "Galaxy S22 Ultra (Exynos)",
+   "name": "Samsung Galaxy S22 Ultra (Exynos)",
+   "url": "https://www.dxomark.com/smartphones/Samsung/Galaxy-S22-Ultra-(Exynos)",
+   "camera": 131,
+   "protocol": "5",
+   "updated": "2022-09-19"
+  },
+  {
+   "brand": "Crosscall",
+   "model": "Action-X5",
+   "name": "Crosscall Action-X5",
+   "url": "https://www.dxomark.com/smartphones/Crosscall/Action-X5",
+   "camera": 50,
+   "protocol": "5",
+   "updated": "2022-09-19"
+  },
+  {
+   "brand": "Black Shark",
+   "model": "5 Pro",
+   "name": "Black Shark 5 Pro",
+   "url": "https://www.dxomark.com/smartphones/Black-Shark/5-Pro",
+   "camera": 101,
+   "protocol": "5",
+   "updated": "2023-04-05"
+  },
+  {
+   "brand": "Xiaomi",
+   "model": "Redmi 10 2022",
+   "name": "Xiaomi Redmi 10 2022",
+   "url": "https://www.dxomark.com/smartphones/Xiaomi/Redmi-10-2022",
+   "camera": 51,
+   "protocol": "5",
+   "updated": "2022-09-19"
+  },
+  {
+   "brand": "Oppo",
+   "model": "Find X5",
+   "name": "Oppo Find X5",
+   "url": "https://www.dxomark.com/smartphones/Oppo/Find-X5",
+   "camera": 114,
+   "protocol": "5",
+   "updated": "2022-09-19"
+  },
+  {
+   "brand": "Oppo",
+   "model": "Find X5 Pro",
+   "name": "Oppo Find X5 Pro",
+   "url": "https://www.dxomark.com/smartphones/Oppo/Find-X5-Pro",
+   "camera": 130,
+   "protocol": "5",
+   "updated": "2022-09-19"
+  },
+  {
+   "brand": "Honor",
+   "model": "Magic4 Ultimate",
+   "name": "Honor Magic4 Ultimate",
+   "url": "https://www.dxomark.com/smartphones/Honor/Magic4-Ultimate",
+   "camera": 147,
+   "protocol": "5",
+   "updated": "2022-09-28"
+  },
+  {
+   "brand": "OnePlus",
+   "model": "10 Pro",
+   "name": "OnePlus 10 Pro",
+   "url": "https://www.dxomark.com/smartphones/OnePlus/10-Pro",
+   "camera": 122,
+   "protocol": "5",
+   "updated": "2022-09-19"
+  },
+  {
+   "brand": "Oppo",
+   "model": "Find X5 Lite",
+   "name": "Oppo Find X5 Lite",
+   "url": "https://www.dxomark.com/smartphones/Oppo/Find-X5-Lite",
+   "camera": 95,
+   "protocol": "5",
+   "updated": "2022-09-19"
+  },
+  {
+   "brand": "Apple",
+   "model": "iPhone SE (2022)",
+   "name": "Apple iPhone SE (2022)",
+   "url": "https://www.dxomark.com/smartphones/Apple/iPhone-SE-(2022)",
+   "camera": 100,
+   "protocol": "5",
+   "updated": "2022-09-19"
+  },
+  {
+   "brand": "Motorola",
+   "model": "Edge 30 Pro",
+   "name": "Motorola Edge 30 Pro",
+   "url": "https://www.dxomark.com/smartphones/Motorola/Edge-30-Pro",
+   "camera": 101,
+   "protocol": "5",
+   "updated": "2022-11-14"
+  },
+  {
+   "brand": "Samsung",
+   "model": "Galaxy S22 Ultra (Snapdragon)",
+   "name": "Samsung Galaxy S22 Ultra (Snapdragon)",
+   "url": "https://www.dxomark.com/smartphones/Samsung/Galaxy-S22-Ultra-(Snapdragon)",
+   "camera": 135,
+   "protocol": "5",
+   "updated": "2022-09-19"
+  },
+  {
+   "brand": "Samsung",
+   "model": "Galaxy A53 5G",
+   "name": "Samsung Galaxy A53 5G",
+   "url": "https://www.dxomark.com/smartphones/Samsung/Galaxy-A53-5G",
+   "camera": 79,
+   "protocol": "5",
+   "updated": "2022-11-14"
+  },
+  {
+   "brand": "Samsung",
+   "model": "Galaxy A33 5G",
+   "name": "Samsung Galaxy A33 5G",
+   "url": "https://www.dxomark.com/smartphones/Samsung/Galaxy-A33-5G",
+   "camera": 85,
+   "protocol": "5",
+   "updated": "2022-11-14"
+  },
+  {
+   "brand": "Xiaomi",
+   "model": "Redmi Note 11 Pro 5G",
+   "name": "Xiaomi Redmi Note 11 Pro 5G",
+   "url": "https://www.dxomark.com/smartphones/Xiaomi/Redmi-Note-11-Pro-5G",
+   "camera": 78,
+   "protocol": "5",
+   "updated": "2022-11-14"
+  },
+  {
+   "brand": "Honor",
+   "model": "Magic4 Pro",
+   "name": "Honor Magic4 Pro",
+   "url": "https://www.dxomark.com/smartphones/Honor/Magic4-Pro",
+   "camera": 126,
+   "protocol": "5",
+   "updated": "2022-09-19"
+  },
+  {
+   "brand": "Sony",
+   "model": "Xperia 10 IV",
+   "name": "Sony Xperia 10 IV",
+   "url": "https://www.dxomark.com/smartphones/Sony/Xperia-10-IV",
+   "camera": 63,
+   "protocol": "5",
+   "updated": "2022-10-18"
+  },
+  {
+   "brand": "Honor",
+   "model": "Magic4 Lite 5G",
+   "name": "Honor Magic4 Lite 5G",
+   "url": "https://www.dxomark.com/smartphones/Honor/Magic4-Lite-5G",
+   "camera": 61,
+   "protocol": "5",
+   "updated": "2022-09-19"
+  },
+  {
+   "brand": "Vivo",
+   "model": "Y76 5G",
+   "name": "Vivo Y76 5G",
+   "url": "https://www.dxomark.com/smartphones/Vivo/Y76-5G",
+   "camera": 83,
+   "protocol": "5",
+   "updated": "2022-09-19"
+  },
+  {
+   "brand": "Xiaomi",
+   "model": "Redmi Note 11S 5G",
+   "name": "Xiaomi Redmi Note 11S 5G",
+   "url": "https://www.dxomark.com/smartphones/Xiaomi/Redmi-Note-11S-5G",
+   "camera": 65,
+   "protocol": "5",
+   "updated": "2022-09-20"
+  },
+  {
+   "brand": "Oppo",
+   "model": "Reno8 Lite 5G",
+   "name": "Oppo Reno8 Lite 5G",
+   "url": "https://www.dxomark.com/smartphones/Oppo/Reno8-Lite-5G",
+   "camera": 64,
+   "protocol": "5",
+   "updated": "2022-10-25"
+  },
+  {
+   "brand": "Google",
+   "model": "Pixel 6a",
+   "name": "Google Pixel 6a",
+   "url": "https://www.dxomark.com/smartphones/Google/Pixel-6a",
+   "camera": 122,
+   "protocol": "5",
+   "updated": "2022-09-19"
+  },
+  {
+   "brand": "Honor",
+   "model": "X7",
+   "name": "Honor X7",
+   "url": "https://www.dxomark.com/smartphones/Honor/X7",
+   "camera": 61,
+   "protocol": "5",
+   "updated": "2022-09-20"
+  },
+  {
+   "brand": "Oppo",
+   "model": "Reno6 Pro 5G (Mediatek)",
+   "name": "Oppo Reno6 Pro 5G (Mediatek)",
+   "url": "https://www.dxomark.com/smartphones/Oppo/Reno6-Pro-5G-(Mediatek)",
+   "camera": 109,
+   "protocol": "5",
+   "updated": "2022-11-14"
+  },
+  {
+   "brand": "Vivo",
+   "model": "X80 Pro (Snapdragon)",
+   "name": "Vivo X80 Pro (Snapdragon)",
+   "url": "https://www.dxomark.com/smartphones/Vivo/X80-Pro-(Snapdragon)",
+   "camera": 137,
+   "protocol": "5",
+   "updated": "2023-04-05"
+  },
+  {
+   "brand": "Motorola",
+   "model": "Moto G62 5G",
+   "name": "Motorola Moto G62 5G",
+   "url": "https://www.dxomark.com/smartphones/Motorola/Moto-G62-5G",
+   "camera": 66,
+   "protocol": "5",
+   "updated": "2022-10-03"
+  },
+  {
+   "brand": "OnePlus",
+   "model": "Nord 2T 5G",
+   "name": "OnePlus Nord 2T 5G",
+   "url": "https://www.dxomark.com/smartphones/OnePlus/Nord-2T-5G",
+   "camera": 114,
+   "protocol": "5",
+   "updated": "2022-10-10"
+  },
+  {
+   "brand": "Oppo",
+   "model": "Reno8 5G",
+   "name": "Oppo Reno8 5G",
+   "url": "https://www.dxomark.com/smartphones/Oppo/Reno8-5G",
+   "camera": 112,
+   "protocol": "5",
+   "updated": "2022-10-18"
+  },
+  {
+   "brand": "Oppo",
+   "model": "Reno8 Pro 5G",
+   "name": "Oppo Reno8 Pro 5G",
+   "url": "https://www.dxomark.com/smartphones/Oppo/Reno8-Pro-5G",
+   "camera": 114,
+   "protocol": "5",
+   "updated": "2022-10-26"
+  },
+  {
+   "brand": "Oppo",
+   "model": "A77 5G",
+   "name": "Oppo A77 5G",
+   "url": "https://www.dxomark.com/smartphones/Oppo/A77-5G",
+   "camera": 53,
+   "protocol": "5",
+   "updated": "2022-11-14"
+  },
+  {
+   "brand": "Honor",
+   "model": "70",
+   "name": "Honor 70",
+   "url": "https://www.dxomark.com/smartphones/Honor/70",
+   "camera": 115,
+   "protocol": "5",
+   "updated": "2022-10-18"
+  },
+  {
+   "brand": "Xiaomi",
+   "model": "12S Ultra",
+   "name": "Xiaomi 12S Ultra",
+   "url": "https://www.dxomark.com/smartphones/Xiaomi/12S-Ultra",
+   "camera": 136,
+   "protocol": "5",
+   "updated": "2022-09-19"
+  },
+  {
+   "brand": "Honor",
+   "model": "X8 5G",
+   "name": "Honor X8 5G",
+   "url": "https://www.dxomark.com/smartphones/Honor/X8-5G",
+   "camera": 52,
+   "protocol": "5",
+   "updated": "2022-10-20"
+  },
+  {
+   "brand": "Sony",
+   "model": "Xperia 5 IV",
+   "name": "Sony Xperia 5 IV",
+   "url": "https://www.dxomark.com/smartphones/Sony/Xperia-5-IV",
+   "camera": 119,
+   "protocol": "5",
+   "updated": "2022-10-24"
+  },
+  {
+   "brand": "Sony",
+   "model": "Xperia 1 IV",
+   "name": "Sony Xperia 1 IV",
+   "url": "https://www.dxomark.com/smartphones/Sony/Xperia-1-IV",
+   "camera": 118,
+   "protocol": "5",
+   "updated": "2023-04-05"
+  },
+  {
+   "brand": "Apple",
+   "model": "iPhone 14",
+   "name": "Apple iPhone 14",
+   "url": "https://www.dxomark.com/smartphones/Apple/iPhone-14",
+   "camera": 133,
+   "protocol": "5",
+   "updated": "2022-11-16"
+  },
+  {
+   "brand": "Apple",
+   "model": "iPhone 14 Pro Max",
+   "name": "Apple iPhone 14 Pro Max",
+   "url": "https://www.dxomark.com/smartphones/Apple/iPhone-14-Pro-Max",
+   "camera": 146,
+   "protocol": "5",
+   "updated": "2024-05-16"
+  },
+  {
+   "brand": "Vivo",
+   "model": "X80 Lite 5G",
+   "name": "Vivo X80 Lite 5G",
+   "url": "https://www.dxomark.com/smartphones/Vivo/X80-Lite-5G",
+   "camera": 93,
+   "protocol": "5",
+   "updated": "2022-11-17"
+  },
+  {
+   "brand": "Apple",
+   "model": "iPhone 14 Pro",
+   "name": "Apple iPhone 14 Pro",
+   "url": "https://www.dxomark.com/smartphones/Apple/iPhone-14-Pro",
+   "camera": 146,
+   "protocol": "5",
+   "updated": "2022-09-29"
+  },
+  {
+   "brand": "Vivo",
+   "model": "X80 Pro (MediaTek)",
+   "name": "Vivo X80 Pro (MediaTek)",
+   "url": "https://www.dxomark.com/smartphones/Vivo/X80-Pro-(MediaTek)",
+   "camera": 135,
+   "protocol": "5",
+   "updated": "2023-04-05"
+  },
+  {
+   "brand": "Google",
+   "model": "Pixel 7 Pro",
+   "name": "Google Pixel 7 Pro",
+   "url": "https://www.dxomark.com/smartphones/Google/Pixel-7-Pro",
+   "camera": 147,
+   "protocol": "5",
+   "updated": "2022-10-13"
+  },
+  {
+   "brand": "Nothing",
+   "model": "Phone(1)",
+   "name": "Nothing Phone(1)",
+   "url": "https://www.dxomark.com/smartphones/Nothing/Phone(1)",
+   "camera": 114,
+   "protocol": "5",
+   "updated": "2023-04-05"
+  },
+  {
+   "brand": "Google",
+   "model": "Pixel 7",
+   "name": "Google Pixel 7",
+   "url": "https://www.dxomark.com/smartphones/Google/Pixel-7",
+   "camera": 140,
+   "protocol": "5",
+   "updated": "2022-11-16"
+  },
+  {
+   "brand": "Xiaomi",
+   "model": "12T",
+   "name": "Xiaomi 12T",
+   "url": "https://www.dxomark.com/smartphones/Xiaomi/12T",
+   "camera": 115,
+   "protocol": "5",
+   "updated": "2022-10-19"
+  },
+  {
+   "brand": "Xiaomi",
+   "model": "12T Pro",
+   "name": "Xiaomi 12T Pro",
+   "url": "https://www.dxomark.com/smartphones/Xiaomi/12T-Pro",
+   "camera": 129,
+   "protocol": "5",
+   "updated": "2022-10-19"
+  },
+  {
+   "brand": "Realme",
+   "model": "9i 5G",
+   "name": "Realme 9i 5G",
+   "url": "https://www.dxomark.com/smartphones/Realme/9i-5G",
+   "camera": 75,
+   "protocol": "5",
+   "updated": "2022-11-21"
+  },
+  {
+   "brand": "Apple",
+   "model": "iPhone 14 Plus",
+   "name": "Apple iPhone 14 Plus",
+   "url": "https://www.dxomark.com/smartphones/Apple/iPhone-14-Plus",
+   "camera": 133,
+   "protocol": "5",
+   "updated": "2022-12-08"
+  },
+  {
+   "brand": "Samsung",
+   "model": "Galaxy A23 5G",
+   "name": "Samsung Galaxy A23 5G",
+   "url": "https://www.dxomark.com/smartphones/Samsung/Galaxy-A23-5G",
+   "camera": 70,
+   "protocol": "5",
+   "updated": "2023-10-18"
+  },
+  {
+   "brand": "Huawei",
+   "model": "Mate 50 Pro",
+   "name": "Huawei Mate 50 Pro",
+   "url": "https://www.dxomark.com/smartphones/Huawei/Mate-50-Pro",
+   "camera": 149,
+   "protocol": "5",
+   "updated": "2022-10-31"
+  },
+  {
+   "brand": "Oppo",
+   "model": "A57",
+   "name": "Oppo A57",
+   "url": "https://www.dxomark.com/smartphones/Oppo/A57",
+   "camera": 46,
+   "protocol": "5",
+   "updated": "2022-11-28"
+  },
+  {
+   "brand": "Crosscall",
+   "model": "Core-Z5",
+   "name": "Crosscall Core-Z5",
+   "url": "https://www.dxomark.com/smartphones/Crosscall/Core-Z5",
+   "camera": 47,
+   "protocol": "5",
+   "updated": "2024-05-16"
+  },
+  {
+   "brand": "Xiaomi",
+   "model": "12 Lite 5G",
+   "name": "Xiaomi 12 Lite 5G",
+   "url": "https://www.dxomark.com/smartphones/Xiaomi/12-Lite-5G",
+   "camera": 109,
+   "protocol": "5",
+   "updated": "2023-01-02"
+  },
+  {
+   "brand": "Honor",
+   "model": "Magic5 Lite 5G",
+   "name": "Honor Magic5 Lite 5G",
+   "url": "https://www.dxomark.com/smartphones/Honor/Magic5-Lite-5G",
+   "camera": 74,
+   "protocol": "5",
+   "updated": "2023-04-05"
+  },
+  {
+   "brand": "Motorola",
+   "model": "Moto G53 5G",
+   "name": "Motorola Moto G53 5G",
+   "url": "https://www.dxomark.com/smartphones/Motorola/Moto-G53-5G",
+   "camera": 68,
+   "protocol": "5",
+   "updated": "2023-05-12"
+  },
+  {
+   "brand": "Vivo",
+   "model": "X90 Pro+",
+   "name": "Vivo X90 Pro+",
+   "url": "https://www.dxomark.com/smartphones/Vivo/X90-Pro+",
+   "camera": 140,
+   "protocol": "5",
+   "updated": "2024-03-19"
+  },
+  {
+   "brand": "Vivo",
+   "model": "X90 Pro",
+   "name": "Vivo X90 Pro",
+   "url": "https://www.dxomark.com/smartphones/Vivo/X90-Pro",
+   "camera": 136,
+   "protocol": "5",
+   "updated": "2023-02-02"
+  },
+  {
+   "brand": "OnePlus",
+   "model": "11",
+   "name": "OnePlus 11",
+   "url": "https://www.dxomark.com/smartphones/OnePlus/11",
+   "camera": 127,
+   "protocol": "5",
+   "updated": "2023-05-16"
+  },
+  {
+   "brand": "Xiaomi",
+   "model": "13 Pro",
+   "name": "Xiaomi 13 Pro",
+   "url": "https://www.dxomark.com/smartphones/Xiaomi/13-Pro",
+   "camera": 136,
+   "protocol": "5",
+   "updated": "2023-04-05"
+  },
+  {
+   "brand": "Xiaomi",
+   "model": "13",
+   "name": "Xiaomi 13",
+   "url": "https://www.dxomark.com/smartphones/Xiaomi/13",
+   "camera": 130,
+   "protocol": "5",
+   "updated": "2023-03-09"
+  },
+  {
+   "brand": "Samsung",
+   "model": "Galaxy S23+",
+   "name": "Samsung Galaxy S23+",
+   "url": "https://www.dxomark.com/smartphones/Samsung/Galaxy-S23+",
+   "camera": 133,
+   "protocol": "5",
+   "updated": "2023-04-05"
+  },
+  {
+   "brand": "Samsung",
+   "model": "Galaxy S23 Ultra",
+   "name": "Samsung Galaxy S23 Ultra",
+   "url": "https://www.dxomark.com/smartphones/Samsung/Galaxy-S23-Ultra",
+   "camera": 140,
+   "protocol": "5",
+   "updated": "2023-02-17"
+  },
+  {
+   "brand": "Samsung",
+   "model": "Galaxy A54 5G",
+   "name": "Samsung Galaxy A54 5G",
+   "url": "https://www.dxomark.com/smartphones/Samsung/Galaxy-A54-5G",
+   "camera": 107,
+   "protocol": "5",
+   "updated": "2023-03-20"
+  },
+  {
+   "brand": "Samsung",
+   "model": "Galaxy S23",
+   "name": "Samsung Galaxy S23",
+   "url": "https://www.dxomark.com/smartphones/Samsung/Galaxy-S23",
+   "camera": 133,
+   "protocol": "5",
+   "updated": "2023-02-27"
+  },
+  {
+   "brand": "Honor",
+   "model": "Magic5 Pro",
+   "name": "Honor Magic5 Pro",
+   "url": "https://www.dxomark.com/smartphones/Honor/Magic5-Pro",
+   "camera": 152,
+   "protocol": "5",
+   "updated": "2024-03-19"
+  },
+  {
+   "brand": "Oppo",
+   "model": "A78 5G",
+   "name": "Oppo A78 5G",
+   "url": "https://www.dxomark.com/smartphones/Oppo/A78-5G",
+   "camera": 69,
+   "protocol": "5",
+   "updated": "2023-04-05"
+  },
+  {
+   "brand": "Samsung",
+   "model": "Galaxy A34 5G",
+   "name": "Samsung Galaxy A34 5G",
+   "url": "https://www.dxomark.com/smartphones/Samsung/Galaxy-A34-5G",
+   "camera": 92,
+   "protocol": "5",
+   "updated": "2023-03-21"
+  },
+  {
+   "brand": "Samsung",
+   "model": "Galaxy A14 5G",
+   "name": "Samsung Galaxy A14 5G",
+   "url": "https://www.dxomark.com/smartphones/Samsung/Galaxy-A14-5G",
+   "camera": 67,
+   "protocol": "5",
+   "updated": "2023-04-25"
+  },
+  {
+   "brand": "Honor",
+   "model": "70 Lite",
+   "name": "Honor 70 Lite",
+   "url": "https://www.dxomark.com/smartphones/Honor/70-Lite",
+   "camera": 58,
+   "protocol": "5",
+   "updated": "2023-04-26"
+  },
+  {
+   "brand": "Xiaomi",
+   "model": "Redmi Note 12 5G",
+   "name": "Xiaomi Redmi Note 12 5G",
+   "url": "https://www.dxomark.com/smartphones/Xiaomi/Redmi-Note-12-5G",
+   "camera": 69,
+   "protocol": "5",
+   "updated": "2023-04-13"
+  },
+  {
+   "brand": "Xiaomi",
+   "model": "Redmi Note 12 Pro+ 5G",
+   "name": "Xiaomi Redmi Note 12 Pro+ 5G",
+   "url": "https://www.dxomark.com/smartphones/Xiaomi/Redmi-Note-12-Pro+-5G",
+   "camera": 113,
+   "protocol": "5",
+   "updated": "2023-04-05"
+  },
+  {
+   "brand": "Motorola",
+   "model": "Edge 40 Pro",
+   "name": "Motorola Edge 40 Pro",
+   "url": "https://www.dxomark.com/smartphones/Motorola/Edge-40-Pro",
+   "camera": 130,
+   "protocol": "5",
+   "updated": "2023-05-04"
+  },
+  {
+   "brand": "Google",
+   "model": "Pixel 7a",
+   "name": "Google Pixel 7a",
+   "url": "https://www.dxomark.com/smartphones/Google/Pixel-7a",
+   "camera": 133,
+   "protocol": "5",
+   "updated": "2023-05-17"
+  },
+  {
+   "brand": "Oppo",
+   "model": "Find X6 Pro",
+   "name": "Oppo Find X6 Pro",
+   "url": "https://www.dxomark.com/smartphones/Oppo/Find-X6-Pro",
+   "camera": 153,
+   "protocol": "5",
+   "updated": "2023-04-11"
+  },
+  {
+   "brand": "Xiaomi",
+   "model": "Redmi Note 12 Pro 5G",
+   "name": "Xiaomi Redmi Note 12 Pro 5G",
+   "url": "https://www.dxomark.com/smartphones/Xiaomi/Redmi-Note-12-Pro-5G",
+   "camera": 102,
+   "protocol": "5",
+   "updated": "2023-04-20"
+  },
+  {
+   "brand": "Oppo",
+   "model": "Find X6",
+   "name": "Oppo Find X6",
+   "url": "https://www.dxomark.com/smartphones/Oppo/Find-X6",
+   "camera": 150,
+   "protocol": "5",
+   "updated": "2023-06-26"
+  },
+  {
+   "brand": "Xiaomi",
+   "model": "Redmi 12C",
+   "name": "Xiaomi Redmi 12C",
+   "url": "https://www.dxomark.com/smartphones/Xiaomi/Redmi-12C",
+   "camera": 45,
+   "protocol": "5",
+   "updated": "2023-05-02"
+  },
+  {
+   "brand": "Xiaomi",
+   "model": "Redmi Note 12",
+   "name": "Xiaomi Redmi Note 12",
+   "url": "https://www.dxomark.com/smartphones/Xiaomi/Redmi-Note-12",
+   "camera": 63,
+   "protocol": "5",
+   "updated": "2023-04-13"
+  },
+  {
+   "brand": "Motorola",
+   "model": "Moto G23",
+   "name": "Motorola Moto G23",
+   "url": "https://www.dxomark.com/smartphones/Motorola/Moto-G23",
+   "camera": 54,
+   "protocol": "5",
+   "updated": "2023-05-16"
+  },
+  {
+   "brand": "TCL",
+   "model": "406",
+   "name": "TCL 406",
+   "url": "https://www.dxomark.com/smartphones/TCL/406",
+   "camera": 52,
+   "protocol": "5",
+   "updated": "2023-05-15"
+  },
+  {
+   "brand": "TCL",
+   "model": "40R 5G",
+   "name": "TCL 40R 5G",
+   "url": "https://www.dxomark.com/smartphones/TCL/40R-5G",
+   "camera": 76,
+   "protocol": "5",
+   "updated": "2023-05-16"
+  },
+  {
+   "brand": "Huawei",
+   "model": "P60 Pro",
+   "name": "Huawei P60 Pro",
+   "url": "https://www.dxomark.com/smartphones/Huawei/P60-Pro",
+   "camera": 156,
+   "protocol": "5",
+   "updated": "2023-05-09"
+  },
+  {
+   "brand": "Sony",
+   "model": "Xperia 10 V",
+   "name": "Sony Xperia 10 V",
+   "url": "https://www.dxomark.com/smartphones/Sony/Xperia-10-V",
+   "camera": 78,
+   "protocol": "5",
+   "updated": "2023-06-29"
+  },
+  {
+   "brand": "Xiaomi",
+   "model": "13 Ultra",
+   "name": "Xiaomi 13 Ultra",
+   "url": "https://www.dxomark.com/smartphones/Xiaomi/13-Ultra",
+   "camera": 140,
+   "protocol": "5",
+   "updated": "2023-06-08"
+  },
+  {
+   "brand": "Asus",
+   "model": "ROG Phone 7",
+   "name": "Asus ROG Phone 7",
+   "url": "https://www.dxomark.com/smartphones/Asus/ROG-Phone-7",
+   "camera": 108,
+   "protocol": "5",
+   "updated": "2024-05-16"
+  },
+  {
+   "brand": "Honor",
+   "model": "90",
+   "name": "Honor 90",
+   "url": "https://www.dxomark.com/smartphones/Honor/90",
+   "camera": 122,
+   "protocol": "5",
+   "updated": "2023-07-13"
+  },
+  {
+   "brand": "Honor",
+   "model": "90 Lite",
+   "name": "Honor 90 Lite",
+   "url": "https://www.dxomark.com/smartphones/Honor/90-Lite",
+   "camera": 73,
+   "protocol": "5",
+   "updated": "2023-08-07"
+  },
+  {
+   "brand": "Fairphone",
+   "model": "5",
+   "name": "Fairphone 5",
+   "url": "https://www.dxomark.com/smartphones/Fairphone/5",
+   "camera": 108,
+   "protocol": "5",
+   "updated": "2023-09-15"
+  },
+  {
+   "brand": "Xiaomi",
+   "model": "Redmi 12 5G",
+   "name": "Xiaomi Redmi 12 5G",
+   "url": "https://www.dxomark.com/smartphones/Xiaomi/Redmi-12-5G",
+   "camera": 63,
+   "protocol": "5",
+   "updated": "2023-09-16"
+  },
+  {
+   "brand": "Sony",
+   "model": "Xperia 5 V",
+   "name": "Sony Xperia 5 V",
+   "url": "https://www.dxomark.com/smartphones/Sony/Xperia-5-V",
+   "camera": 118,
+   "protocol": "5",
+   "updated": "2023-10-04"
+  },
+  {
+   "brand": "Xiaomi",
+   "model": "13T",
+   "name": "Xiaomi 13T",
+   "url": "https://www.dxomark.com/smartphones/Xiaomi/13T",
+   "camera": 123,
+   "protocol": "5",
+   "updated": "2023-10-05"
+  },
+  {
+   "brand": "Xiaomi",
+   "model": "13T Pro",
+   "name": "Xiaomi 13T Pro",
+   "url": "https://www.dxomark.com/smartphones/Xiaomi/13T-Pro",
+   "camera": 131,
+   "protocol": "5",
+   "updated": "2023-10-11"
+  },
+  {
+   "brand": "Apple",
+   "model": "iPhone 15 Pro Max",
+   "name": "Apple iPhone 15 Pro Max",
+   "url": "https://www.dxomark.com/smartphones/Apple/iPhone-15-Pro-Max",
+   "camera": 154,
+   "protocol": "5",
+   "updated": "2023-09-26"
+  },
+  {
+   "brand": "Apple",
+   "model": "iPhone 15 Pro",
+   "name": "Apple iPhone 15 Pro",
+   "url": "https://www.dxomark.com/smartphones/Apple/iPhone-15-Pro",
+   "camera": 154,
+   "protocol": "5",
+   "updated": "2023-10-09"
+  },
+  {
+   "brand": "Apple",
+   "model": "iPhone 15",
+   "name": "Apple iPhone 15",
+   "url": "https://www.dxomark.com/smartphones/Apple/iPhone-15",
+   "camera": 145,
+   "protocol": "5",
+   "updated": "2023-10-13"
+  },
+  {
+   "brand": "Apple",
+   "model": "iPhone 15 Plus",
+   "name": "Apple iPhone 15 Plus",
+   "url": "https://www.dxomark.com/smartphones/Apple/iPhone-15-Plus",
+   "camera": 145,
+   "protocol": "5",
+   "updated": "2023-10-13"
+  },
+  {
+   "brand": "Google",
+   "model": "Pixel 8",
+   "name": "Google Pixel 8",
+   "url": "https://www.dxomark.com/smartphones/Google/Pixel-8",
+   "camera": 148,
+   "protocol": "5",
+   "updated": "2023-11-07"
+  },
+  {
+   "brand": "Google",
+   "model": "Pixel 8 Pro",
+   "name": "Google Pixel 8 Pro",
+   "url": "https://www.dxomark.com/smartphones/Google/Pixel-8-Pro",
+   "camera": 153,
+   "protocol": "5",
+   "updated": "2023-10-19"
+  },
+  {
+   "brand": "Motorola",
+   "model": "Edge 40 Neo",
+   "name": "Motorola Edge 40 Neo",
+   "url": "https://www.dxomark.com/smartphones/Motorola/Edge-40-Neo",
+   "camera": 103,
+   "protocol": "5",
+   "updated": "2023-10-20"
+  },
+  {
+   "brand": "Huawei",
+   "model": "Mate 60 Pro+",
+   "name": "Huawei Mate 60 Pro+",
+   "url": "https://www.dxomark.com/smartphones/Huawei/Mate-60-Pro+",
+   "camera": 157,
+   "protocol": "5",
+   "updated": "2024-01-08"
+  },
+  {
+   "brand": "Samsung",
+   "model": "Galaxy S23 FE",
+   "name": "Samsung Galaxy S23 FE",
+   "url": "https://www.dxomark.com/smartphones/Samsung/Galaxy-S23-FE",
+   "camera": 127,
+   "protocol": "5",
+   "updated": "2023-12-14"
+  },
+  {
+   "brand": "Samsung",
+   "model": "Galaxy A05s",
+   "name": "Samsung Galaxy A05s",
+   "url": "https://www.dxomark.com/smartphones/Samsung/Galaxy-A05s",
+   "camera": 45,
+   "protocol": "5",
+   "updated": "2023-12-19"
+  },
+  {
+   "brand": "Samsung",
+   "model": "Galaxy A25 5G",
+   "name": "Samsung Galaxy A25 5G",
+   "url": "https://www.dxomark.com/smartphones/Samsung/Galaxy-A25-5G",
+   "camera": 92,
+   "protocol": "5",
+   "updated": "2024-01-05"
+  },
+  {
+   "brand": "Honor",
+   "model": "Magic6 Lite (5300 mAh)",
+   "name": "Honor Magic6 Lite (5300 mAh)",
+   "url": "https://www.dxomark.com/smartphones/Honor/Magic6-Lite-(5300-mAh)",
+   "camera": 84,
+   "protocol": "5",
+   "updated": "2024-04-08"
+  },
+  {
+   "brand": "Xiaomi",
+   "model": "Redmi Note 13 Pro Plus 5G",
+   "name": "Xiaomi Redmi Note 13 Pro Plus 5G",
+   "url": "https://www.dxomark.com/smartphones/Xiaomi/Redmi-Note-13-Pro-Plus-5G",
+   "camera": 121,
+   "protocol": "5",
+   "updated": "2024-01-29"
+  },
+  {
+   "brand": "Xiaomi",
+   "model": "Redmi 13C",
+   "name": "Xiaomi Redmi 13C",
+   "url": "https://www.dxomark.com/smartphones/Xiaomi/Redmi-13C",
+   "camera": 63,
+   "protocol": "5",
+   "updated": "2024-01-29"
+  },
+  {
+   "brand": "Vivo",
+   "model": "X100 Pro",
+   "name": "Vivo X100 Pro",
+   "url": "https://www.dxomark.com/smartphones/Vivo/X100-Pro",
+   "camera": 150,
+   "protocol": "5",
+   "updated": "2024-01-16"
+  },
+  {
+   "brand": "Xiaomi",
+   "model": "14",
+   "name": "Xiaomi 14",
+   "url": "https://www.dxomark.com/smartphones/Xiaomi/14",
+   "camera": 138,
+   "protocol": "5",
+   "updated": "2024-03-05"
+  },
+  {
+   "brand": "Xiaomi",
+   "model": "Redmi Note 13 Pro 5G",
+   "name": "Xiaomi Redmi Note 13 Pro 5G",
+   "url": "https://www.dxomark.com/smartphones/Xiaomi/Redmi-Note-13-Pro-5G",
+   "camera": 120,
+   "protocol": "5",
+   "updated": "2024-01-29"
+  },
+  {
+   "brand": "Samsung",
+   "model": "Galaxy S24 Ultra",
+   "name": "Samsung Galaxy S24 Ultra",
+   "url": "https://www.dxomark.com/smartphones/Samsung/Galaxy-S24-Ultra",
+   "camera": 144,
+   "protocol": "5",
+   "updated": "2024-01-31"
+  },
+  {
+   "brand": "Xiaomi",
+   "model": "Redmi Note 13",
+   "name": "Xiaomi Redmi Note 13",
+   "url": "https://www.dxomark.com/smartphones/Xiaomi/Redmi-Note-13",
+   "camera": 75,
+   "protocol": "5",
+   "updated": "2024-01-29"
+  },
+  {
+   "brand": "Samsung",
+   "model": "Galaxy S24 (Exynos)",
+   "name": "Samsung Galaxy S24 (Exynos)",
+   "url": "https://www.dxomark.com/smartphones/Samsung/Galaxy-S24-(Exynos)",
+   "camera": 133,
+   "protocol": "5",
+   "updated": "2024-03-20"
+  },
+  {
+   "brand": "Samsung",
+   "model": "Galaxy S24+ (Exynos)",
+   "name": "Samsung Galaxy S24+ (Exynos)",
+   "url": "https://www.dxomark.com/smartphones/Samsung/Galaxy-S24+-(Exynos)",
+   "camera": 133,
+   "protocol": "5",
+   "updated": "2024-03-20"
+  },
+  {
+   "brand": "Xiaomi",
+   "model": "Redmi Note 13 5G",
+   "name": "Xiaomi Redmi Note 13 5G",
+   "url": "https://www.dxomark.com/smartphones/Xiaomi/Redmi-Note-13-5G",
+   "camera": 91,
+   "protocol": "5",
+   "updated": "2024-02-21"
+  },
+  {
+   "brand": "Samsung",
+   "model": "Galaxy A15 5G",
+   "name": "Samsung Galaxy A15 5G",
+   "url": "https://www.dxomark.com/smartphones/Samsung/Galaxy-A15-5G",
+   "camera": 83,
+   "protocol": "5",
+   "updated": "2024-02-23"
+  },
+  {
+   "brand": "Honor",
+   "model": "Magic6 Pro",
+   "name": "Honor Magic6 Pro",
+   "url": "https://www.dxomark.com/smartphones/Honor/Magic6-Pro",
+   "camera": 158,
+   "protocol": "5",
+   "updated": "2024-03-18"
+  },
+  {
+   "brand": "Samsung",
+   "model": "Galaxy A15 LTE",
+   "name": "Samsung Galaxy A15 LTE",
+   "url": "https://www.dxomark.com/smartphones/Samsung/Galaxy-A15-LTE",
+   "camera": 81,
+   "protocol": "5",
+   "updated": "2024-02-23"
+  },
+  {
+   "brand": "Xiaomi",
+   "model": "14 Ultra",
+   "name": "Xiaomi 14 Ultra",
+   "url": "https://www.dxomark.com/smartphones/Xiaomi/14-Ultra",
+   "camera": 149,
+   "protocol": "5",
+   "updated": "2024-05-22"
+  },
+  {
+   "brand": "Crosscall",
+   "model": "Stellar-X5",
+   "name": "Crosscall Stellar-X5",
+   "url": "https://www.dxomark.com/smartphones/Crosscall/Stellar-X5",
+   "camera": 113,
+   "protocol": "5",
+   "updated": "2024-06-11"
+  },
+  {
+   "brand": "Samsung",
+   "model": "Galaxy A55 5G",
+   "name": "Samsung Galaxy A55 5G",
+   "url": "https://www.dxomark.com/smartphones/Samsung/Galaxy-A55-5G",
+   "camera": 108,
+   "protocol": "5",
+   "updated": "2024-03-14"
+  },
+  {
+   "brand": "Oppo",
+   "model": "Find X7 Ultra",
+   "name": "Oppo Find X7 Ultra",
+   "url": "https://www.dxomark.com/smartphones/Oppo/Find-X7-Ultra",
+   "camera": 157,
+   "protocol": "5",
+   "updated": "2024-03-12"
+  },
+  {
+   "brand": "Samsung",
+   "model": "Galaxy A35 5G",
+   "name": "Samsung Galaxy A35 5G",
+   "url": "https://www.dxomark.com/smartphones/Samsung/Galaxy-A35-5G",
+   "camera": 104,
+   "protocol": "5",
+   "updated": "2024-03-14"
+  },
+  {
+   "brand": "Motorola",
+   "model": "moto g34 5G",
+   "name": "Motorola moto g34 5G",
+   "url": "https://www.dxomark.com/smartphones/Motorola/moto-g34-5G",
+   "camera": 67,
+   "protocol": "5",
+   "updated": "2024-03-26"
+  },
+  {
+   "brand": "Google",
+   "model": "Pixel 8a",
+   "name": "Google Pixel 8a",
+   "url": "https://www.dxomark.com/smartphones/Google/Pixel-8a",
+   "camera": 136,
+   "protocol": "5",
+   "updated": "2024-05-16"
+  },
+  {
+   "brand": "Honor",
+   "model": "90 Smart",
+   "name": "Honor 90 Smart",
+   "url": "https://www.dxomark.com/smartphones/Honor/90-Smart",
+   "camera": 79,
+   "protocol": "5",
+   "updated": "2024-04-08"
+  },
+  {
+   "brand": "Motorola",
+   "model": "moto g54 5G",
+   "name": "Motorola moto g54 5G",
+   "url": "https://www.dxomark.com/smartphones/Motorola/moto-g54-5G",
+   "camera": 85,
+   "protocol": "5",
+   "updated": "2024-05-06"
+  },
+  {
+   "brand": "Huawei",
+   "model": "Pura 70 Ultra",
+   "name": "Huawei Pura 70 Ultra",
+   "url": "https://www.dxomark.com/smartphones/Huawei/Pura-70-Ultra",
+   "camera": 163,
+   "protocol": "6",
+   "updated": "2025-10-23"
+  },
+  {
+   "brand": "Xiaomi",
+   "model": "Redmi 13C 5G",
+   "name": "Xiaomi Redmi 13C 5G",
+   "url": "https://www.dxomark.com/smartphones/Xiaomi/Redmi-13C-5G",
+   "camera": 60,
+   "protocol": "5",
+   "updated": "2024-06-03"
+  },
+  {
+   "brand": "Honor",
+   "model": "200 Pro",
+   "name": "Honor 200 Pro",
+   "url": "https://www.dxomark.com/smartphones/Honor/200-Pro",
+   "camera": 137,
+   "protocol": "5",
+   "updated": "2024-07-04"
+  },
+  {
+   "brand": "Honor",
+   "model": "200 Lite",
+   "name": "Honor 200 Lite",
+   "url": "https://www.dxomark.com/smartphones/Honor/200-Lite",
+   "camera": 86,
+   "protocol": "5",
+   "updated": "2024-06-17"
+  },
+  {
+   "brand": "Asus",
+   "model": "Zenfone 11 Ultra",
+   "name": "Asus Zenfone 11 Ultra",
+   "url": "https://www.dxomark.com/smartphones/Asus/Zenfone-11-Ultra",
+   "camera": 125,
+   "protocol": "5",
+   "updated": "2024-07-24"
+  },
+  {
+   "brand": "Honor",
+   "model": "200",
+   "name": "Honor 200",
+   "url": "https://www.dxomark.com/smartphones/Honor/200",
+   "camera": 130,
+   "protocol": "5",
+   "updated": "2024-07-04"
+  },
+  {
+   "brand": "Motorola",
+   "model": "Edge 50 Ultra",
+   "name": "Motorola Edge 50 Ultra",
+   "url": "https://www.dxomark.com/smartphones/Motorola/Edge-50-Ultra",
+   "camera": 146,
+   "protocol": "5",
+   "updated": "2024-07-31"
+  },
+  {
+   "brand": "Xiaomi",
+   "model": "Redmi A3",
+   "name": "Xiaomi Redmi A3",
+   "url": "https://www.dxomark.com/smartphones/Xiaomi/Redmi-A3",
+   "camera": 45,
+   "protocol": "5",
+   "updated": "2024-08-28"
+  },
+  {
+   "brand": "Google",
+   "model": "Pixel 9",
+   "name": "Google Pixel 9",
+   "url": "https://www.dxomark.com/smartphones/Google/Pixel-9",
+   "camera": 143,
+   "protocol": "6",
+   "updated": "2025-10-23"
+  },
+  {
+   "brand": "Google",
+   "model": "Pixel 9 Pro XL",
+   "name": "Google Pixel 9 Pro XL",
+   "url": "https://www.dxomark.com/smartphones/Google/Pixel-9-Pro-XL",
+   "camera": 160,
+   "protocol": "6",
+   "updated": "2025-10-23"
+  },
+  {
+   "brand": "Motorola",
+   "model": "Moto g85 5G",
+   "name": "Motorola Moto g85 5G",
+   "url": "https://www.dxomark.com/smartphones/Motorola/Moto-g85-5G",
+   "camera": 88,
+   "protocol": "5",
+   "updated": "2024-11-22"
+  },
+  {
+   "brand": "Motorola",
+   "model": "Edge 50 Neo",
+   "name": "Motorola Edge 50 Neo",
+   "url": "https://www.dxomark.com/smartphones/Motorola/Edge-50-Neo",
+   "camera": 115,
+   "protocol": "5",
+   "updated": "2024-09-12"
+  },
+  {
+   "brand": "Xiaomi",
+   "model": "14T Pro",
+   "name": "Xiaomi 14T Pro",
+   "url": "https://www.dxomark.com/smartphones/Xiaomi/14T-Pro",
+   "camera": 135,
+   "protocol": "5",
+   "updated": "2024-09-30"
+  },
+  {
+   "brand": "Xiaomi",
+   "model": "14T",
+   "name": "Xiaomi 14T",
+   "url": "https://www.dxomark.com/smartphones/Xiaomi/14T",
+   "camera": 134,
+   "protocol": "5",
+   "updated": "2024-09-30"
+  },
+  {
+   "brand": "Apple",
+   "model": "iPhone 16 Pro Max",
+   "name": "Apple iPhone 16 Pro Max",
+   "url": "https://www.dxomark.com/smartphones/Apple/iPhone-16-Pro-Max",
+   "camera": 161,
+   "protocol": "6",
+   "updated": "2025-10-23"
+  },
+  {
+   "brand": "Honor",
+   "model": "200 Smart",
+   "name": "Honor 200 Smart",
+   "url": "https://www.dxomark.com/smartphones/Honor/200-Smart",
+   "camera": 55,
+   "protocol": "5",
+   "updated": "2024-09-20"
+  },
+  {
+   "brand": "Samsung",
+   "model": "Galaxy S24 FE",
+   "name": "Samsung Galaxy S24 FE",
+   "url": "https://www.dxomark.com/smartphones/Samsung/Galaxy-S24-FE",
+   "camera": 133,
+   "protocol": "5",
+   "updated": "2024-10-01"
+  },
+  {
+   "brand": "Xiaomi",
+   "model": "Redmi 14C",
+   "name": "Xiaomi Redmi 14C",
+   "url": "https://www.dxomark.com/smartphones/Xiaomi/Redmi-14C",
+   "camera": 63,
+   "protocol": "5",
+   "updated": "2024-10-16"
+  },
+  {
+   "brand": "Apple",
+   "model": "iPhone 16 Pro",
+   "name": "Apple iPhone 16 Pro",
+   "url": "https://www.dxomark.com/smartphones/Apple/iPhone-16-Pro",
+   "camera": 157,
+   "protocol": "5",
+   "updated": "2024-10-10"
+  },
+  {
+   "brand": "Apple",
+   "model": "iPhone 16",
+   "name": "Apple iPhone 16",
+   "url": "https://www.dxomark.com/smartphones/Apple/iPhone-16",
+   "camera": 147,
+   "protocol": "5",
+   "updated": "2024-11-21"
+  },
+  {
+   "brand": "Samsung",
+   "model": "Galaxy A16 5G",
+   "name": "Samsung Galaxy A16 5G",
+   "url": "https://www.dxomark.com/smartphones/Samsung/Galaxy-A16-5G",
+   "camera": 77,
+   "protocol": "5",
+   "updated": "2024-11-22"
+  },
+  {
+   "brand": "Samsung",
+   "model": "Galaxy A16 LTE",
+   "name": "Samsung Galaxy A16 LTE",
+   "url": "https://www.dxomark.com/smartphones/Samsung/Galaxy-A16-LTE",
+   "camera": 85,
+   "protocol": "5",
+   "updated": "2024-11-21"
+  },
+  {
+   "brand": "Motorola",
+   "model": "Moto g75 5G",
+   "name": "Motorola Moto g75 5G",
+   "url": "https://www.dxomark.com/smartphones/Motorola/Moto-g75-5G",
+   "camera": 96,
+   "protocol": "5",
+   "updated": "2025-01-14"
+  },
+  {
+   "brand": "Oppo",
+   "model": "Find X8 Pro",
+   "name": "Oppo Find X8 Pro",
+   "url": "https://www.dxomark.com/smartphones/Oppo/Find-X8-Pro",
+   "camera": 157,
+   "protocol": "5",
+   "updated": "2025-02-10"
+  },
+  {
+   "brand": "Xiaomi",
+   "model": "Redmi Note 14 Pro 5G",
+   "name": "Xiaomi Redmi Note 14 Pro 5G",
+   "url": "https://www.dxomark.com/smartphones/Xiaomi/Redmi-Note-14-Pro-5G",
+   "camera": 106,
+   "protocol": "5",
+   "updated": "2025-01-23"
+  },
+  {
+   "brand": "Xiaomi",
+   "model": "Redmi Note 14 5G",
+   "name": "Xiaomi Redmi Note 14 5G",
+   "url": "https://www.dxomark.com/smartphones/Xiaomi/Redmi-Note-14-5G",
+   "camera": 103,
+   "protocol": "5",
+   "updated": "2025-01-24"
+  },
+  {
+   "brand": "Crosscall",
+   "model": "Stellar-M6",
+   "name": "Crosscall Stellar-M6",
+   "url": "https://www.dxomark.com/smartphones/Crosscall/Stellar-M6",
+   "camera": 59,
+   "protocol": "5",
+   "updated": "2025-02-04"
+  },
+  {
+   "brand": "Xiaomi",
+   "model": "Redmi Note 14 Pro+ 5G",
+   "name": "Xiaomi Redmi Note 14 Pro+ 5G",
+   "url": "https://www.dxomark.com/smartphones/Xiaomi/Redmi-Note-14-Pro+-5G",
+   "camera": 103,
+   "protocol": "6",
+   "updated": "2025-10-23"
+  },
+  {
+   "brand": "Xiaomi",
+   "model": "Redmi Note 14",
+   "name": "Xiaomi Redmi Note 14",
+   "url": "https://www.dxomark.com/smartphones/Xiaomi/Redmi-Note-14",
+   "camera": 84,
+   "protocol": "5",
+   "updated": "2025-01-24"
+  },
+  {
+   "brand": "Honor",
+   "model": "Magic7 Pro",
+   "name": "Honor Magic7 Pro",
+   "url": "https://www.dxomark.com/smartphones/Honor/Magic7-Pro",
+   "camera": 148,
+   "protocol": "6",
+   "updated": "2025-10-23"
+  },
+  {
+   "brand": "Samsung",
+   "model": "Galaxy S25 Ultra",
+   "name": "Samsung Galaxy S25 Ultra",
+   "url": "https://www.dxomark.com/smartphones/Samsung/Galaxy-S25-Ultra",
+   "camera": 151,
+   "protocol": "6",
+   "updated": "2025-10-23"
+  },
+  {
+   "brand": "Motorola",
+   "model": "Moto G35 5G",
+   "name": "Motorola Moto G35 5G",
+   "url": "https://www.dxomark.com/smartphones/Motorola/Moto-G35-5G",
+   "camera": 75,
+   "protocol": "5",
+   "updated": "2025-02-10"
+  },
+  {
+   "brand": "Xiaomi",
+   "model": "15",
+   "name": "Xiaomi 15",
+   "url": "https://www.dxomark.com/smartphones/Xiaomi/15",
+   "camera": 147,
+   "protocol": "5",
+   "updated": "2025-03-20"
+  },
+  {
+   "brand": "Xiaomi",
+   "model": "15 Ultra",
+   "name": "Xiaomi 15 Ultra",
+   "url": "https://www.dxomark.com/smartphones/Xiaomi/15-Ultra",
+   "camera": 159,
+   "protocol": "6",
+   "updated": "2025-10-23"
+  },
+  {
+   "brand": "Samsung",
+   "model": "Galaxy A56",
+   "name": "Samsung Galaxy A56",
+   "url": "https://www.dxomark.com/smartphones/Samsung/Galaxy-A56",
+   "camera": 114,
+   "protocol": "6",
+   "updated": "2025-10-23"
+  },
+  {
+   "brand": "Tecno",
+   "model": "Camon 40 Pro 5G",
+   "name": "Tecno Camon 40 Pro 5G",
+   "url": "https://www.dxomark.com/smartphones/Tecno/Camon-40-Pro-5G",
+   "camera": 138,
+   "protocol": "5",
+   "updated": "2025-03-04"
+  },
+  {
+   "brand": "Google",
+   "model": "Pixel 9a",
+   "name": "Google Pixel 9a",
+   "url": "https://www.dxomark.com/smartphones/Google/Pixel-9a",
+   "camera": 128,
+   "protocol": "6",
+   "updated": "2025-10-23"
+  },
+  {
+   "brand": "Samsung",
+   "model": "Galaxy S25 Edge",
+   "name": "Samsung Galaxy S25 Edge",
+   "url": "https://www.dxomark.com/smartphones/Samsung/Galaxy-S25-Edge",
+   "camera": 140,
+   "protocol": "6",
+   "updated": "2025-10-23"
+  },
+  {
+   "brand": "Oppo",
+   "model": "Find X8 Ultra",
+   "name": "Oppo Find X8 Ultra",
+   "url": "https://www.dxomark.com/smartphones/Oppo/Find-X8-Ultra",
+   "camera": 168,
+   "protocol": "6",
+   "updated": "2025-10-23"
+  },
+  {
+   "brand": "Vivo",
+   "model": "X200 Ultra",
+   "name": "Vivo X200 Ultra",
+   "url": "https://www.dxomark.com/smartphones/Vivo/X200-Ultra",
+   "camera": 167,
+   "protocol": "6",
+   "updated": "2025-10-23"
+  },
+  {
+   "brand": "Huawei",
+   "model": "Pura 80 Ultra",
+   "name": "Huawei Pura 80 Ultra",
+   "url": "https://www.dxomark.com/smartphones/Huawei/Pura-80-Ultra",
+   "camera": 175,
+   "protocol": "6",
+   "updated": "2025-10-23"
+  },
+  {
+   "brand": "Google",
+   "model": "Pixel 10 Pro XL",
+   "name": "Google Pixel 10 Pro XL",
+   "url": "https://www.dxomark.com/smartphones/Google/Pixel-10-Pro-XL",
+   "camera": 163,
+   "protocol": "6",
+   "updated": "2025-10-23"
+  },
+  {
+   "brand": "Apple",
+   "model": "iPhone 17 Pro",
+   "name": "Apple iPhone 17 Pro",
+   "url": "https://www.dxomark.com/smartphones/Apple/iPhone-17-Pro",
+   "camera": 168,
+   "protocol": "6",
+   "updated": "2025-10-23"
+  },
+  {
+   "brand": "Apple",
+   "model": "iPhone 17",
+   "name": "Apple iPhone 17",
+   "url": "https://www.dxomark.com/smartphones/Apple/iPhone-17",
+   "camera": 157,
+   "protocol": "6",
+   "updated": "2026-08-13"
+  },
+  {
+   "brand": "Apple",
+   "model": "iPhone Air",
+   "name": "Apple iPhone Air",
+   "url": "https://www.dxomark.com/smartphones/Apple/iPhone-Air",
+   "camera": 141,
+   "protocol": "6",
+   "updated": "2025-11-21"
+  },
+  {
+   "brand": "Samsung",
+   "model": "Galaxy S25 FE",
+   "name": "Samsung Galaxy S25 FE",
+   "url": "https://www.dxomark.com/smartphones/Samsung/Galaxy-S25-FE",
+   "camera": 118,
+   "protocol": "6",
+   "updated": "2025-12-18"
+  },
+  {
+   "brand": "Honor",
+   "model": "Magic8 Pro",
+   "name": "Honor Magic8 Pro",
+   "url": "https://www.dxomark.com/smartphones/Honor/Magic8-Pro",
+   "camera": 164,
+   "protocol": "6",
+   "updated": "2025-12-26"
+  },
+  {
+   "brand": "Vivo",
+   "model": "X300 Pro",
+   "name": "Vivo X300 Pro",
+   "url": "https://www.dxomark.com/smartphones/Vivo/X300-Pro",
+   "camera": 171,
+   "protocol": "6",
+   "updated": "2025-12-31"
+  },
+  {
+   "brand": "Motorola",
+   "model": "Signature",
+   "name": "Motorola Signature",
+   "url": "https://www.dxomark.com/smartphones/Motorola/Signature",
+   "camera": 164,
+   "protocol": "6",
+   "updated": "2026-01-07"
+  },
+  {
+   "brand": "Xiaomi",
+   "model": "15T Pro",
+   "name": "Xiaomi 15T Pro",
+   "url": "https://www.dxomark.com/smartphones/Xiaomi/15T-Pro",
+   "camera": 149,
+   "protocol": "6",
+   "updated": "2026-01-12"
+  },
+  {
+   "brand": "Oppo",
+   "model": "Find X9 Pro",
+   "name": "Oppo Find X9 Pro",
+   "url": "https://www.dxomark.com/smartphones/Oppo/Find-X9-Pro",
+   "camera": 166,
+   "protocol": "6",
+   "updated": "2026-01-15"
+  },
+  {
+   "brand": "Xiaomi",
+   "model": "17 Pro Max",
+   "name": "Xiaomi 17 Pro Max",
+   "url": "https://www.dxomark.com/smartphones/Xiaomi/17-Pro-Max",
+   "camera": 159,
+   "protocol": "6",
+   "updated": "2026-01-28"
+  },
+  {
+   "brand": "Xiaomi",
+   "model": "17 Ultra",
+   "name": "Xiaomi 17 Ultra",
+   "url": "https://www.dxomark.com/smartphones/Xiaomi/17-Ultra",
+   "camera": 166,
+   "protocol": "6",
+   "updated": "2026-02-11"
+  },
+  {
+   "brand": "Samsung",
+   "model": "Galaxy S26 Ultra",
+   "name": "Samsung Galaxy S26 Ultra",
+   "url": "https://www.dxomark.com/smartphones/Samsung/Galaxy-S26-Ultra",
+   "camera": 157,
+   "protocol": "6",
+   "updated": "2026-03-12"
+  },
+  {
+   "brand": "Tecno",
+   "model": "Camon 50 Ultra 5G",
+   "name": "Tecno Camon 50 Ultra 5G",
+   "url": "https://www.dxomark.com/smartphones/Tecno/Camon-50-Ultra-5G",
+   "camera": 146,
+   "protocol": "6",
+   "updated": "2026-03-03"
+  },
+  {
+   "brand": "Google",
+   "model": "Pixel 10a",
+   "name": "Google Pixel 10a",
+   "url": "https://www.dxomark.com/smartphones/Google/Pixel-10a",
+   "camera": 134,
+   "protocol": "6",
+   "updated": "2026-03-05"
+  },
+  {
+   "brand": "Vivo",
+   "model": "X300 Ultra",
+   "name": "Vivo X300 Ultra",
+   "url": "https://www.dxomark.com/smartphones/Vivo/X300-Ultra",
+   "camera": 170,
+   "protocol": "6",
+   "updated": "2026-06-01"
+  },
+  {
+   "brand": "Oppo",
+   "model": "Find X9 Ultra",
+   "name": "Oppo Find X9 Ultra",
+   "url": "https://www.dxomark.com/smartphones/Oppo/Find-X9-Ultra",
+   "camera": 170,
+   "protocol": "6",
+   "updated": "2026-07-28"
+  },
+  {
+   "brand": "Samsung",
+   "model": "Galaxy S26",
+   "name": "Samsung Galaxy S26",
+   "url": "https://www.dxomark.com/smartphones/Samsung/Galaxy-S26",
+   "camera": 146,
+   "protocol": "6",
+   "updated": "2026-08-13"
+  },
+  {
+   "brand": "Google",
+   "model": "Pixel 11 Pro XL",
+   "name": "Google Pixel 11 Pro XL",
+   "url": "https://www.dxomark.com/smartphones/Google/Pixel-11-Pro-XL",
+   "camera": 168,
+   "protocol": "6",
+   "updated": "2026-08-21"
+  },
+  {
+   "brand": "Google",
+   "model": "Pixel 11",
+   "name": "Google Pixel 11",
+   "url": "https://www.dxomark.com/smartphones/Google/Pixel-11",
+   "camera": 154,
+   "protocol": "6",
+   "updated": "2026-08-21"
+  },
+  {
+   "brand": "Apple",
+   "model": "iPhone 18 Pro",
+   "name": "Apple iPhone 18 Pro",
+   "url": "https://www.dxomark.com/smartphones/Apple/iPhone-18-Pro",
+   "camera": 172,
+   "protocol": "6",
+   "updated": "2026-09-18"
+  }
+ ]
+}

@@ -24,6 +24,7 @@ store.google.com/sg ──────────► data/prices.csv ───�
 | Discover | `python -m pipeline.discover` | Lists phones announced since Jan 2025 from GSMArena brand pages (no tablets, watches, foldables or China/India-only lines) |
 | Specs | `python -m pipeline.specs` | Fetches and parses every spec sheet (plus the 2025 phones) |
 | Prices | `python -m pipeline.prices crawl` | Official-store listings → price rows, matched by model name and storage |
+| Lab results | `python -m pipeline.labs` | Refreshes DXOMARK camera scores (`data/dxomark_scores.json`). Notebookcheck stress tests are kept by hand in `data/notebookcheck_stress.csv` with review links |
 | Build | `python -m pipeline.build` | Scores everything and writes the site data |
 
 GSMArena and Lazada both block plain scripts, so fetching uses a visible
@@ -53,8 +54,8 @@ Nine categories, each 0–10 (`pipeline/config.py` holds every threshold):
 
 | Category | Based on |
 |---|---|
-| Performance | Half CPU: GeekBench 6 multi-core. Half GPU: 3DMark Wild Life Extreme. Lab results; else same/similar chipset; else estimated (CPU cores / nearest GeekBench scores) |
-| Camera | Main sensor size, OIS, telephoto zoom & sensor, ultrawide, video, selfie. Megapixels alone don't count. Unpublished sensor sizes are estimated from same-megapixel cameras on phones with similar performance |
+| Performance | Half CPU: GeekBench 6 multi-core. Half *sustained* GPU: 3DMark Wild Life Extreme peak × the share kept in Notebookcheck's stress test (phones that overheated get the lowest share seen; untested phones borrow from the same chip, else the same brand). Lab results; else same/similar chipset; else estimated |
+| Camera | Main sensor size, OIS, telephoto zoom & sensor, ultrawide, video, selfie (megapixels alone don't count), moved halfway to DXOMARK's measured camera score where tested. Untested phones only borrow from an identical-camera twin (full if same chip, half if same line) or, for Apple and Google, half from a same-chip sibling. Unpublished sensor sizes are estimated from same-megapixel cameras on phones with similar performance |
 | Battery life | GSMArena *Active use* hours (else estimated from EU label or capacity) |
 | Display | Panel, refresh rate, LTPO, HDR, measured brightness, sharpness |
 | Charging | Wired & wireless watts, reverse wireless |

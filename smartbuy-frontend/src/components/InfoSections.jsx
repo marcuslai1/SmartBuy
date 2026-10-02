@@ -3,9 +3,10 @@ import { fmtDate } from '../lib/data';
 
 export function HowItWorks({ categories }) {
   const desc = {
-    performance: 'Half CPU (Geekbench 6 multi-core), half GPU (3DMark Wild Life Extreme), each on a log scale.',
+    performance:
+      'Half CPU (Geekbench 6 multi-core), half sustained GPU: the 3DMark Wild Life Extreme peak times the share a phone keeps in Notebookcheck’s stress test, so phones that throttle hard score lower.',
     camera:
-      'Main sensor size, OIS, telephoto zoom and sensor, ultrawide, video and selfie. Megapixels alone don’t count.',
+      'Main sensor size, OIS, telephoto zoom and sensor, ultrawide, video and selfie, moved halfway towards DXOMARK’s measured camera score where it has tested the phone (or an identical-camera twin). Megapixels alone don’t count.',
     battery: 'Hours in GSMArena’s measured “Active use” test.',
     display: 'Panel type, refresh rate, LTPO, HDR, measured brightness and sharpness.',
     charging: 'Wired and wireless watts, plus reverse wireless.',

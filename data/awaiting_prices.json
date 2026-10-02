@@ -41,15 +41,15 @@
    "last_price": null
   },
   {
-   "id": "honor-magic9-super",
-   "name": "Honor Magic9 Super",
-   "announced": "2026-09-28",
-   "last_price": null
-  },
-  {
    "id": "oppo-find-x9-pro",
    "name": "OPPO Find X9 Pro",
    "announced": "2025-10-16",
+   "last_price": null
+  },
+  {
+   "id": "honor-magic9-super",
+   "name": "Honor Magic9 Super",
+   "announced": "2026-09-28",
    "last_price": null
   },
   {
@@ -71,15 +71,15 @@
    "last_price": null
   },
   {
-   "id": "honor-magic8",
-   "name": "Honor Magic8",
-   "announced": "2025-10-15",
-   "last_price": null
-  },
-  {
    "id": "oppo-find-x9",
    "name": "OPPO Find X9",
    "announced": "2025-10-16",
+   "last_price": null
+  },
+  {
+   "id": "honor-magic8",
+   "name": "Honor Magic8",
+   "announced": "2025-10-15",
    "last_price": null
   },
   {
@@ -95,15 +95,39 @@
    "last_price": null
   },
   {
+   "id": "honor-magic8-pro-air",
+   "name": "Honor Magic8 Pro Air",
+   "announced": "2026-01-19",
+   "last_price": null
+  },
+  {
    "id": "oneplus-15t",
    "name": "OnePlus 15T",
    "announced": "2026-03-24",
    "last_price": null
   },
   {
-   "id": "honor-magic8-pro-air",
-   "name": "Honor Magic8 Pro Air",
-   "announced": "2026-01-19",
+   "id": "oppo-find-x9s-pro",
+   "name": "OPPO Find X9s Pro",
+   "announced": "2026-04-21",
+   "last_price": null
+  },
+  {
+   "id": "vivo-x300s",
+   "name": "vivo X300s",
+   "announced": "2026-03-30",
+   "last_price": null
+  },
+  {
+   "id": "oppo-find-x10-e",
+   "name": "OPPO Find X10 E",
+   "announced": "2026-09-22",
+   "last_price": null
+  },
+  {
+   "id": "honor-magic9-pro-max",
+   "name": "Honor Magic9 Pro Max",
+   "announced": "2026-09-28",
    "last_price": null
   },
   {
@@ -118,30 +142,6 @@
     "ram_gb": 16.0,
     "store": "lazada"
    }
-  },
-  {
-   "id": "oppo-find-x9s-pro",
-   "name": "OPPO Find X9s Pro",
-   "announced": "2026-04-21",
-   "last_price": null
-  },
-  {
-   "id": "oppo-find-x10-e",
-   "name": "OPPO Find X10 E",
-   "announced": "2026-09-22",
-   "last_price": null
-  },
-  {
-   "id": "vivo-x300s",
-   "name": "vivo X300s",
-   "announced": "2026-03-30",
-   "last_price": null
-  },
-  {
-   "id": "honor-magic9-pro-max",
-   "name": "Honor Magic9 Pro Max",
-   "announced": "2026-09-28",
-   "last_price": null
   },
   {
    "id": "vivo-x300-e",
@@ -181,17 +181,10 @@
    "last_price": null
   },
   {
-   "id": "xiaomi-15",
-   "name": "Xiaomi 15",
-   "announced": "2024-10-29",
-   "last_price": {
-    "date": "2025-07-15",
-    "sgd": 1099.0,
-    "list_sgd": null,
-    "storage_gb": 256,
-    "ram_gb": 12.0,
-    "store": "lazada"
-   }
+   "id": "vivo-x300-pro",
+   "name": "vivo X300 Pro",
+   "announced": "2025-10-13",
+   "last_price": null
   },
   {
    "id": "oppo-find-x8-pro",
@@ -207,10 +200,17 @@
    }
   },
   {
-   "id": "vivo-x300-pro",
-   "name": "vivo X300 Pro",
-   "announced": "2025-10-13",
-   "last_price": null
+   "id": "xiaomi-15",
+   "name": "Xiaomi 15",
+   "announced": "2024-10-29",
+   "last_price": {
+    "date": "2025-07-15",
+    "sgd": 1099.0,
+    "list_sgd": null,
+    "storage_gb": 256,
+    "ram_gb": 12.0,
+    "store": "lazada"
+   }
   },
   {
    "id": "xiaomi-18-pro-max",
@@ -319,12 +319,6 @@
    "last_price": null
   },
   {
-   "id": "oppo-reno15",
-   "name": "OPPO Reno15",
-   "announced": "2026-01-02",
-   "last_price": null
-  },
-  {
    "id": "honor-magic8-lite",
    "name": "Honor Magic8 Lite",
    "announced": "2025-12-08",
@@ -334,6 +328,12 @@
    "id": "xiaomi-poco-x8-power",
    "name": "Xiaomi Poco X8 Power",
    "announced": "2026-09-04",
+   "last_price": null
+  },
+  {
+   "id": "oppo-reno15",
+   "name": "OPPO Reno15",
+   "announced": "2026-01-02",
    "last_price": null
   },
   {
@@ -368,15 +368,15 @@
    "last_price": null
   },
   {
-   "id": "nothing-phone-4a-pro",
-   "name": "Nothing Phone (4a) Pro",
-   "announced": "2026-03-05",
-   "last_price": null
-  },
-  {
    "id": "oppo-reno16-f",
    "name": "OPPO Reno16 F",
    "announced": "2026-06-25",
+   "last_price": null
+  },
+  {
+   "id": "nothing-phone-4a-pro",
+   "name": "Nothing Phone (4a) Pro",
+   "announced": "2026-03-05",
    "last_price": null
   },
   {
@@ -424,6 +424,12 @@
    "last_price": null
   },
   {
+   "id": "oppo-a7-pro-max",
+   "name": "OPPO A7 Pro Max",
+   "announced": "2026-08-04",
+   "last_price": null
+  },
+  {
    "id": "oneplus-12r",
    "name": "OnePlus 12R",
    "announced": "2024-01-23",
@@ -437,23 +443,10 @@
    }
   },
   {
-   "id": "oppo-a7-pro-max",
-   "name": "OPPO A7 Pro Max",
-   "announced": "2026-08-04",
+   "id": "oppo-reno15-fs",
+   "name": "OPPO Reno15 FS",
+   "announced": "2026-01-20",
    "last_price": null
-  },
-  {
-   "id": "xiaomi-14t",
-   "name": "Xiaomi 14T",
-   "announced": "2024-09-26",
-   "last_price": {
-    "date": "2025-07-15",
-    "sgd": 649.0,
-    "list_sgd": null,
-    "storage_gb": 256,
-    "ram_gb": 12.0,
-    "store": "lazada"
-   }
   },
   {
    "id": "honor-200-pro",
@@ -469,10 +462,17 @@
    }
   },
   {
-   "id": "oppo-reno15-fs",
-   "name": "OPPO Reno15 FS",
-   "announced": "2026-01-20",
-   "last_price": null
+   "id": "xiaomi-14t",
+   "name": "Xiaomi 14T",
+   "announced": "2024-09-26",
+   "last_price": {
+    "date": "2025-07-15",
+    "sgd": 649.0,
+    "list_sgd": null,
+    "storage_gb": 256,
+    "ram_gb": 12.0,
+    "store": "lazada"
+   }
   },
   {
    "id": "oppo-reno15-f",
@@ -518,19 +518,6 @@
    "last_price": null
   },
   {
-   "id": "oneplus-nord-4",
-   "name": "OnePlus Nord 4",
-   "announced": "2024-07-16",
-   "last_price": {
-    "date": "2025-07-15",
-    "sgd": 599.0,
-    "list_sgd": null,
-    "storage_gb": 128,
-    "ram_gb": 8.0,
-    "store": "lazada"
-   }
-  },
-  {
    "id": "vivo-v50",
    "name": "vivo V50",
    "announced": "2025-02-17",
@@ -544,6 +531,25 @@
    }
   },
   {
+   "id": "oneplus-nord-4",
+   "name": "OnePlus Nord 4",
+   "announced": "2024-07-16",
+   "last_price": {
+    "date": "2025-07-15",
+    "sgd": 599.0,
+    "list_sgd": null,
+    "storage_gb": 128,
+    "ram_gb": 8.0,
+    "store": "lazada"
+   }
+  },
+  {
+   "id": "vivo-v70-lite-4g",
+   "name": "vivo V70 Lite 4G",
+   "announced": "2026-08-22",
+   "last_price": null
+  },
+  {
    "id": "honor-x9c",
    "name": "Honor X9c",
    "announced": "2024-11-05",
@@ -555,12 +561,6 @@
     "ram_gb": 8.0,
     "store": "lazada"
    }
-  },
-  {
-   "id": "vivo-v70-lite-4g",
-   "name": "vivo V70 Lite 4G",
-   "announced": "2026-08-22",
-   "last_price": null
   },
   {
    "id": "oppo-reno12-pro",
@@ -595,19 +595,6 @@
    "last_price": null
   },
   {
-   "id": "oppo-reno13-f",
-   "name": "OPPO Reno13 F",
-   "announced": "2025-01-04",
-   "last_price": {
-    "date": "2025-07-15",
-    "sgd": 490.54,
-    "list_sgd": null,
-    "storage_gb": 256,
-    "ram_gb": 8.0,
-    "store": "lazada"
-   }
-  },
-  {
    "id": "nothing-phone-2a-plus",
    "name": "Nothing Phone (2a) Plus",
    "announced": "2024-07-31",
@@ -621,23 +608,23 @@
    }
   },
   {
-   "id": "xiaomi-poco-m8-power",
-   "name": "Xiaomi Poco M8 Power",
-   "announced": "2026-08-04",
-   "last_price": null
-  },
-  {
-   "id": "xiaomi-redmi-note-14-pro-plus-5g",
-   "name": "Xiaomi Redmi Note 14 Pro+ 5G",
-   "announced": "2025-01-10",
+   "id": "oppo-reno13-f",
+   "name": "OPPO Reno13 F",
+   "announced": "2025-01-04",
    "last_price": {
     "date": "2025-07-15",
-    "sgd": 479.0,
+    "sgd": 490.54,
     "list_sgd": null,
     "storage_gb": 256,
     "ram_gb": 8.0,
     "store": "lazada"
    }
+  },
+  {
+   "id": "xiaomi-poco-m8-power",
+   "name": "Xiaomi Poco M8 Power",
+   "announced": "2026-08-04",
+   "last_price": null
   },
   {
    "id": "oppo-reno12",
@@ -672,10 +659,17 @@
    "last_price": null
   },
   {
-   "id": "oppo-a7-pro",
-   "name": "OPPO A7 Pro",
-   "announced": "2026-09-08",
-   "last_price": null
+   "id": "xiaomi-redmi-note-14-pro-plus-5g",
+   "name": "Xiaomi Redmi Note 14 Pro+ 5G",
+   "announced": "2025-01-10",
+   "last_price": {
+    "date": "2025-07-15",
+    "sgd": 479.0,
+    "list_sgd": null,
+    "storage_gb": 256,
+    "ram_gb": 8.0,
+    "store": "lazada"
+   }
   },
   {
    "id": "honor-400-lite",
@@ -694,6 +688,12 @@
    "id": "xiaomi-redmi-note-17-india-china",
    "name": "Xiaomi Redmi Note 17 (India/China)",
    "announced": "2026-07-14",
+   "last_price": null
+  },
+  {
+   "id": "oppo-a7-pro",
+   "name": "OPPO A7 Pro",
+   "announced": "2026-09-08",
    "last_price": null
   },
   {
@@ -779,21 +779,15 @@
    "last_price": null
   },
   {
-   "id": "vivo-iqoo-pad5c",
-   "name": "vivo IQOO Pad5c",
-   "announced": "2026-06-01",
-   "last_price": null
-  },
-  {
    "id": "xiaomi-redmi-note-15-special",
    "name": "Xiaomi Redmi Note 15 Special",
    "announced": "2026-04-02",
    "last_price": null
   },
   {
-   "id": "vivo-pad5e",
-   "name": "vivo Pad5e",
-   "announced": "2025-10-13",
+   "id": "vivo-iqoo-pad5c",
+   "name": "vivo IQOO Pad5c",
+   "announced": "2026-06-01",
    "last_price": null
   },
   {
@@ -809,9 +803,9 @@
    "last_price": null
   },
   {
-   "id": "vivo-y6",
-   "name": "vivo Y6",
-   "announced": "2026-04-23",
+   "id": "vivo-pad5e",
+   "name": "vivo Pad5e",
+   "announced": "2025-10-13",
    "last_price": null
   },
   {
@@ -828,15 +822,21 @@
    }
   },
   {
-   "id": "xiaomi-poco-m8x",
-   "name": "Xiaomi Poco M8x",
-   "announced": "2026-08-21",
+   "id": "vivo-y6",
+   "name": "vivo Y6",
+   "announced": "2026-04-23",
    "last_price": null
   },
   {
    "id": "xiaomi-redmi-m100",
    "name": "Xiaomi Redmi M100",
    "announced": "2026-08-19",
+   "last_price": null
+  },
+  {
+   "id": "xiaomi-poco-m8x",
+   "name": "Xiaomi Poco M8x",
+   "announced": "2026-08-21",
    "last_price": null
   },
   {
@@ -877,19 +877,6 @@
    }
   },
   {
-   "id": "xiaomi-redmi-note-14-5g",
-   "name": "Xiaomi Redmi Note 14 5G",
-   "announced": "2025-01-10",
-   "last_price": {
-    "date": "2025-07-15",
-    "sgd": 299.0,
-    "list_sgd": null,
-    "storage_gb": 256,
-    "ram_gb": 8.0,
-    "store": "lazada"
-   }
-  },
-  {
    "id": "vivo-v40-lite",
    "name": "vivo V40 Lite",
    "announced": "2024-07-14",
@@ -909,15 +896,15 @@
    "last_price": null
   },
   {
-   "id": "realme-16t",
-   "name": "realme 16T",
-   "announced": "2026-05-22",
-   "last_price": null
-  },
-  {
    "id": "vivo-y31t",
    "name": "vivo Y31t",
    "announced": "2026-08-19",
+   "last_price": null
+  },
+  {
+   "id": "realme-16t",
+   "name": "realme 16T",
+   "announced": "2026-05-22",
    "last_price": null
   },
   {
@@ -925,6 +912,19 @@
    "name": "OPPO A6t Pro 4G",
    "announced": "2026-01-13",
    "last_price": null
+  },
+  {
+   "id": "xiaomi-redmi-note-14-5g",
+   "name": "Xiaomi Redmi Note 14 5G",
+   "announced": "2025-01-10",
+   "last_price": {
+    "date": "2025-07-15",
+    "sgd": 299.0,
+    "list_sgd": null,
+    "storage_gb": 256,
+    "ram_gb": 8.0,
+    "store": "lazada"
+   }
   },
   {
    "id": "oppo-a6",
@@ -989,12 +989,6 @@
    }
   },
   {
-   "id": "realme-c100x",
-   "name": "realme C100x",
-   "announced": "2026-05-07",
-   "last_price": null
-  },
-  {
    "id": "vivo-y39",
    "name": "vivo Y39",
    "announced": "2025-03-27",
@@ -1006,6 +1000,12 @@
     "ram_gb": 8.0,
     "store": "lazada"
    }
+  },
+  {
+   "id": "realme-c100x",
+   "name": "realme C100x",
+   "announced": "2026-05-07",
+   "last_price": null
   },
   {
    "id": "realme-c85-4g",

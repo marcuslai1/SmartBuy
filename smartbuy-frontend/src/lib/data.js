@@ -79,6 +79,7 @@ function normalizePhone(p) {
     categories: p.categories || {},
     estimated: Array.isArray(p.estimated) ? p.estimated : [],
     estimated_reasons: p.estimated_reasons && typeof p.estimated_reasons === 'object' ? p.estimated_reasons : {},
+    notes: p.notes && typeof p.notes === 'object' ? p.notes : {},
     scores: p.scores || {},
     specs: p.specs || {},
     variant: p.variant || {},
@@ -263,6 +264,7 @@ export function keySpec(phone, key) {
         s.chipset,
         isNum(s.gb6) ? `Geekbench 6 ${fmtNum(s.gb6)}` : 'no benchmark',
         isNum(s.gpu) ? `3DMark ${fmtNum(s.gpu)}` : null,
+        isNum(s.gpu_stability) ? `keeps ${Math.round(s.gpu_stability * 100)}% under load` : null,
       ]);
     case 'camera':
       return join([
@@ -275,6 +277,7 @@ export function keySpec(phone, key) {
         isNum(s.tele_zoom) ? `${fmtNum(s.tele_zoom, 1)}× tele` : 'no tele',
         s.ultrawide === false ? 'no ultrawide' : yes(s.ultrawide, 'ultrawide'),
         s.video_8k ? '8K video' : yes(s.video_4k60, '4K60 video'),
+        isNum(s.dxomark) && !s.dxomark_from ? `DXOMARK ${s.dxomark}` : null,
       ]);
     case 'battery':
       return join([

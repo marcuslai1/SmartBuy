@@ -49,11 +49,21 @@ def performance(p: dict) -> float:
     cpu = _log01(p.get("gb6") or 0, C.PERF_GB6_LO, C.PERF_GB6_HI)
     if not p.get("gpu"):
         return 10 * cpu
-    gpu = _log01(p["gpu"], C.PERF_GPU_LO, C.PERF_GPU_HI)
+    gpu = _log01(sustained_gpu(p), C.PERF_GPU_LO, C.PERF_GPU_HI)
     return 10 * ((1 - C.PERF_GPU_SHARE) * cpu + C.PERF_GPU_SHARE * gpu)
 
 
+def sustained_gpu(p: dict) -> float:
+    """Peak 3DMark score times the share of it the phone keeps under sustained load."""
+    return p["gpu"] * (p.get("gpu_stability") or 1.0)
+
+
 def camera(p: dict) -> float:
+    """Hardware score plus the lab-result adjustment (DXOMARK, see labs.py)."""
+    return _clamp(camera_hardware(p) + (p.get("camera_adj") or 0.0))
+
+
+def camera_hardware(p: dict) -> float:
     cfg = C.CAMERA
     lenses = p.get("lenses") or []
     main = next((l for l in lenses if l["role"] == "wide"), lenses[0] if lenses else None)

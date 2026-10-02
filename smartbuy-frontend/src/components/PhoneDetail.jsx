@@ -220,6 +220,7 @@ function DetailBody({ phone, data, preset, inCompare, compareFull, onToggleCompa
                 </div>
                 <div className="col-span-3 text-xs text-muted">
                   {keySpec(phone, c.key)}
+                  {phone.notes?.[c.key] && <span className="block text-ink-2">{phone.notes[c.key]}.</span>}
                   {est && <span className="block text-ink-2">{estimateNote(phone, c.key)}.</span>}
                 </div>
               </li>
@@ -294,17 +295,23 @@ function DetailBody({ phone, data, preset, inCompare, compareFull, onToggleCompa
 
       <Section title="Specifications">
         <SpecList phone={phone} />
-        {phone.gsm_url && (
-          <a
-            href={phone.gsm_url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="link mt-4 inline-flex items-center gap-1 text-sm"
-          >
-            Full specs and tests on GSMArena
-            <ExternalLink size={13} aria-hidden="true" />
-          </a>
-        )}
+        <div className="mt-4 flex flex-wrap gap-x-5 gap-y-1.5 text-sm">
+          {[
+            [phone.gsm_url, 'Full specs and tests on GSMArena'],
+            [
+              phone.specs?.dxomark_url,
+              phone.specs?.dxomark_from ? `DXOMARK camera test of the ${phone.specs.dxomark_from}` : 'DXOMARK camera test',
+            ],
+            [phone.specs?.stress_url, 'Notebookcheck review'],
+          ]
+            .filter(([url]) => url)
+            .map(([url, label]) => (
+              <a key={url} href={url} target="_blank" rel="noopener noreferrer" className="link inline-flex items-center gap-1">
+                {label}
+                <ExternalLink size={13} aria-hidden="true" />
+              </a>
+            ))}
+        </div>
       </Section>
     </div>
   );
@@ -418,6 +425,15 @@ function SpecList({ phone }) {
             : 'Not available',
         ],
         ['Storage type', s.storage_type ? `${s.storage_type}${s.storage_type_est ? ' (estimated)' : ''}` : null],
+        [
+          'Sustained graphics',
+          isNum(s.gpu_stability)
+            ? `keeps ${Math.round(s.gpu_stability * 100)}% of peak${
+                s.stability_source === 'tested' ? '' : s.stability_source === 'overheated' ? ' (overheated)' : ' (estimated)'
+              }`
+            : null,
+        ],
+        ['Hottest surface under load', isNum(s.max_temp_c) ? `${fmtNum(s.max_temp_c, 1)} °C` : null],
       ],
     },
     {
@@ -451,6 +467,14 @@ function SpecList({ phone }) {
         ['Ultrawide', yn(s.ultrawide)],
         ['Video', s.video_8k ? '8K, 4K60' : s.video_4k60 ? '4K60' : s.video_4k60 === false ? 'No 4K60' : null],
         ['Selfie', isNum(s.selfie_mp) ? `${fmtNum(s.selfie_mp)}MP` : null],
+        [
+          'DXOMARK camera',
+          isNum(s.dxomark) && !s.dxomark_from
+            ? `${s.dxomark} (protocol v${s.dxomark_protocol})`
+            : s.dxomark_from
+              ? `Not tested (adjusted from the ${s.dxomark_from})`
+              : 'Not tested',
+        ],
       ],
     },
     {

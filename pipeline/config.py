@@ -55,9 +55,12 @@ TIERS = [("budget", 0, 400), ("midrange", 400, 800), ("flagship", 800, 10**9)]
 # ---------------------------------------------------------------- performance
 # CPU: GeekBench 6 multi-core, log-scaled. ~1200 = Helio G85 class, ~11000 = 2026 flagship
 PERF_GB6_LO, PERF_GB6_HI = 1200, 11000
-# GPU: 3DMark Wild Life Extreme, log-scaled. ~200 = Helio G81 class, ~8000 = 2026 flagship
-PERF_GPU_LO, PERF_GPU_HI = 200, 8000
+# GPU: sustained 3DMark Wild Life Extreme = peak score x stress-test stability (the
+# share of peak a phone keeps under load, from Notebookcheck; see labs.py), log-scaled.
+# ~200 = Helio G81 class, ~5500 = best sustained result on sale in 2026
+PERF_GPU_LO, PERF_GPU_HI = 200, 5500
 PERF_GPU_SHARE = 0.5  # performance = CPU and GPU halves (CPU only when no GPU figure exists)
+STABILITY_FLAG_BELOW = 0.9  # flag a borrowed stability as an estimate only when it matters
 # A lab result more than this far from the median of other phones on the same chip
 # (at least two of them) is treated as a bad run and replaced by that median
 LAB_OUTLIER = 0.25
@@ -78,6 +81,13 @@ CAMERA = {
     "video_4k30": 0.4,
     "selfie_max": 0.5,               # >= 32 MP
 }
+
+# Lab camera results (DXOMARK, see labs.py)
+CAMERA_LAB_WEIGHT = 0.5        # a tested phone moves this far from its hardware score to its lab result
+CAMERA_SHARE = 0.5             # share passed to a relative that isn't an exact camera-and-chip twin
+CAMERA_LAB_MIN_FIT = 8         # phones needed to put a DXOMARK protocol version on our scale
+TWIN_SENSOR_TOL = 0.03         # main sensors within 3% count as the same sensor
+CAMERA_PIPELINE_BRANDS = ("Apple", "Google")   # one processing pipeline across the range
 
 # ---------------------------------------------------------------- battery
 # GSMArena "Active use score" hours: 9h = 0, 20h = 10

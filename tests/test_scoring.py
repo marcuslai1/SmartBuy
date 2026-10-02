@@ -197,3 +197,16 @@ def test_typical_price_is_median_of_cheapest_per_crawl():
     rows.append({"date": "2026-10-02", "storage_gb": 512, "price_sgd": 700})
     typical, n = typical_price(rows, 256, "2026-10-02", 799)
     assert n == 4 and typical == 949.0     # median of 999, 899, 1049, 799; Jan row is outside 90 days
+
+
+def test_binned_gpu_is_not_treated_as_a_bad_run():
+    from pipeline.enrich import enrich
+    five = "Apple GPU (5-core graphics)"
+    sheets = [{"name": f"Apple iPhone {i}", "chipset": "Apple A18", "gpu_name": five, "wildlife_extreme": w}
+              for i, w in enumerate([4295, 4324, 4310])]
+    sheets.append({"name": "Apple iPhone 16e", "chipset": "Apple A18", "gpu_name": "Apple GPU (4-core graphics)",
+                   "wildlife_extreme": 2850})
+    sheets.append({"name": "Apple iPhone 16 Plus X", "chipset": "Apple A18", "gpu_name": five})
+    out = {r["model"]: r for r in enrich(sheets)[0]}
+    assert out["iPhone 16e"]["gpu"] == 2850 and out["iPhone 16e"]["gpu_source"] == "tested"
+    assert out["iPhone 16 Plus X"]["gpu"] == 4310    # borrows from the same GPU configuration
