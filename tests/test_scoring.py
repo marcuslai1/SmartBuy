@@ -35,7 +35,7 @@ def test_every_category_is_bounded():
 
 
 def test_categories_can_reach_ten():
-    best = {**FLAGSHIP, "gb6": 12000, "gpu": 9000, "battery_h": 21, "measured_nits": 2000,
+    best = {**FLAGSHIP, "gb6": 12000, "gpu": 9000, "battery_h": 25, "measured_nits": 2000,
             "lenses": [{"role": "wide", "mp": 50, "sensor_in": 1.0, "zoom": None, "ois": True},
                        {"role": "periscope telephoto", "mp": 200, "sensor_in": 0.5, "zoom": 6.0, "ois": True},
                        {"role": "ultrawide", "mp": 50, "sensor_in": 0.4, "zoom": None, "ois": False}],
@@ -64,6 +64,18 @@ def test_megapixels_alone_do_not_win_camera():
     big_mp_small_sensor = {"lenses": [{"role": "wide", "mp": 200, "sensor_in": 0.4, "zoom": None, "ois": False}]}
     small_mp_big_sensor = {"lenses": [{"role": "wide", "mp": 48, "sensor_in": 0.78, "zoom": None, "ois": True}]}
     assert scoring.camera(small_mp_big_sensor) > scoring.camera(big_mp_small_sensor)
+
+
+def test_battery_hours_have_diminishing_returns():
+    score = lambda h: scoring.battery({"battery_h": h})
+    assert score(9) == 0.0 and math.isclose(score(25), 10.0)
+    assert score(12) - score(9) > score(25) - score(22) > 0
+    assert score(20) < 8.0  # 20h is good, not best on sale
+
+
+def test_charging_tops_out_at_120w():
+    wired = lambda w: scoring.charging({"wired_w": w})
+    assert wired(100) < wired(120) == 7.0 == wired(150)
 
 
 def test_apple_charging_estimated_from_time_claim():

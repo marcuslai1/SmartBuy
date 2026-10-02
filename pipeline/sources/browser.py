@@ -28,6 +28,12 @@ def cached(url: str) -> str | None:
     return p.read_text(encoding="utf-8") if p.exists() else None
 
 
+def cached_at(url: str) -> float | None:
+    """When a page was fetched (file time), or None if it isn't cached."""
+    p = _cache_path(url)
+    return p.stat().st_mtime if p.exists() else None
+
+
 class Browser:
     """Context manager that fetches pages via Chrome, with on-disk caching."""
 

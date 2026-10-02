@@ -26,11 +26,17 @@ store.google.com/sg ──────────► data/prices.csv ───�
 | Prices | `python -m pipeline.prices crawl` | Official-store listings → price rows, matched by model name and storage |
 | Lab results | `python -m pipeline.labs` | Refreshes DXOMARK camera scores (`data/dxomark_scores.json`). Notebookcheck stress tests are kept by hand in `data/notebookcheck_stress.csv` with review links |
 | Build | `python -m pipeline.build` | Scores everything and writes the site data |
+| **Refresh** | `python -m pipeline.refresh` | All of the above for new phones and today's prices (plus re-checking up to 30 spec sheets still waiting for lab tests), then tests, a summary of what changed, commit and push. `--no-push`, `--no-git`, `--prices-only`; `--install-reminder` adds a weekly Windows reminder |
 
-GSMArena and Lazada both block plain scripts, so fetching uses a visible
-Chrome window via Playwright (`pip install -r requirements.txt`). Pages are
-cached in `.cache/`. If Lazada rate-limits, use
-`python -m pipeline.prices crawl --lazada-browser` and solve the slider once.
+GSMArena blocks plain scripts, so its pages are fetched in a visible Chrome
+window via Playwright (`pip install -r requirements.txt`) and cached in
+`.cache/`. Lazada blocks scripts too, and its captcha stalls script-driven
+Chrome, so when plain requests are blocked the crawl hands over to a snippet
+(`pipeline/sources/lazada_snippet.js`) that you paste into your own Chrome's
+console on lazada.sg. It does the searches there, downloads
+`smartbuy-lazada-<date>.json`, and the crawl picks the file up from Downloads
+and carries on. Runs on the same day merge, and a brand only counts as fully
+priced once all of its searches have finished.
 
 A phone is on the site only if an official store currently sells it. Foldables
 are left out: they're priced for the form factor, not the specs.
@@ -56,13 +62,17 @@ Nine categories, each 0–10 (`pipeline/config.py` holds every threshold):
 |---|---|
 | Performance | Half CPU: GeekBench 6 multi-core. Half *sustained* GPU: 3DMark Wild Life Extreme peak × the share kept in Notebookcheck's stress test (phones that overheated get the lowest share seen; untested phones borrow from the same chip, else the same brand). Lab results; else same/similar chipset; else estimated |
 | Camera | Main sensor size, OIS, telephoto zoom & sensor, ultrawide, video, selfie (megapixels alone don't count), moved halfway to DXOMARK's measured camera score where tested. Untested phones only borrow from an identical-camera twin (full if same chip, half if same line) or, for Apple and Google, half from a same-chip sibling. Unpublished sensor sizes are estimated from same-megapixel cameras on phones with similar performance |
-| Battery life | GSMArena *Active use* hours (else estimated from EU label or capacity) |
+| Battery life | GSMArena *Active use* hours (else estimated from EU label or capacity), on a log scale: 9 h = 0, 16 h ≈ 5.6, 20 h ≈ 7.8, 25 h = 10, so each extra hour counts a little less |
 | Display | Panel, refresh rate, LTPO, HDR, measured brightness, sharpness |
-| Charging | Wired & wireless watts, reverse wireless |
+| Charging | Wired watts (log scale, 120 W = full marks), wireless watts, reverse wireless |
 | Build & durability | IP rating, glass, frame, EU drop test class, battery lifespan (EU-label charge cycles) |
 | Memory & storage | RAM, storage size and storage speed (UFS/eMMC) of the priced variant |
 | Software support | Years of OS upgrades *still to come*: the promise minus time since release. If a phone's sheet states no promise, it's borrowed from the closest same-series phone, else a brand default |
 | Features | 5G, NFC, stereo speakers, eSIM, headphone jack, UWB, IR, ultrasonic fingerprint or 3D face unlock |
+
+10/10 in a category means the best on sale. When three or more ranked phones
+share a 10, the build prints a warning: that category's top anchor in
+`config.py` needs raising.
 
 Every input that's estimated, borrowed or assumed is flagged on the site with
 the reason. Lab results that disagree wildly (>25%) with other phones on the

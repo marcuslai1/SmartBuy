@@ -6,6 +6,10 @@ candidate makes it onto the site is decided later by whether an official
 Singapore store actually sells it (see prices step).
 
     python -m pipeline.discover            # writes data/candidates.json
+
+Brand pages are cached; fresh_pages re-fetches the newest page(s) of each brand
+so new phones show up. Candidates found before are kept (merge), since a
+cached older page no longer lines up with a re-fetched first page.
 """
 from __future__ import annotations
 
@@ -23,7 +27,7 @@ MAX_PAGES = 5
 
 # Not phones, or not comparable (foldables have their own price logic)
 EXCLUDE_ANY = re.compile(
-    r"(ipad|\bpad\d*\b|magicpad|\btab\b|tablet|watch|band|buds|fold|flip|trifold|\bduo\b|robot|xcover|"
+    r"(ipad|\bpad(\d\w*)?\b|magicpad|\btab\b|tablet|watch|band|buds|fold|flip|trifold|\bduo\b|robot|xcover|"
     r"magic ?v\d)|\((china|india|in/pk|us|russia)\)",
     re.I)
 
@@ -41,20 +45,23 @@ EXCLUDE_LINES = {
 }
 
 
-def discover() -> list[dict]:
+def excluded(brand: str, name: str) -> bool:
+    return bool(EXCLUDE_ANY.search(name) or re.search(EXCLUDE_LINES.get(brand, r"^$"), name))
+
+
+def discover(fresh_pages: int = 0) -> list[dict]:
     found: list[dict] = []
     with Browser() as b:
         for brand, slug in BRAND_PAGES.items():
             for page in range(1, MAX_PAGES + 1):
-                html = b.get(brand_page_url(slug, page))
+                html = b.get(brand_page_url(slug, page), refresh=page <= fresh_pages)
                 items = parse_listing(html)
                 if not items:
                     break
                 for it in items:
                     if (it["announced"] or "0000") < MIN_ANNOUNCED:
                         continue
-                    name = it["name"]
-                    if EXCLUDE_ANY.search(name) or re.search(EXCLUDE_LINES.get(brand, r"^$"), name):
+                    if excluded(brand, it["name"]):
                         continue
                     found.append({"brand": brand, **it})
                 # Stop paging once the listing is older than our window
@@ -63,8 +70,20 @@ def discover() -> list[dict]:
     return found
 
 
+def merge(found: list[dict]) -> tuple[list[dict], list[dict]]:
+    """Existing candidates (minus any the rules now exclude) plus new ones.
+    Returns (all candidates, the new ones)."""
+    old = json.loads(OUT.read_text(encoding="utf-8")) if OUT.exists() else []
+    kept = {c["url"]: c for c in old if not excluded(c["brand"], c["name"])}
+    new = [c for c in found if c["url"] not in kept]
+    kept.update({c["url"]: c for c in found})
+    return list(kept.values()), new
+
+
 if __name__ == "__main__":
-    cands = discover()
+    import sys
+
+    cands, _ = merge(discover(fresh_pages=1 if "--fresh" in sys.argv else 0))
     OUT.parent.mkdir(exist_ok=True)
     OUT.write_text(json.dumps(cands, indent=2, ensure_ascii=False), encoding="utf-8")
     by_brand: dict[str, list[str]] = {}

@@ -90,8 +90,10 @@ TWIN_SENSOR_TOL = 0.03         # main sensors within 3% count as the same sensor
 CAMERA_PIPELINE_BRANDS = ("Apple", "Google")   # one processing pipeline across the range
 
 # ---------------------------------------------------------------- battery
-# GSMArena "Active use score" hours: 9h = 0, 20h = 10
-BATTERY_H_LO, BATTERY_H_HI = 9.0, 20.0
+# GSMArena "Active use score" hours, log-scaled so each extra hour counts a bit
+# less than the one before: 9h = 0, 12h = 2.8, 16h = 5.6, 20h = 7.8, 25h = 10
+# (~25h = the longest-lasting phones on sale in 2026)
+BATTERY_H_LO, BATTERY_H_HI = 9.0, 25.0
 
 # ---------------------------------------------------------------- display
 DISPLAY = {
@@ -107,7 +109,7 @@ DISPLAY = {
 
 # ---------------------------------------------------------------- charging
 CHARGING = {
-    "wired_max": 7.0, "w_lo": 15, "w_hi": 100,
+    "wired_max": 7.0, "w_lo": 15, "w_hi": 120,     # log-scaled watts; 120W = the fastest on sale
     "wireless": [(50, 2.5), (25, 2.0), (15, 1.5), (0.1, 1.0)],
     "reverse_wireless": 0.5,
 }
@@ -156,6 +158,10 @@ OS_UPDATES_MAX = 7
 EXTRAS = {"has_5g": 2.0, "nfc": 2.0, "stereo": 1.5, "esim": 1.0, "jack": 1.0, "uwb": 0.5, "ir": 0.5,
           "secure_unlock": 0.5}   # ultrasonic fingerprint or 3D face unlock
 
+# 10/10 should mean "best on sale". The build warns when this many ranked phones
+# share a 10 in one category: its top anchor needs raising.
+SATURATION_WARN = 3
+
 # ---------------------------------------------------------------- value
 VALUE_SPREAD = 2.0  # value = 5 + VALUE_SPREAD * (residual / residual std), clamped 0-10
 SMARTBUY_BLEND = 0.5  # smartbuy = blend * spec + (1 - blend) * value
@@ -170,7 +176,7 @@ WEIGHT_WOBBLE = 0.3
 PRICE_WOBBLE = 0.08
 ESTIMATE_NOISE = {
     "performance": 0.6,   # borrowed / estimated benchmarks
-    "battery": 1.5,       # EU-label or capacity estimate: median miss ~1.5h = ~1.4 points
+    "battery": 1.0,       # EU-label or capacity estimate: median miss ~1.5h = ~1 point mid-range
     "camera": 0.4,        # assumed main sensor size
     "display": 0.6,       # claimed rather than measured brightness
     "build": 0.5,         # glass / frame / drop class / cycles not published

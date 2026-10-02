@@ -6,16 +6,20 @@ all parsed sheets to data/specs_raw.json. Unsold candidates are still useful:
 their lab benchmarks feed the per-chipset performance table.
 
     python -m pipeline.specs
+    python -m pipeline.specs --recheck 30   # also re-fetch up to 30 sheets still missing lab tests
 """
 from __future__ import annotations
 
+import datetime as dt
 import json
 import re
+import time
 from pathlib import Path
 from urllib.parse import quote_plus
 
 from .match import matches
-from .sources.browser import Browser, cached
+from .enrich import slugify
+from .sources.browser import Browser, cached, cached_at
 from .sources.gsmarena import BASE, parse_search, parse_spec
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -23,6 +27,8 @@ CANDIDATES = ROOT / "data" / "candidates.json"
 LEGACY_SPECS = ROOT / "data" / "legacy" / "final_spec.json"
 LEGACY_MAP = ROOT / "data" / "legacy" / "gsmarena_map.json"
 OUT = ROOT / "data" / "specs_raw.json"
+# GSMArena adds these when it reviews a phone, often weeks after launch
+LAB_FIELDS = ("active_use_h", "geekbench6", "wildlife_extreme", "measured_nits")
 
 # Legacy names that GSMArena spells differently
 LEGACY_SEARCH_OVERRIDES = {
@@ -91,10 +97,15 @@ def resolve_legacy(browser: Browser, candidates: list[dict]) -> dict[str, str]:
     return mapping
 
 
-def fetch_all(cached_only: bool = False, max_failures: int = 3) -> list[dict]:
+def fetch_all(cached_only: bool = False, max_failures: int = 3, recheck: int = 0,
+              priority: set[str] | None = None) -> list[dict]:
     """Parse every candidate's spec sheet. cached_only skips pages not fetched yet;
     after max_failures in a row (GSMArena rate limiting) it stops fetching and
-    keeps going with cached pages only."""
+    keeps going with cached pages only.
+
+    recheck: also re-fetch up to this many cached sheets of phones from the last
+    year that still lack lab tests and weren't fetched in the past week; phones
+    in `priority` (ids, e.g. the ones on sale) first, then least recently fetched."""
     candidates = json.loads(CANDIDATES.read_text(encoding="utf-8"))
     records: dict[str, dict] = {}
     failures, missing = 0, []
@@ -119,6 +130,29 @@ def fetch_all(cached_only: bool = False, max_failures: int = 3) -> list[dict]:
             records[rec["gsm_id"]] = rec
             if i % 25 == 0:
                 print(f"  [{i}/{len(urls)}] parsed", flush=True)
+        if recheck and not cached_only and failures < max_failures:
+            year_ago = (dt.date.today() - dt.timedelta(days=365)).isoformat()
+            stale = [r for r in records.values() if (r.get("announced") or "") >= year_ago
+                     and not all(r.get(k) for k in LAB_FIELDS)
+                     and (cached_at(r["gsm_url"]) or 0) < time.time() - 7 * 86400]
+            stale.sort(key=lambda r: (slugify(r["name"]) not in (priority or ()), cached_at(r["gsm_url"]) or 0))
+            gained = []
+            for r in stale[:recheck]:
+                try:
+                    rec = parse_spec(b.get(r["gsm_url"], refresh=True), r["gsm_url"])
+                except RuntimeError as e:
+                    print(f"  recheck FAILED {r['gsm_url']}: {e}", flush=True)
+                    failures += 1
+                    if failures >= max_failures:
+                        break
+                    continue
+                failures = 0
+                new = [k for k in LAB_FIELDS if rec.get(k) and not r.get(k)]
+                if new:
+                    gained.append(f"{rec['name']} ({', '.join(new)})")
+                records[rec["gsm_id"]] = rec
+            print(f"  rechecked {min(len(stale), recheck)} of {len(stale)} sheets missing lab tests; new results: "
+                  + ("; ".join(gained) or "none"), flush=True)
     if missing:
         print(f"  {len(missing)} spec sheets not fetched yet (re-run later): "
               + ", ".join(u.rsplit('/', 1)[-1] for u in missing[:8]) + (" ..." if len(missing) > 8 else ""))
@@ -128,6 +162,7 @@ def fetch_all(cached_only: bool = False, max_failures: int = 3) -> list[dict]:
 if __name__ == "__main__":
     import sys
 
-    recs = fetch_all(cached_only="--cached-only" in sys.argv)
+    n = int(sys.argv[sys.argv.index("--recheck") + 1]) if "--recheck" in sys.argv else 0
+    recs = fetch_all(cached_only="--cached-only" in sys.argv, recheck=n)
     OUT.write_text(json.dumps(recs, indent=1, ensure_ascii=False), encoding="utf-8")
     print(f"{len(recs)} spec sheets -> {OUT}")

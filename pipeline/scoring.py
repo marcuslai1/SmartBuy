@@ -98,7 +98,7 @@ def camera_hardware(p: dict) -> float:
 
 
 def battery(p: dict) -> float:
-    return 10 * _lerp01(p.get("battery_h") or 0, C.BATTERY_H_LO, C.BATTERY_H_HI)
+    return 10 * _log01(p.get("battery_h") or 0, C.BATTERY_H_LO, C.BATTERY_H_HI)
 
 
 def display(p: dict) -> float:

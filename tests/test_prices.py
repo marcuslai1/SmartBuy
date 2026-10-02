@@ -1,3 +1,5 @@
+import json
+
 from pipeline.prices import observations, reference_sgd
 
 PHONES = [
@@ -48,3 +50,42 @@ def test_rejects_bundles_fakes_and_unknown_models():
 def test_most_specific_model_wins():
     rows, _ = run(listing("Samsung Galaxy S26 Ultra, 5G, AI Phone", 1478))
     assert rows[0]["phone_id"] == "samsung-galaxy-s26-ultra"
+
+
+def test_snippet_download_becomes_listings():
+    from pipeline.sources import lazada
+
+    data = {
+        "complete": False, "queries_done": ["iphone", "samsung galaxy", "galaxy a", "galaxy s", "xiaomi"],
+        "listings": [
+            {"brand": "Samsung", "itemId": "1", "name": "Samsung  Galaxy S26, 5G", "price": "1228.00",
+             "originalPrice": "1398.00", "sellerName": "Samsung ", "itemUrl": "//www.lazada.sg/products/pdp-i1.html?x=1",
+             "inStock": True,
+             "pdp": {"ok": True, "properties": [{"name": "Color Family", "values": [{"name": "Navy"}]},
+                                                {"name": "Storage Capacity",
+                                                 "values": [{"name": "12GB_256GB"}, {"name": "12GB_512GB"}]}]}},
+            {"brand": "Xiaomi", "itemId": "2", "name": "Xiaomi 17 12GB+256GB", "price": "999", "sellerName": "x",
+             "itemUrl": "//www.lazada.sg/products/pdp-i2.html", "inStock": True, "pdp": {"ok": False}},
+        ],
+    }
+    listings, brands = lazada.from_snippet(data)
+    s26, x17 = listings
+    assert s26["title"] == "Samsung Galaxy S26, 5G" and s26["url"] == "https://www.lazada.sg/products/pdp-i1.html"
+    assert s26["price"] == 1228.0 and s26["list_price"] == 1398.0 and s26["storage_options"] == [256, 512]
+    assert x17["storage_options"] is None  # product page unreadable: the title decides
+    # Xiaomi's other queries (redmi, poco...) never ran, so only Apple and Samsung are complete
+    assert brands == {"Apple", "Samsung"}
+
+
+def test_crawl_status_merges_brands(tmp_path, monkeypatch):
+    from pipeline import prices
+
+    monkeypatch.setattr(prices, "STATUS", tmp_path / "status.json")
+    everyone = {"Apple", "Google", "Samsung", "Xiaomi", "vivo"}
+    prices.record_crawl_status("2026-10-02", {"Samsung"}, everyone)
+    status = json.loads((tmp_path / "status.json").read_text())["2026-10-02"]
+    assert status["complete_brands"] == ["Apple", "Google", "Samsung"]
+    assert "vivo, Xiaomi" in status["note"]
+    prices.record_crawl_status("2026-10-02", prices.lazada_brands_done("2026-10-02") | {"Xiaomi", "vivo"}, everyone)
+    status = json.loads((tmp_path / "status.json").read_text())["2026-10-02"]
+    assert status["note"] == "" and len(status["complete_brands"]) == 5

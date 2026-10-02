@@ -7,9 +7,10 @@ export function HowItWorks({ categories }) {
       'Half CPU (Geekbench 6 multi-core), half sustained GPU: the 3DMark Wild Life Extreme peak times the share a phone keeps in Notebookcheck’s stress test, so phones that throttle hard score lower.',
     camera:
       'Main sensor size, OIS, telephoto zoom and sensor, ultrawide, video and selfie, moved halfway towards DXOMARK’s measured camera score where it has tested the phone (or an identical-camera twin). Megapixels alone don’t count.',
-    battery: 'Hours in GSMArena’s measured “Active use” test.',
+    battery:
+      'Hours in GSMArena’s measured “Active use” test: 9 h scores 0 and 25 h scores 10, with each extra hour counting a little less than the one before.',
     display: 'Panel type, refresh rate, LTPO, HDR, measured brightness and sharpness.',
-    charging: 'Wired and wireless watts, plus reverse wireless.',
+    charging: 'Wired watts (120 W gets full marks), wireless watts, plus reverse wireless.',
     build: 'IP rating, glass, frame, EU drop-test class and battery lifespan (EU-label charge cycles).',
     memory: 'RAM, storage size and storage speed (UFS/eMMC) of the exact variant priced.',
     software: 'Years of OS upgrades still to come: the promise minus the time since release.',

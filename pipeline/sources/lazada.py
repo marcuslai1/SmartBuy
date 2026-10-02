@@ -13,6 +13,7 @@ from __future__ import annotations
 import json
 import re
 import time
+from pathlib import Path
 
 import requests
 
@@ -44,11 +45,19 @@ OFFICIAL_SELLERS = {
 # Set by the crawlers: False when a run stopped early because of a captcha/block
 last_run_complete = True
 
-QUERIES = [
-    "iphone", "samsung galaxy", "galaxy a", "galaxy s", "google pixel", "xiaomi", "redmi", "redmi note",
-    "poco", "oppo", "oppo reno", "oppo find", "oppo a", "vivo", "vivo v", "vivo x", "vivo y", "honor",
-    "honor magic", "realme", "realme c", "oneplus", "nothing phone", "cmf phone",
-]
+# Search text -> the brand whose official store it covers. A brand's crawl is
+# complete once all of its queries have run.
+QUERY_BRANDS = {
+    "iphone": "Apple", "samsung galaxy": "Samsung", "galaxy a": "Samsung", "galaxy s": "Samsung",
+    "google pixel": "Google", "xiaomi": "Xiaomi", "redmi": "Xiaomi", "redmi note": "Xiaomi", "poco": "Xiaomi",
+    "oppo": "OPPO", "oppo reno": "OPPO", "oppo find": "OPPO", "oppo a": "OPPO", "vivo": "vivo",
+    "vivo v": "vivo", "vivo x": "vivo", "vivo y": "vivo", "honor": "Honor", "honor magic": "Honor",
+    "realme": "realme", "realme c": "realme", "oneplus": "OnePlus", "nothing phone": "Nothing",
+    "cmf phone": "Nothing",
+}
+QUERIES = list(QUERY_BRANDS)
+SNIPPET = Path(__file__).with_name("lazada_snippet.js")
+DOWNLOADS = Path.home() / "Downloads"
 
 
 class Blocked(Exception):
@@ -147,36 +156,77 @@ def official_listings_browser(queries: list[str] | None = None, max_pages: int =
     return list(seen.values())
 
 
-def storage_options(url: str, session: requests.Session | None = None) -> list[int] | None:
-    """Storage sizes a listing sells, from its product page's SKU properties
+def storage_sizes(properties: list[dict] | None) -> list[int]:
+    """Storage sizes in a product page's SKU properties
     (e.g. 'Storage Capacity': ['12GB_256GB', '12GB_512GB'] -> [256, 512])."""
+    sizes = set()
+    for prop in properties or []:
+        if not re.search(r"storage|capacity|rom|memory|variant|model", prop.get("name") or "", re.I):
+            continue
+        for v in prop.get("values") or []:
+            sizes.update(storages_in((v.get("name") or "").replace("_", " ")))
+    return sorted(sizes)
+
+
+def storage_options(url: str, session: requests.Session | None = None) -> list[int] | None:
+    """Storage sizes a listing sells, from its product page. [] when the page
+    lists none; None when it couldn't be read (blocked), so it's retried next run."""
     r = (session or requests).get(url, headers=HEADERS, timeout=30)
     if r.status_code != 200 or "_____tmd_____/punish" in r.text[:3000]:
         return None
     m = re.search(r"__moduleData__\s*=\s*(\{.*?\});\s*\n", r.text, re.S)
     if not m:
-        return None
+        return []
     try:
         props = json.loads(m.group(1))["data"]["root"]["fields"]["productOption"]["skuBase"]["properties"] or []
     except (KeyError, TypeError, ValueError):
-        return None
-    sizes = set()
-    for prop in props:
-        if not re.search(r"storage|capacity|rom|memory|variant|model", prop.get("name", ""), re.I):
-            continue
-        for v in prop.get("values", []):
-            sizes.update(storages_in(v.get("name", "").replace("_", " ")))
-    return sorted(sizes) or None
+        return []
+    return storage_sizes(props)
 
 
 def add_storage_options(listings: list[dict], delay: float = 2.5) -> None:
-    """Annotate Lazada listings in place with the storage sizes they sell."""
+    """Annotate Lazada listings in place with the storage sizes they sell. Stops at
+    the first blocked page; the rest keep the storage named in their title."""
     with requests.Session() as session:
         for lst in listings:
-            if lst["store"] != "lazada" or "storage_options" in lst:
+            if lst["store"] != "lazada" or lst.get("storage_options") is not None or not lst.get("in_stock", True):
                 continue
-            lst["storage_options"] = storage_options(lst["url"], session)
+            opts = storage_options(lst["url"], session)
+            if opts is None:
+                print("  lazada: product pages blocked; storage taken from titles for the rest", flush=True)
+                return
+            lst["storage_options"] = opts
             time.sleep(delay)
+
+
+# ------------------------------------------------------------- browser snippet
+# When Lazada blocks scripts, the crawl runs as a snippet pasted into the
+# person's own Chrome (a real session passes the captcha), which downloads its
+# results as smartbuy-lazada-<date>.json.
+
+def snippet(date: str, max_pages: int = 3) -> str:
+    js = SNIPPET.read_text(encoding="utf-8")
+    return (js.replace("__QUERIES__", json.dumps(QUERY_BRANDS)).replace("__SELLERS__", json.dumps(OFFICIAL_SELLERS))
+            .replace("__DATE__", date).replace("__MAX_PAGES__", str(max_pages)))
+
+
+def snippet_file(date: str, folder: Path = DOWNLOADS) -> Path | None:
+    """The newest download for this date ('smartbuy-lazada-2026-10-02 (1).json' too)."""
+    files = sorted(folder.glob(f"smartbuy-lazada-{date}*.json"), key=lambda f: f.stat().st_mtime)
+    return files[-1] if files else None
+
+
+def from_snippet(data: dict) -> tuple[list[dict], set[str]]:
+    """(listings, brands whose queries all finished) from a snippet download."""
+    listings = []
+    for it in data.get("listings") or []:
+        lst = _listing(it, it["brand"])
+        pdp = it.get("pdp") or {}
+        lst["storage_options"] = storage_sizes(pdp.get("properties")) if pdp.get("ok") else None
+        listings.append(lst)
+    done = set(data.get("queries_done") or [])
+    brands = {b for b in set(QUERY_BRANDS.values()) if all(q in done for q, qb in QUERY_BRANDS.items() if qb == b)}
+    return listings, brands
 
 
 def official_listings(queries: list[str] | None = None, max_pages: int = 3, delay: float = 6.0,

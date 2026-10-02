@@ -1,6 +1,15 @@
 {
  "2026-10-02": {
-  "complete_brands": ["Apple", "Google", "Samsung"],
-  "note": "Lazada rate-limited the crawl partway through; Xiaomi, OPPO, vivo, Honor, realme, OnePlus and Nothing listings are incomplete."
+  "complete_brands": [
+   "Apple",
+   "Google",
+   "Samsung"
+  ],
+  "note": "Lazada rate-limited the crawl partway through; Xiaomi, OPPO, vivo, Honor, realme, OnePlus and Nothing listings are incomplete.",
+  "lazada_brands": [
+   "Apple",
+   "Google",
+   "Samsung"
+  ]
  }
 }

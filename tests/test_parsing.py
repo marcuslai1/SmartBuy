@@ -58,3 +58,10 @@ def test_storage_types_per_size():
     assert parse_storage_types("256GB 8GB RAM | NVMe") == {"default": "NVMe"}
     assert parse_storage_types("64GB 4GB RAM | eMMC 5.1") == {"default": "eMMC 5.1"}
     assert parse_storage_types("128GB 4GB RAM | UFS") == {}
+
+
+def test_tablets_and_region_lines_are_not_candidates():
+    from pipeline.discover import excluded
+
+    assert excluded("vivo", "IQOO Pad5c") and excluded("vivo", "Pad5e") and excluded("Samsung", "Galaxy Tab S11")
+    assert not excluded("vivo", "X300 Pro") and not excluded("OPPO", "Find X9")

@@ -256,6 +256,16 @@ def _base_variant(p: dict) -> dict:
     return vs[0] if vs else {"storage_gb": None, "ram_gb": None}
 
 
+def saturated(phones: list[dict]) -> dict[str, list[str]]:
+    """Categories where at least SATURATION_WARN ranked phones score a full 10."""
+    out = {}
+    for key, _ in C.CATEGORIES:
+        tens = [ph["short_name"] for ph in phones if ph["categories"][key] >= 9.995]
+        if len(tens) >= C.SATURATION_WARN:
+            out[key] = tens
+    return out
+
+
 def crawl_status(date: str) -> dict:
     """Which brands the latest crawl fully covered (data/crawl_status.json)."""
     path = ROOT / "data" / "crawl_status.json"
@@ -265,7 +275,8 @@ def crawl_status(date: str) -> dict:
 
 def build() -> dict:
     records, stats = enrich(json.loads(SPECS.read_text(encoding="utf-8")))
-    records = [r for r in records if not r.get("is_foldable")]
+    # Foldables and tablets (a 9"+ screen) aren't compared with phones
+    records = [r for r in records if not r.get("is_foldable") and (r.get("display_in") or 0) < 9]
     lab_info = labs.apply(records)
     by_id = {r["id"]: r for r in records}
     rows = load_rows()
@@ -373,7 +384,8 @@ def build() -> dict:
     }
 
 
-if __name__ == "__main__":
+def write() -> dict:
+    """Build, write phones.json and the awaiting-prices to-do list, print a summary."""
     data = build()
     OUT.write_text(json.dumps(data, indent=1, ensure_ascii=False), encoding="utf-8")
     m = data["value_models"]["balanced"]
@@ -387,4 +399,12 @@ if __name__ == "__main__":
           f"{len(data['retired'])} retired; prices as of {data['price_date']}")
     print(f"balanced value curve: expected = {m['a']:.2f} + {m['b']:.2f}*x + {m['c']:.3f}*x^2 (x = ln price), "
           f"sd {m['sd']:.2f}, R^2 {m['r2']:.2f}")
+    for key, names in saturated(data["phones"]).items():
+        print(f"WARNING: {len(names)} phones score 10 for {key} ({', '.join(names)}); "
+              f"raise its top anchor in config.py so 10 stays 'best on sale'")
     print(f"-> {OUT}")
+    return data
+
+
+if __name__ == "__main__":
+    write()
