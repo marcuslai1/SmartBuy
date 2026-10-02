@@ -9,7 +9,6 @@ import {
   fmtStorage,
   isNum,
   keySpec,
-  legacyChange,
   plausibleRefresh,
   scoreOf,
   sensorFormat,
@@ -18,7 +17,7 @@ import {
   variantLabel,
   weightShares,
 } from '../lib/data';
-import { Meter, PriceChange, Traits } from './bits';
+import { Meter, Traits } from './bits';
 import Dialog from './Dialog';
 
 export default function PhoneDetail({ phone, open, onClose, data, preset, inCompare, compareFull, onToggleCompare }) {
@@ -68,11 +67,10 @@ function Section({ title, children, aside }) {
 }
 
 function DetailBody({ phone, data, preset, inCompare, compareFull, onToggleCompare }) {
-  const { categories, presets, legacyDate } = data;
+  const { categories, presets } = data;
   const s = scoreOf(phone, preset);
   const shares = weightShares(presets, preset, categories);
   const price = phone.price || {};
-  const change = legacyChange(phone, legacyDate);
   const { strengths, weakness } = traits(phone, categories);
   const discounted = isNum(price.list_sgd) && isNum(price.sgd) && price.list_sgd > price.sgd;
   const presetLabel = presets[preset]?.label || preset;
@@ -103,11 +101,10 @@ function DetailBody({ phone, data, preset, inCompare, compareFull, onToggleCompa
               <div className="tnum mt-0.5 text-sm text-ink-2">
                 {last && isNum(last.sgd)
                   ? `Was ${fmtSGD(last.sgd)}${isNum(last.storage_gb) ? ` for ${fmtStorage(last.storage_gb)}` : ''} at ${storeLabel(last.store)} in ${fmtMonth(last.date)}`
-                  : 'No earlier SmartBuy price either.'}
+                  : 'No price recorded yet.'}
               </div>
             </>
           )}
-          {change && <PriceChange change={change} legacyLabel={fmtMonth(legacyDate)} className="mt-1" />}
           <div className="mt-3 flex flex-wrap gap-2">
             {price.url && (
               <a href={price.url} target="_blank" rel="noopener noreferrer" className="btn btn-primary">
@@ -271,7 +268,6 @@ function DetailBody({ phone, data, preset, inCompare, compareFull, onToggleCompa
       <Section title="Price history">
         <PriceHistory
           history={phone.history.length ? phone.history : last && isNum(last.sgd) ? [last] : []}
-          legacyDate={legacyDate}
         />
       </Section>
 
@@ -293,7 +289,7 @@ function DetailBody({ phone, data, preset, inCompare, compareFull, onToggleCompa
   );
 }
 
-function PriceHistory({ history, legacyDate }) {
+function PriceHistory({ history }) {
   if (!history.length) return <p className="text-sm text-muted">No price history yet.</p>;
   const rows = [...history].reverse();
   return (
@@ -313,7 +309,6 @@ function PriceHistory({ history, legacyDate }) {
             <tr key={`${h.date}-${i}`} className="border-b border-line last:border-0">
               <td className="py-1.5 text-ink-2">
                 {fmtDate(h.date)}
-                {h.date === legacyDate && <span className="text-xs text-muted"> · original snapshot</span>}
               </td>
               <td className="py-1.5 text-xs text-muted">
                 {[isNum(h.ram_gb) ? `${fmtNum(h.ram_gb, 1)}GB` : null, fmtStorage(h.storage_gb)]

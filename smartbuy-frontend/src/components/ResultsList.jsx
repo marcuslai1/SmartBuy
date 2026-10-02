@@ -1,7 +1,7 @@
 import { memo } from 'react';
 import { Check, Plus } from 'lucide-react';
-import { fmtSGD, fmtScore, isNum, legacyChange, scoreOf, shortVariant, storeLabel, traits } from '../lib/data';
-import { EstBadge, MiniBars, PriceChange, Traits } from './bits';
+import { fmtSGD, fmtScore, isNum, scoreOf, shortVariant, storeLabel, traits } from '../lib/data';
+import { EstBadge, MiniBars, Traits } from './bits';
 
 export default function ResultsList({
   phones,
@@ -9,7 +9,6 @@ export default function ResultsList({
   preset,
   sortLabel,
   presetLabel,
-  legacyDate,
   compare,
   onToggleCompare,
   onOpen,
@@ -50,7 +49,6 @@ export default function ResultsList({
               rank={i + 1}
               categories={categories}
               preset={preset}
-              legacyDate={legacyDate}
               inCompare={compare.includes(p.id)}
               compareFull={compare.length >= 3}
               onToggleCompare={onToggleCompare}
@@ -101,7 +99,6 @@ const PhoneRow = memo(function PhoneRow({
   rank,
   categories,
   preset,
-  legacyDate,
   inCompare,
   compareFull,
   onToggleCompare,
@@ -111,7 +108,6 @@ const PhoneRow = memo(function PhoneRow({
 }) {
   const s = scoreOf(phone, preset);
   const price = phone.price || {};
-  const change = legacyChange(phone, legacyDate);
   const { strengths, weakness } = traits(phone, categories);
   const discounted = isNum(price.list_sgd) && isNum(price.sgd) && price.list_sgd > price.sgd;
   const meta = [shortVariant(phone.variant), storeLabel(price.store)].filter(Boolean).join(' · ');
@@ -164,11 +160,9 @@ const PhoneRow = memo(function PhoneRow({
             </h3>
             <div className="mt-0.5 flex flex-wrap items-center gap-x-2 text-xs text-muted">
               <span>{meta}</span>
-              {change && <PriceChange change={change} className="hidden sm:inline-flex" />}
             </div>
             <div className="mt-1 sm:hidden">
               {priceLine}
-              {change && <PriceChange change={change} />}
             </div>
             <div className="mt-1.5">
               <Traits strengths={strengths} weakness={weakness} compact />

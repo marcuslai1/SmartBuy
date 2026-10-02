@@ -49,9 +49,6 @@ export default function Header({ priceDate, theme, onToggleTheme, count, incompl
               Awaiting prices
             </a>
           )}
-          <a className="rounded-md px-2.5 py-1.5 hover:bg-surface-2 hover:text-ink" href="#changes">
-            Since Jul 2025
-          </a>
           <a className="rounded-md px-2.5 py-1.5 hover:bg-surface-2 hover:text-ink" href="#how">
             How it works
           </a>

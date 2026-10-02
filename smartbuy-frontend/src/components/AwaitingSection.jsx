@@ -1,13 +1,12 @@
 import { useMemo, useState } from 'react';
 import { ArrowDown, ArrowUp } from 'lucide-react';
-import { fmtDate, fmtMonth, fmtSGD, fmtScore, fmtStorage, isNum, scoreOf, shortVariant } from '../lib/data';
+import { fmtDate, fmtMonth, fmtScore, isNum, scoreOf, shortVariant } from '../lib/data';
 import { EstBadge, MiniBars } from './bits';
 
 const PREVIEW = 10;
 
 const COLUMNS = [
   { key: 'name', label: 'Phone', dir: 1 },
-  { key: 'last', label: 'Jul 2025 price', dir: -1 },
   { key: 'spec', label: 'Spec score', dir: -1 },
 ];
 
@@ -23,7 +22,6 @@ export default function AwaitingSection({
   presetLabel,
   crawl,
   priceDate,
-  legacyDate,
   onOpen,
   hasFilters,
 }) {
@@ -33,7 +31,6 @@ export default function AwaitingSection({
   const sorted = useMemo(() => {
     const get = {
       name: (p) => p.name,
-      last: (p) => p.last_price?.sgd,
       spec: (p) => scoreOf(p, preset).spec,
     }[sort.key];
     return [...phones].sort((a, b) => {
@@ -102,11 +99,6 @@ export default function AwaitingSection({
                           <>
                             Spec<span className="hidden sm:inline"> · {presetLabel}</span>
                           </>
-                        ) : col.key === 'last' ? (
-                          <>
-                            Jul<span className="hidden sm:inline"> 2025 price</span>
-                            <span className="sm:hidden"> ’25</span>
-                          </>
                         ) : (
                           col.label
                         )}
@@ -124,7 +116,6 @@ export default function AwaitingSection({
             </thead>
             <tbody>
               {shown.map((p, i) => {
-                const lp = p.last_price;
                 return (
                   <tr
                     key={p.id}
@@ -156,19 +147,6 @@ export default function AwaitingSection({
                           <MiniBars phone={p} categories={categories} height={18} />
                         </div>
                       </div>
-                    </td>
-                    <td className="px-2 py-2.5 text-right">
-                      {lp && isNum(lp.sgd) ? (
-                        <>
-                          <div className="text-ink-2">{fmtSGD(lp.sgd)}</div>
-                          <div className="text-2xs text-muted">
-                            {fmtStorage(lp.storage_gb)}
-                            {lp.date && lp.date !== legacyDate ? ` · ${fmtMonth(lp.date)}` : ''}
-                          </div>
-                        </>
-                      ) : (
-                        <span className="text-muted">—</span>
-                      )}
                     </td>
                     <td className="py-2.5 pl-2 pr-4 text-right text-base font-semibold text-ink sm:pr-5">
                       {fmtScore(scoreOf(p, preset).spec)}

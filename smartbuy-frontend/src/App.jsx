@@ -8,7 +8,7 @@ import ValueChart from './components/ValueChart';
 import ResultsList from './components/ResultsList';
 import PhoneDetail from './components/PhoneDetail';
 import { CompareDialog, CompareTray } from './components/Compare';
-import { ChangesSection, Footer, HowItWorks } from './components/InfoSections';
+import { Footer, HowItWorks } from './components/InfoSections';
 import AwaitingSection from './components/AwaitingSection';
 
 function useData() {
@@ -82,7 +82,7 @@ function Explorer({ data }) {
   const [compareOpen, setCompareOpen] = useState(false);
   const pushedDetail = useRef(false);
 
-  const { phones, presets, categories, tiers, valueModels, legacyDate } = data;
+  const { phones, presets, categories, tiers, valueModels } = data;
   const presetKey = presets[view.preset]
     ? view.preset
     : presets[DEFAULT_PRESET]
@@ -230,7 +230,6 @@ function Explorer({ data }) {
             preset={presetKey}
             presetLabel={presetLabel}
             sortLabel={sortLabel}
-            legacyDate={legacyDate}
             compare={view.compare}
             onToggleCompare={toggleCompare}
             onOpen={openPhone}
@@ -249,11 +248,9 @@ function Explorer({ data }) {
             presetLabel={presetLabel}
             crawl={data.crawl}
             priceDate={data.priceDate}
-            legacyDate={legacyDate}
             onOpen={openPhone}
             hasFilters={view.brands.length > 0 || !!view.q.trim()}
           />
-          <ChangesSection phones={phones} retired={data.retired} legacyDate={legacyDate} onOpen={openPhone} />
           <HowItWorks categories={categories} />
         </div>
       </main>

@@ -1,5 +1,5 @@
-import { ArrowDownRight, ArrowUpRight, Minus, Plus } from 'lucide-react';
-import { estimateNote, fmtPct, fmtScore, fmtStorage, isNum } from '../lib/data';
+import { Minus, Plus } from 'lucide-react';
+import { estimateNote, fmtScore, isNum } from '../lib/data';
 
 /** Horizontal 0–10 meter: accent fill on a lighter track of the same hue. */
 export function Meter({ value, max = 10, className = '', height = 6 }) {
@@ -94,21 +94,3 @@ export function Traits({ strengths, weakness, compact = false }) {
   );
 }
 
-/** "−12% since Jul 2025" with icon + sign so colour is never the only cue. */
-export function PriceChange({ change, legacyLabel = 'Jul 2025', className = '' }) {
-  if (!change) return null;
-  const down = change.pct < -0.005;
-  const up = change.pct > 0.005;
-  const Icon = down ? ArrowDownRight : up ? ArrowUpRight : Minus;
-  const tone = down ? 'text-good' : up ? 'text-bad' : 'text-muted';
-  return (
-    <span className={`inline-flex items-center gap-0.5 text-xs ${className}`}>
-      <Icon size={13} strokeWidth={2.25} className={tone} aria-hidden="true" />
-      <span className={`tnum font-medium ${tone}`}>{down || up ? fmtPct(change.pct) : 'Same'}</span>
-      <span className="text-muted">
-        &nbsp;since {legacyLabel}
-        {change.storageDiffers && ` (was ${fmtStorage(change.old.storage_gb)})`}
-      </span>
-    </span>
-  );
-}

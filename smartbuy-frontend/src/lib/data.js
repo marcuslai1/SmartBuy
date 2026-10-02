@@ -45,7 +45,6 @@ export function normalizeData(raw) {
   return {
     generatedAt: d.generated_at || null,
     priceDate: d.price_date || null,
-    legacyDate: d.legacy_price_date || null,
     categories,
     presets,
     tiers,
@@ -54,7 +53,6 @@ export function normalizeData(raw) {
     awaiting,
     brands,
     crawl: { note: crawl.note || null, incompleteBrands, completeBrands: crawl.complete_brands || [] },
-    retired: Array.isArray(d.retired) ? d.retired.filter((r) => r && r.name) : [],
   };
 }
 
@@ -209,16 +207,6 @@ export function sensorFormat(inches) {
 
 /* ---------- derived info ---------- */
 
-/** Price change versus the July 2025 snapshot, if the phone was in it. */
-export function legacyChange(phone, legacyDate) {
-  const h = phone.history;
-  const cur = phone.price?.sgd;
-  if (!legacyDate || !h.length || h[0].date !== legacyDate || !isNum(cur) || !(h[0].sgd > 0)) return null;
-  const old = h[0];
-  const curStorage = phone.price?.storage_gb ?? phone.variant?.storage_gb;
-  const storageDiffers = isNum(old.storage_gb) && isNum(curStorage) && old.storage_gb !== curStorage;
-  return { old, pct: (cur - old.sgd) / old.sgd, storageDiffers, curStorage };
-}
 
 export function traits(phone, categories) {
   const scored = categories
