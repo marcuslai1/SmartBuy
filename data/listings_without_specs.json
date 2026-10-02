@@ -1,0 +1,40 @@
+{
+ "date": "2026-10-02",
+ "listings": [
+  {
+   "brand": "Apple",
+   "title": "Apple iPhone 15 Pro Max",
+   "price": 1925.0,
+   "store": "lazada",
+   "url": "https://www.lazada.sg/products/pdp-i2882006128.html"
+  },
+  {
+   "brand": "vivo",
+   "title": "vivo Y05e 4GB+4GB + 64GB | Dual SIMs | 5150 mAh Battery | Extendable Storage 2TB | 2 Years Warranty",
+   "price": 179.0,
+   "store": "lazada",
+   "url": "https://www.lazada.sg/products/pdp-i13899868474.html"
+  },
+  {
+   "brand": "Honor",
+   "title": "HONOR X9d 5G Smartphone 24(12+12)GB+256/512GB 108MP OIS+EIS | OLED | 8300 mAh Reverse Charge | IP69K | SGS Standard",
+   "price": 569.0,
+   "store": "lazada",
+   "url": "https://www.lazada.sg/products/pdp-i2775952282.html"
+  },
+  {
+   "brand": "vivo",
+   "title": "vivo Y31s 5G 6GB+6GB + 256GB | Snapdragon 4 Gen 2 | 50MP Camera | 6500 mAh | 44W FlashCharge | 2 Years Warranty",
+   "price": 399.0,
+   "store": "lazada",
+   "url": "https://www.lazada.sg/products/pdp-i13787127115.html"
+  },
+  {
+   "brand": "Honor",
+   "title": "[Limited Edition] HONOR 600 Pro MOLLY 5G Smartphone | 28(12+16)GB+512GB | Snapdragon 8 Elite | 7000mAh Long Battery Life",
+   "price": 1199.0,
+   "store": "lazada",
+   "url": "https://www.lazada.sg/products/pdp-i13736979239.html"
+  }
+ ]
+}

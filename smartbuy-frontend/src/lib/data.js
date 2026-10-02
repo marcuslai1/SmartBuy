@@ -1,0 +1,373 @@
+// Helpers for reading phones.json defensively: every field may be missing.
+
+export const DEFAULT_PRESET = 'balanced';
+
+export const SORTS = [
+  { key: 'smartbuy', label: 'SmartBuy score' },
+  { key: 'value', label: 'Value' },
+  { key: 'spec', label: 'Spec score' },
+  { key: 'price_asc', label: 'Price: low to high' },
+  { key: 'price_desc', label: 'Price: high to low' },
+];
+
+const FALLBACK_TIERS = [
+  { key: 'budget', min: 0, max: 400 },
+  { key: 'midrange', min: 400, max: 800 },
+  { key: 'flagship', min: 800, max: null },
+];
+
+const STORE_LABELS = {
+  lazada: 'Lazada',
+  'apple.com/sg': 'Apple Store',
+  'store.google.com/sg': 'Google Store',
+};
+
+const isNum = (n) => typeof n === 'number' && Number.isFinite(n);
+export { isNum };
+
+/** Normalise the raw JSON into something components can trust. */
+export function normalizeData(raw) {
+  const d = raw && typeof raw === 'object' ? raw : {};
+  const categories = Array.isArray(d.categories) ? d.categories.filter((c) => c && c.key) : [];
+  const presets = d.presets && typeof d.presets === 'object' ? d.presets : {};
+  const tiers = Array.isArray(d.tiers) && d.tiers.length ? d.tiers : FALLBACK_TIERS;
+  const phones = (Array.isArray(d.phones) ? d.phones : []).filter((p) => p && p.id && p.name).map(normalizePhone);
+  const rankedIds = new Set(phones.map((p) => p.id));
+  // Phones with spec scores but no current price: never ranked or plotted.
+  const awaiting = (Array.isArray(d.awaiting) ? d.awaiting : [])
+    .filter((p) => p && p.id && p.name && !rankedIds.has(p.id))
+    .map((p) => ({ ...normalizePhone(p), awaiting: true }));
+  const crawl = d.crawl && typeof d.crawl === 'object' ? d.crawl : {};
+  const incompleteBrands = Array.isArray(crawl.incomplete_brands) ? crawl.incomplete_brands : [];
+  const brands = [...new Set([...phones, ...awaiting].map((p) => p.brand))].sort((a, b) =>
+    a.localeCompare(b, 'en', { sensitivity: 'base' }),
+  );
+  return {
+    generatedAt: d.generated_at || null,
+    priceDate: d.price_date || null,
+    legacyDate: d.legacy_price_date || null,
+    categories,
+    presets,
+    tiers,
+    valueModels: d.value_models || {},
+    phones,
+    awaiting,
+    brands,
+    crawl: { note: crawl.note || null, incompleteBrands, completeBrands: crawl.complete_brands || [] },
+    retired: Array.isArray(d.retired) ? d.retired.filter((r) => r && r.name) : [],
+  };
+}
+
+function normalizePhone(p) {
+  return {
+    ...p,
+    brand: p.brand || String(p.name).split(' ')[0],
+    model: p.model || p.name,
+    price: p.price || {},
+    offers: Array.isArray(p.offers) ? p.offers.filter(Boolean) : [],
+    history: Array.isArray(p.history) ? p.history.filter((h) => h && isNum(h.sgd)) : [],
+    categories: p.categories || {},
+    estimated: Array.isArray(p.estimated) ? p.estimated : [],
+    estimated_reasons: p.estimated_reasons && typeof p.estimated_reasons === 'object' ? p.estimated_reasons : {},
+    scores: p.scores || {},
+    specs: p.specs || {},
+    variant: p.variant || {},
+    last_price: p.last_price || null,
+  };
+}
+
+/** Short label for tight spaces (chart labels, compare tray). */
+export function shortName(p) {
+  if (p?.short_name) return p.short_name;
+  const m = p?.model;
+  if (m && m.length > 4 && /[a-z]/i.test(m)) return m;
+  return p?.name || m || '';
+}
+
+export const presetKeys = (presets) => Object.keys(presets || {});
+
+export function scoreOf(phone, preset) {
+  return phone?.scores?.[preset] || {};
+}
+
+/** Category weights for a preset as fractions that sum to 1. */
+export function weightShares(presets, preset, categories) {
+  const w = presets?.[preset]?.weights || {};
+  const total = categories.reduce((s, c) => s + (isNum(w[c.key]) ? w[c.key] : 0), 0);
+  const out = {};
+  categories.forEach((c) => {
+    out[c.key] = total > 0 && isNum(w[c.key]) ? w[c.key] / total : null;
+  });
+  return out;
+}
+
+export function tierOfPrice(sgd, tiers) {
+  if (!isNum(sgd)) return null;
+  for (const t of tiers) {
+    const max = t.max == null ? Infinity : t.max;
+    if (sgd > (t.min ?? 0) - 1e-9 && sgd <= max) return t.key;
+  }
+  return null;
+}
+
+export function phoneTier(phone, tiers) {
+  return phone.tier || tierOfPrice(phone.price?.sgd, tiers);
+}
+
+export function tierLabel(t) {
+  if (!t) return '';
+  if (t.max == null) return `S$${t.min}+`;
+  if (!t.min) return `≤S$${t.max}`;
+  return `S$${t.min}–${t.max}`;
+}
+
+/* ---------- formatting ---------- */
+
+export function fmtSGD(n) {
+  if (!isNum(n)) return '—';
+  const hasCents = Math.round(n * 100) % 100 !== 0;
+  return (
+    'S$' +
+    n.toLocaleString('en-SG', {
+      minimumFractionDigits: hasCents ? 2 : 0,
+      maximumFractionDigits: hasCents ? 2 : 0,
+    })
+  );
+}
+
+export function fmtScore(n, digits = 1) {
+  return isNum(n) ? n.toFixed(digits) : '–';
+}
+
+export function fmtNum(n, digits = 0) {
+  if (!isNum(n)) return '—';
+  return n.toLocaleString('en-SG', { maximumFractionDigits: digits });
+}
+
+export function fmtStorage(gb) {
+  if (!isNum(gb)) return null;
+  if (gb >= 1024) return `${fmtNum(gb / 1024, 1)}TB`;
+  return `${fmtNum(gb)}GB`;
+}
+
+export function variantLabel(v) {
+  if (!v) return '';
+  const parts = [];
+  if (isNum(v.ram_gb)) parts.push(`${fmtNum(v.ram_gb, 1)}GB RAM`);
+  const s = fmtStorage(v.storage_gb);
+  if (s) parts.push(s);
+  return parts.join(' · ');
+}
+
+export function shortVariant(v) {
+  if (!v) return '';
+  const parts = [];
+  if (isNum(v.ram_gb)) parts.push(`${fmtNum(v.ram_gb, 1)}GB`);
+  const s = fmtStorage(v.storage_gb);
+  if (s) parts.push(s);
+  return parts.join(' · ');
+}
+
+const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+function parseISO(iso) {
+  if (!iso || typeof iso !== 'string') return null;
+  const m = iso.match(/^(\d{4})-(\d{2})-(\d{2})/);
+  if (!m) return null;
+  return { y: +m[1], m: +m[2], d: +m[3] };
+}
+
+export function fmtDate(iso) {
+  const p = parseISO(iso);
+  return p ? `${p.d} ${MONTHS[p.m - 1]} ${p.y}` : '—';
+}
+
+export function fmtMonth(iso) {
+  const p = parseISO(iso);
+  return p ? `${MONTHS[p.m - 1]} ${p.y}` : '—';
+}
+
+export function storeLabel(store) {
+  if (!store) return 'Unknown store';
+  return STORE_LABELS[store] || store;
+}
+
+export function fmtPct(x) {
+  if (!isNum(x)) return '—';
+  const v = Math.round(x * 100);
+  if (v === 0) return '0%';
+  return `${v > 0 ? '+' : '−'}${Math.abs(v)}%`;
+}
+
+/** Optical format like 1/1.3" from a sensor size in inches. */
+export function sensorFormat(inches) {
+  if (!isNum(inches) || inches <= 0) return null;
+  if (inches >= 0.95) return '1"';
+  const d = 1 / inches;
+  return `1/${d.toFixed(1).replace(/\.0$/, '')}"`;
+}
+
+/* ---------- derived info ---------- */
+
+/** Price change versus the July 2025 snapshot, if the phone was in it. */
+export function legacyChange(phone, legacyDate) {
+  const h = phone.history;
+  const cur = phone.price?.sgd;
+  if (!legacyDate || !h.length || h[0].date !== legacyDate || !isNum(cur) || !(h[0].sgd > 0)) return null;
+  const old = h[0];
+  const curStorage = phone.price?.storage_gb ?? phone.variant?.storage_gb;
+  const storageDiffers = isNum(old.storage_gb) && isNum(curStorage) && old.storage_gb !== curStorage;
+  return { old, pct: (cur - old.sgd) / old.sgd, storageDiffers, curStorage };
+}
+
+export function traits(phone, categories) {
+  const scored = categories
+    .map((c) => ({ key: c.key, label: c.label, v: phone.categories?.[c.key] }))
+    .filter((c) => isNum(c.v));
+  const strengths = scored
+    .filter((c) => c.v >= 8)
+    .sort((a, b) => b.v - a.v)
+    .slice(0, 2);
+  const weakness = scored
+    .filter((c) => c.v <= 3.5)
+    .sort((a, b) => a.v - b.v)
+    .slice(0, 1);
+  return { strengths, weakness };
+}
+
+export function estimateNote(phone, key) {
+  const reason = phone.estimated_reasons?.[key];
+  if (typeof reason === 'string' && reason.trim()) return reason.trim().replace(/\.$/, '');
+  const s = phone.specs || {};
+  if (key === 'performance') {
+    if (s.gb6_source === 'same chipset') return 'Benchmark borrowed from another phone with the same chipset';
+    if (s.gb6_source === 'unknown' || !isNum(s.gb6)) return 'No benchmark found; estimated from the chipset and CPU';
+    return 'Benchmark taken from a similar chipset';
+  }
+  if (key === 'battery') {
+    if (s.battery_source === 'capacity estimate') return 'Not lab-tested; battery life estimated from capacity';
+    return 'Not lab-tested; estimated from the EU energy label or capacity';
+  }
+  return 'Estimated rather than lab-tested';
+}
+
+const yes = (b, label) => (b ? label : null);
+
+/** One-line summary of the spec that drives each category score. */
+export function keySpec(phone, key) {
+  const s = phone.specs || {};
+  const join = (arr) => arr.filter(Boolean).join(' · ') || '—';
+  switch (key) {
+    case 'performance':
+      return join([s.chipset, isNum(s.gb6) ? `Geekbench 6 ${fmtNum(s.gb6)}` : 'no benchmark']);
+    case 'camera':
+      return join([
+        sensorFormat(s.main_sensor_in)
+          ? `${sensorFormat(s.main_sensor_in)} main`
+          : isNum(s.main_mp)
+            ? `${fmtNum(s.main_mp)}MP main`
+            : null,
+        yes(s.main_ois, 'OIS'),
+        isNum(s.tele_zoom) ? `${fmtNum(s.tele_zoom, 1)}× tele` : 'no tele',
+        s.ultrawide === false ? 'no ultrawide' : yes(s.ultrawide, 'ultrawide'),
+        s.video_8k ? '8K video' : yes(s.video_4k60, '4K60 video'),
+      ]);
+    case 'battery':
+      return join([
+        isNum(s.battery_h) ? `${fmtNum(s.battery_h, 1)} h active use` : null,
+        isNum(s.battery_mah) ? `${fmtNum(s.battery_mah)} mAh` : null,
+      ]);
+    case 'display':
+      return join([
+        isNum(s.display_in) ? `${fmtNum(s.display_in, 2)}″` : null,
+        s.oled === true ? (s.ltpo ? 'LTPO OLED' : 'OLED') : s.oled === false ? 'LCD' : null,
+        plausibleRefresh(s.refresh_hz) ? `${s.refresh_hz}Hz` : null,
+        yes(s.has_hdr, 'HDR'),
+        isNum(s.nits) ? `${fmtNum(s.nits)} nits${s.nits_measured ? '' : ' (claimed)'}` : null,
+      ]);
+    case 'charging': {
+      const wired = isNum(s.wired_w) ? s.wired_w : s.wired_w_est;
+      return join([
+        isNum(wired) ? `${fmtNum(wired)}W wired${!isNum(s.wired_w) ? ' (est.)' : ''}` : null,
+        isNum(s.wireless_w) ? `${fmtNum(s.wireless_w)}W wireless` : 'no wireless',
+      ]);
+    }
+    case 'build':
+      return join([
+        s.ip_rating || 'no IP rating',
+        s.glass,
+        s.frame && `${s.frame} frame`,
+        s.eu_free_fall && `EU drop class ${s.eu_free_fall}`,
+      ]);
+    case 'memory':
+      return variantLabel(phone.variant) || '—';
+    case 'software':
+      return isNum(s.os_updates)
+        ? `${s.os_updates} yr${s.os_updates === 1 ? '' : 's'} of OS updates${s.os_updates_stated ? '' : ' (typical for brand)'}`
+        : '—';
+    case 'extras':
+      return join([
+        yes(s.has_5g, '5G'),
+        yes(s.nfc, 'NFC'),
+        yes(s.esim, 'eSIM'),
+        yes(s.stereo, 'stereo'),
+        yes(s.jack, '3.5mm jack'),
+        yes(s.card_slot, 'microSD'),
+        yes(s.uwb, 'UWB'),
+        yes(s.ir, 'IR blaster'),
+      ]);
+    default:
+      return '—';
+  }
+}
+
+/** Some scraped refresh rates are PWM frequencies (e.g. 2560Hz); hide those. */
+export function plausibleRefresh(hz) {
+  return isNum(hz) && hz >= 30 && hz <= 240;
+}
+
+/** Expected (typical) spec score at a price from the fitted curve. */
+export function expectedAt(model, price) {
+  if (!model || !isNum(model.a) || !isNum(model.b) || !(price > 0)) return null;
+  return model.a + model.b * Math.log(price);
+}
+
+/* ---------- filtering & sorting ---------- */
+
+export function matchesFilters(phone, f, tiers) {
+  const price = phone.price?.sgd;
+  if (f.budget && f.budget !== 'any') {
+    if (phoneTier(phone, tiers) !== f.budget) return false;
+  }
+  if (isNum(f.max) && f.max > 0) {
+    if (!isNum(price) || price > f.max) return false;
+  }
+  if (f.brands?.length && !f.brands.includes(phone.brand)) return false;
+  const q = (f.q || '').trim().toLowerCase();
+  if (q) {
+    const hay = `${phone.name} ${phone.short_name || ''} ${phone.brand} ${phone.specs?.chipset || ''}`.toLowerCase();
+    if (!q.split(/\s+/).every((w) => hay.includes(w))) return false;
+  }
+  return true;
+}
+
+export function sortPhones(list, sort, preset) {
+  const get =
+    {
+      smartbuy: (p) => scoreOf(p, preset).smartbuy,
+      value: (p) => scoreOf(p, preset).value,
+      spec: (p) => scoreOf(p, preset).spec,
+      price_asc: (p) => p.price?.sgd,
+      price_desc: (p) => p.price?.sgd,
+    }[sort] || ((p) => scoreOf(p, preset).smartbuy);
+  const dir = sort === 'price_asc' ? 1 : -1;
+  return [...list].sort((a, b) => {
+    const va = get(a);
+    const vb = get(b);
+    const na = !isNum(va);
+    const nb = !isNum(vb);
+    if (na || nb) return na === nb ? 0 : na ? 1 : -1;
+    if (va !== vb) return (va - vb) * dir;
+    return (scoreOf(b, preset).smartbuy ?? 0) - (scoreOf(a, preset).smartbuy ?? 0);
+  });
+}

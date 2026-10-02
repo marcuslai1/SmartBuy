@@ -1,10 +1,28 @@
 <!doctype html>
-<html lang="en">
+<html lang="en-SG">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Vite + React</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>SmartBuy · Phone value in Singapore</title>
+    <meta
+      name="description"
+      content="Compare phones sold by official Singapore stores by how much phone you get for the price. Specs and lab tests from GSMArena."
+    />
+    <meta name="color-scheme" content="light dark" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <script>
+      // Apply a saved theme before first paint to avoid a flash.
+      try {
+        var t = localStorage.getItem('sb-theme');
+        if (t === 'light' || t === 'dark') document.documentElement.dataset.theme = t;
+      } catch (e) { /* storage blocked */ }
+    </script>
   </head>
   <body>
     <div id="root"></div>
