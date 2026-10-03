@@ -1,26 +1,18 @@
 // Helpers for reading phones.json defensively: every field may be missing.
 
 export const DEFAULT_PRESET = 'balanced';
+export const CUSTOM = 'custom';
 
 export const SORTS = [
-  { key: 'smartbuy', label: 'SmartBuy score' },
-  { key: 'value', label: 'Value' },
-  { key: 'spec', label: 'Spec score' },
+  { key: 'best', label: 'Best buys first' },
+  { key: 'spec', label: 'Score' },
+  { key: 'value', label: 'Above typical for the price' },
   { key: 'price_asc', label: 'Price: low to high' },
   { key: 'price_desc', label: 'Price: high to low' },
 ];
 
-/** Screen-size filter (inches). */
-export const SIZES = [
-  { key: 'any', label: 'Any' },
-  { key: 'compact', label: 'Compact', title: 'Under 6.4″', test: (d) => d < 6.4 },
-  { key: 'standard', label: 'Standard', title: '6.4–6.79″', test: (d) => d >= 6.4 && d < 6.8 },
-  { key: 'large', label: 'Large', title: '6.8″ and up', test: (d) => d >= 6.8 },
-];
-
-/** The price a phone's value is judged at: its typical price over recent crawls. */
-export const scoringPrice = (phone) =>
-  isNum(phone.price?.typical_sgd) ? phone.price.typical_sgd : phone.price?.sgd;
+/** Quick budget choices (S$, upper limits). */
+export const BUDGETS = [400, 600, 800, 1200];
 
 const FALLBACK_TIERS = [
   { key: 'budget', min: 0, max: 400 },
@@ -54,13 +46,16 @@ export function normalizeData(raw) {
   const brands = [...new Set([...phones, ...awaiting].map((p) => p.brand))].sort((a, b) =>
     a.localeCompare(b, 'en', { sensitivity: 'base' }),
   );
+  const storage = d.storage && Array.isArray(d.storage.needs) ? d.storage : { needs: [0, 128, 256, 512], default: 128 };
   return {
     generatedAt: d.generated_at || null,
     priceDate: d.price_date || null,
     categories,
     presets,
     tiers,
-    valueModels: d.value_models || {},
+    storage,
+    bestBuy: d.best_buy || { sure: 0.5, close: 0.2 },
+    uncertainty: d.uncertainty || null,
     phones,
     awaiting,
     brands,
@@ -74,6 +69,7 @@ function normalizePhone(p) {
     brand: p.brand || String(p.name).split(' ')[0],
     model: p.model || p.name,
     price: p.price || {},
+    variants: Array.isArray(p.variants) ? p.variants.filter(Boolean) : [],
     offers: Array.isArray(p.offers) ? p.offers.filter(Boolean) : [],
     history: Array.isArray(p.history) ? p.history.filter((h) => h && isNum(h.sgd)) : [],
     categories: p.categories || {},
@@ -87,6 +83,40 @@ function normalizePhone(p) {
   };
 }
 
+/**
+ * The priorities in force: a preset, or the buyer's own weights from the quiz
+ * (`view.w`, one number per category in category order).
+ */
+export function resolvePriority(view, presets, categories) {
+  const custom =
+    Array.isArray(view.w) && view.w.length === categories.length && view.w.every((x) => isNum(x) && x >= 0)
+      ? Object.fromEntries(categories.map((c, i) => [c.key, view.w[i]]))
+      : null;
+  if (view.preset === CUSTOM && custom && Object.values(custom).some((x) => x > 0)) {
+    return {
+      key: CUSTOM,
+      label: 'Yours',
+      title: 'Your priorities',
+      phrase: 'your priorities',
+      blurb: 'Your answers to “Find my phone”.',
+      weights: custom,
+      custom,
+    };
+  }
+  const key = presets[view.preset] ? view.preset : presets[DEFAULT_PRESET] ? DEFAULT_PRESET : Object.keys(presets)[0];
+  const p = presets[key] || {};
+  const label = p.label || key;
+  return {
+    key,
+    label,
+    title: `${label} priority`,
+    phrase: `a ${label} priority`,
+    blurb: p.blurb || '',
+    weights: p.weights || {},
+    custom,
+  };
+}
+
 /** Short label for tight spaces (chart labels, compare tray). */
 export function shortName(p) {
   if (p?.short_name) return p.short_name;
@@ -95,15 +125,9 @@ export function shortName(p) {
   return p?.name || m || '';
 }
 
-export const presetKeys = (presets) => Object.keys(presets || {});
-
-export function scoreOf(phone, preset) {
-  return phone?.scores?.[preset] || {};
-}
-
-/** Category weights for a preset as fractions that sum to 1. */
-export function weightShares(presets, preset, categories) {
-  const w = presets?.[preset]?.weights || {};
+/** Category weights as fractions that sum to 1. */
+export function weightShares(weights, categories) {
+  const w = weights || {};
   const total = categories.reduce((s, c) => s + (isNum(w[c.key]) ? w[c.key] : 0), 0);
   const out = {};
   categories.forEach((c) => {
@@ -112,24 +136,8 @@ export function weightShares(presets, preset, categories) {
   return out;
 }
 
-export function tierOfPrice(sgd, tiers) {
-  if (!isNum(sgd)) return null;
-  for (const t of tiers) {
-    const max = t.max == null ? Infinity : t.max;
-    if (sgd > (t.min ?? 0) - 1e-9 && sgd <= max) return t.key;
-  }
-  return null;
-}
-
-export function phoneTier(phone, tiers) {
-  return phone.tier || tierOfPrice(phone.price?.sgd, tiers);
-}
-
-export function tierLabel(t) {
-  if (!t) return '';
-  if (t.max == null) return `S$${t.min}+`;
-  if (!t.min) return `≤S$${t.max}`;
-  return `S$${t.min}–${t.max}`;
+export function storageLabel(need) {
+  return need ? `${fmtStorage(need)}+` : 'any storage';
 }
 
 /* ---------- formatting ---------- */
@@ -146,8 +154,22 @@ export function fmtSGD(n) {
   );
 }
 
+/** A variant's current price, "~S$720" when it's an estimate. */
+export function fmtVariantPrice(v) {
+  if (!v) return '—';
+  return `${v.est_from ? '~' : ''}${fmtSGD(v.sgd)}`;
+}
+
 export function fmtScore(n, digits = 1) {
   return isNum(n) ? n.toFixed(digits) : '–';
+}
+
+/** Signed score difference: "+1.4", "−0.3", "±0.0". */
+export function fmtDiff(n, digits = 1) {
+  if (!isNum(n)) return '–';
+  const r = Number(n.toFixed(digits));
+  if (r === 0) return `±${(0).toFixed(digits)}`;
+  return `${r > 0 ? '+' : '−'}${Math.abs(r).toFixed(digits)}`;
 }
 
 export function fmtNum(n, digits = 0) {
@@ -203,13 +225,6 @@ export function storeLabel(store) {
   return STORE_LABELS[store] || store;
 }
 
-export function fmtPct(x) {
-  if (!isNum(x)) return '—';
-  const v = Math.round(x * 100);
-  if (v === 0) return '0%';
-  return `${v > 0 ? '+' : '−'}${Math.abs(v)}%`;
-}
-
 /** Optical format like 1/1.3" from a sensor size in inches. */
 export function sensorFormat(inches) {
   if (!isNum(inches) || inches <= 0) return null;
@@ -220,11 +235,8 @@ export function sensorFormat(inches) {
 
 /* ---------- derived info ---------- */
 
-
-export function traits(phone, categories) {
-  const scored = categories
-    .map((c) => ({ key: c.key, label: c.label, v: phone.categories?.[c.key] }))
-    .filter((c) => isNum(c.v));
+export function traits(cats, categories) {
+  const scored = categories.map((c) => ({ key: c.key, label: c.label, v: cats?.[c.key] })).filter((c) => isNum(c.v));
   const strengths = scored
     .filter((c) => c.v >= 8)
     .sort((a, b) => b.v - a.v)
@@ -234,6 +246,10 @@ export function traits(phone, categories) {
     .sort((a, b) => a.v - b.v)
     .slice(0, 1);
   return { strengths, weakness };
+}
+
+export function categoryLabel(categories, key) {
+  return categories.find((c) => c.key === key)?.label || key;
 }
 
 export function estimateNote(phone, key) {
@@ -252,10 +268,18 @@ export function estimateNote(phone, key) {
   return 'Estimated rather than lab-tested';
 }
 
+/** Why a variant's price is an estimate. */
+export function priceEstimateNote(v) {
+  if (!v?.est_from) return null;
+  return `No store lists the ${fmtStorage(v.storage_gb)} version; estimated from the ${fmtStorage(
+    v.est_from.storage_gb,
+  )} at ${fmtSGD(v.est_from.sgd)} plus a typical storage upgrade price`;
+}
+
 const yes = (b, label) => (b ? label : null);
 
 /** One-line summary of the spec that drives each category score. */
-export function keySpec(phone, key) {
+export function keySpec(phone, key, variant = phone.variant) {
   const s = phone.specs || {};
   const join = (arr) => arr.filter(Boolean).join(' · ') || '—';
   switch (key) {
@@ -307,8 +331,13 @@ export function keySpec(phone, key) {
         s.eu_free_fall && `EU drop class ${s.eu_free_fall}`,
         isNum(s.battery_cycles) && `${fmtNum(s.battery_cycles)} battery cycles`,
       ]);
-    case 'memory':
-      return join([variantLabel(phone.variant), s.storage_type && `${s.storage_type}${s.storage_type_est ? ' (est.)' : ''}`]);
+    case 'memory': {
+      const kind = variant?.storage_type || s.storage_type;
+      return join([
+        isNum(variant?.ram_gb) ? `${fmtNum(variant.ram_gb, 1)}GB RAM` : null,
+        kind && `${kind}${s.storage_type_est ? ' (est.)' : ''} storage`,
+      ]);
+    }
     case 'software':
       if (!isNum(s.os_updates)) return '—';
       return join([
@@ -322,7 +351,6 @@ export function keySpec(phone, key) {
         yes(s.esim, 'eSIM'),
         yes(s.stereo, 'stereo'),
         yes(s.jack, '3.5mm jack'),
-        yes(s.card_slot, 'microSD'),
         yes(s.uwb, 'UWB'),
         yes(s.ir, 'IR blaster'),
         yes(s.secure_unlock, 'ultrasonic/3D unlock'),
@@ -337,59 +365,24 @@ export function plausibleRefresh(hz) {
   return isNum(hz) && hz >= 30 && hz <= 240;
 }
 
-/**
- * Expected (typical) spec score at a price from the fitted curve:
- * a + b·x + c·x², x = ln(price), held flat past its turning point (pipeline/value.py).
- */
-export function expectedAt(model, price) {
-  if (!model || !isNum(model.a) || !isNum(model.b) || !(price > 0)) return null;
-  const c = isNum(model.c) ? model.c : 0;
-  let x = Math.log(price);
-  if (c) {
-    const peak = -model.b / (2 * c);
-    x = c < 0 ? Math.min(x, peak) : Math.max(x, peak);
-  }
-  return model.a + model.b * x + c * x * x;
-}
+/* ---------- sorting ---------- */
 
-/* ---------- filtering & sorting ---------- */
-
-export function matchesFilters(phone, f, tiers) {
-  const price = phone.price?.sgd;
-  if (f.budget && f.budget !== 'any') {
-    if (phoneTier(phone, tiers) !== f.budget) return false;
-  }
-  if (isNum(f.max) && f.max > 0) {
-    if (!isNum(price) || price > f.max) return false;
-  }
-  if (f.brands?.length && !f.brands.includes(phone.brand)) return false;
-  const size = SIZES.find((s) => s.key === f.size);
-  if (size?.test && !(isNum(phone.specs?.display_in) && size.test(phone.specs.display_in))) return false;
-  const q = (f.q || '').trim().toLowerCase();
-  if (q) {
-    const hay = `${phone.name} ${phone.short_name || ''} ${phone.brand} ${phone.specs?.chipset || ''}`.toLowerCase();
-    if (!q.split(/\s+/).every((w) => hay.includes(w))) return false;
-  }
-  return true;
-}
-
-export function sortPhones(list, sort, preset) {
+/** Sort engine rows; ties fall back to score, then price. */
+export function sortRows(rows, sort) {
   const get =
     {
-      smartbuy: (p) => scoreOf(p, preset).smartbuy,
-      value: (p) => scoreOf(p, preset).value,
-      spec: (p) => scoreOf(p, preset).spec,
-      price_asc: (p) => p.price?.sgd,
-      price_desc: (p) => p.price?.sgd,
-    }[sort] || ((p) => scoreOf(p, preset).smartbuy);
+      value: (r) => r.value,
+      price_asc: (r) => r.now,
+      price_desc: (r) => r.now,
+    }[sort] || ((r) => r.spec);
   const dir = sort === 'price_asc' ? 1 : -1;
-  return [...list].sort((a, b) => {
+  return [...rows].sort((a, b) => {
     const va = get(a);
     const vb = get(b);
     const na = !isNum(va);
     const nb = !isNum(vb);
     if (na || nb) return na === nb ? 0 : na ? 1 : -1;
     if (va !== vb) return (va - vb) * dir;
-    return (scoreOf(b, preset).smartbuy ?? 0) - (scoreOf(a, preset).smartbuy ?? 0);
+    return b.spec - a.spec || a.now - b.now;
   });
 }

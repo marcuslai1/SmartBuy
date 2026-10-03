@@ -16,11 +16,11 @@
   --muted: #6b6a65;
   --line: #e3e2dc;
   --line-strong: #cbcac2;
-  --accent: #2a78d6;       /* marks (chart dots, bars) */
-  --accent-ink: #1b5aa6;   /* text, links, buttons: >= 4.5:1 on surface */
-  --accent-soft: #e8f0fb;  /* selected backgrounds */
+  --accent: #2a78d6; /* marks (chart dots, bars) */
+  --accent-ink: #1b5aa6; /* text, links, buttons: >= 4.5:1 on surface */
+  --accent-soft: #e8f0fb; /* selected backgrounds */
   --on-accent: #ffffff;
-  --track: #dce8f7;        /* meter track: lighter step of the accent ramp */
+  --track: #dce8f7; /* meter track: lighter step of the accent ramp */
   --good: #0b6b0b;
   --bad: #b42e2e;
   --dim-point: #c9c8c1;
@@ -95,7 +95,12 @@ body {
   margin: 0;
   background: var(--bg);
   color: var(--ink);
-  font-family: 'IBM Plex Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  font-family:
+    'IBM Plex Sans',
+    system-ui,
+    -apple-system,
+    'Segoe UI',
+    sans-serif;
   font-size: 15px;
   line-height: 1.5;
   overflow-x: hidden;
@@ -178,7 +183,9 @@ body {
   .seg-opt input:checked + span {
     background: var(--surface);
     color: var(--ink);
-    box-shadow: 0 0 0 1px var(--line-strong), 0 1px 2px rgba(0, 0, 0, 0.06);
+    box-shadow:
+      0 0 0 1px var(--line-strong),
+      0 1px 2px rgba(0, 0, 0, 0.06);
   }
   .seg-opt input:focus-visible + span {
     outline: 2px solid var(--accent-ink);
@@ -260,6 +267,29 @@ body {
   .btn-ghost {
     border-color: transparent;
     background: transparent;
+  }
+
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    height: 18px;
+    padding: 0 6px;
+    border-radius: 999px;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    white-space: nowrap;
+    vertical-align: 1px;
+    cursor: help;
+    position: relative;
+    z-index: 1;
+  }
+  .badge-best {
+    background: var(--accent-ink);
+    color: var(--on-accent);
+  }
+  .badge-close {
+    border: 1px solid var(--accent-ink);
+    color: var(--accent-ink);
   }
 
   .est {

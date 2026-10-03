@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { MotionConfig } from 'framer-motion';
-import { normalizeData, matchesFilters, sortPhones, SORTS, DEFAULT_PRESET } from './lib/data';
+import { normalizeData, resolvePriority, SORTS, storageLabel } from './lib/data';
+import { analyse, considers, picks, textMatch } from './lib/engine';
+import { quizToView, saveAnswers } from './lib/quiz';
 import { useTheme, useUrlState } from './lib/hooks';
 import Header from './components/Header';
 import Controls from './components/Controls';
@@ -10,6 +12,8 @@ import PhoneDetail from './components/PhoneDetail';
 import { CompareDialog, CompareTray } from './components/Compare';
 import { Footer, HowItWorks } from './components/InfoSections';
 import AwaitingSection from './components/AwaitingSection';
+import Picks from './components/Picks';
+import Quiz from './components/Quiz';
 
 function useData() {
   const [state, setState] = useState({ status: 'loading', data: null, error: null });
@@ -41,10 +45,10 @@ export default function App() {
   return (
     <MotionConfig reducedMotion="user">
       <a
-        href="#rankings"
+        href="#picks"
         className="sr-only focus:not-sr-only focus:fixed focus:left-3 focus:top-3 focus:z-[60] focus:rounded-md focus:bg-surface focus:px-3 focus:py-2 focus:text-sm focus:shadow"
       >
-        Skip to rankings
+        Skip to picks
       </a>
       <Header
         priceDate={data?.priceDate}
@@ -80,60 +84,69 @@ function Explorer({ data }) {
   const [view, update] = useUrlState();
   const [hoveredId, setHoveredId] = useState(null);
   const [compareOpen, setCompareOpen] = useState(false);
+  const [quizOpen, setQuizOpen] = useState(false);
   const pushedDetail = useRef(false);
 
-  const { phones, presets, categories, tiers, valueModels } = data;
-  const presetKey = presets[view.preset]
-    ? view.preset
-    : presets[DEFAULT_PRESET]
-      ? DEFAULT_PRESET
-      : Object.keys(presets)[0];
-  const sortKey = SORTS.some((s) => s.key === view.sort) ? view.sort : 'smartbuy';
-  const presetLabel = presets[presetKey]?.label || 'Balanced';
-  const sortLabel =
-    sortKey === 'smartbuy' ? 'SmartBuy score' : SORTS.find((s) => s.key === sortKey).label.toLowerCase();
+  const { phones, presets, categories, tiers, awaiting } = data;
+  const priority = useMemo(
+    () => resolvePriority({ preset: view.preset, w: view.w }, presets, categories),
+    [view.preset, view.w, presets, categories],
+  );
+  const sortKey = SORTS.some((s) => s.key === view.sort) ? view.sort : 'best';
+  const needLabel = storageLabel(view.storage);
 
-  const { awaiting } = data;
+  // Everything that depends on the buyer's choices: prices at the storage need,
+  // scores for the priorities, the best-buy ladder among the phones considered.
+  const analysis = useMemo(
+    () =>
+      analyse(data, {
+        weights: priority.weights,
+        storage: view.storage,
+        brands: view.brands,
+        size: view.size,
+        must: view.must,
+      }),
+    [data, priority.weights, view.storage, view.brands, view.size, view.must],
+  );
+  // The budget and the search box only narrow what's shown.
+  const shown = useMemo(
+    () => analysis.rows.filter((r) => r.considered && (!view.max || r.now <= view.max) && textMatch(r.phone, view.q)),
+    [analysis, view.max, view.q],
+  );
+  const matchIds = useMemo(() => new Set(shown.map((r) => r.id)), [shown]);
+  const pickList = useMemo(() => picks(analysis, view.max), [analysis, view.max]);
+
   const incomplete = useMemo(() => new Set(data.crawl.incompleteBrands), [data.crawl.incompleteBrands]);
-  // Awaiting phones can be opened and compared, but are never ranked or plotted.
-  const byId = useMemo(() => new Map([...phones, ...awaiting].map((p) => [p.id, p])), [phones, awaiting]);
+  const phoneById = useMemo(() => new Map([...phones, ...awaiting].map((p) => [p.id, p])), [phones, awaiting]);
   const brands = useMemo(() => {
     const counts = new Map();
     phones.forEach((p) => counts.set(p.brand, (counts.get(p.brand) || 0) + 1));
     return data.brands.map((name) => ({ name, count: counts.get(name) || 0, partial: incomplete.has(name) }));
   }, [phones, data.brands, incomplete]);
 
-  const filters = useMemo(
-    () => ({ budget: view.budget, size: view.size, max: view.max, brands: view.brands, q: view.q }),
-    [view.budget, view.size, view.max, view.brands, view.q],
-  );
-  const matched = useMemo(() => phones.filter((p) => matchesFilters(p, filters, tiers)), [phones, filters, tiers]);
-  const sorted = useMemo(() => sortPhones(matched, sortKey, presetKey), [matched, sortKey, presetKey]);
-  // Budget filters need a price, so only brand and search apply to awaiting phones.
+  // Awaiting phones have no price: only brand, size, must-haves and search apply.
   const awaitingMatched = useMemo(
-    () => awaiting.filter((p) => matchesFilters(p, { brands: view.brands, size: view.size, q: view.q }, tiers)),
-    [awaiting, view.brands, view.size, view.q, tiers],
+    () =>
+      awaiting.filter(
+        (p) => considers(p, { brands: view.brands, size: view.size, must: view.must }) && textMatch(p, view.q),
+      ),
+    [awaiting, view.brands, view.size, view.must, view.q],
   );
-  const matchIds = useMemo(() => new Set(matched.map((p) => p.id)), [matched]);
 
   const labelIds = useMemo(() => {
     const ids = [];
-    if (view.phone && byId.has(view.phone)) ids.push(view.phone);
-    // Label the top of the current ranking (price sorts fall back to SmartBuy order).
-    const rankSort = sortKey.startsWith('price') ? 'smartbuy' : sortKey;
-    sortPhones(matched, rankSort, presetKey)
-      .slice(0, 3)
-      .forEach((p) => !ids.includes(p.id) && ids.push(p.id));
+    if (view.phone && analysis.byId.has(view.phone)) ids.push(view.phone);
+    pickList.forEach((p) => !ids.includes(p.row.id) && ids.push(p.row.id));
     return ids;
-  }, [matched, presetKey, sortKey, view.phone, byId]);
+  }, [pickList, view.phone, analysis]);
 
   const activeCount =
-    (view.budget !== 'any' ? 1 : 0) +
     (view.size !== 'any' ? 1 : 0) +
     (view.max ? 1 : 0) +
     (view.brands.length ? 1 : 0) +
+    (view.must.length ? 1 : 0) +
     (view.q.trim() ? 1 : 0);
-  const reset = useCallback(() => update({ budget: 'any', size: 'any', max: null, brands: [], q: '' }), [update]);
+  const reset = useCallback(() => update({ size: 'any', max: null, brands: [], must: [], q: '' }), [update]);
 
   const openPhone = useCallback(
     (id) => {
@@ -160,12 +173,36 @@ function Explorer({ data }) {
     },
     [update, view.compare],
   );
-  const comparePhones = useMemo(() => view.compare.map((id) => byId.get(id)).filter(Boolean), [view.compare, byId]);
+  const compareItems = useMemo(
+    () =>
+      view.compare
+        .map((id) => phoneById.get(id))
+        .filter(Boolean)
+        .map((phone) => ({ phone, row: analysis.byId.get(phone.id) || null })),
+    [view.compare, phoneById, analysis],
+  );
+
+  const submitQuiz = useCallback(
+    (answers) => {
+      saveAnswers(answers);
+      update(
+        quizToView(answers, {
+          baseWeights: presets.balanced?.weights || priority.weights,
+          categories,
+          brands: data.brands,
+        }),
+      );
+      setQuizOpen(false);
+      requestAnimationFrame(() => document.getElementById('picks')?.scrollIntoView({ block: 'start' }));
+    },
+    [update, presets, priority.weights, categories, data.brands],
+  );
 
   // Keep the last opened phone while the drawer animates out.
-  const detailPhone = (view.phone && byId.get(view.phone)) || null;
+  const detailPhone = (view.phone && phoneById.get(view.phone)) || null;
   const [lastPhone, setLastPhone] = useState(detailPhone);
   if (detailPhone && detailPhone !== lastPhone) setLastPhone(detailPhone);
+  const drawerPhone = detailPhone || lastPhone;
 
   // Expose the sticky controls' height so the chart can stick just below them.
   useEffect(() => {
@@ -178,43 +215,57 @@ function Explorer({ data }) {
     return () => ro.disconnect();
   }, []);
 
+  const context = useMemo(
+    () => ({ priority, needLabel, storage: view.storage, max: view.max }),
+    [priority, needLabel, view.storage, view.max],
+  );
+
   return (
     <>
       <Controls
         view={view}
         update={update}
         presets={presets}
-        presetKey={presetKey}
+        priority={priority}
         brands={brands}
-        tiers={tiers}
+        storageNeeds={data.storage.needs}
         activeCount={activeCount}
         onReset={reset}
-        shown={matched.length}
-        total={phones.length}
+        shown={shown.length}
+        total={analysis.counts.considered}
       />
 
-      <main className={`mx-auto max-w-[1360px] px-4 sm:px-6 lg:px-8 ${comparePhones.length ? 'pb-24' : 'pb-4'}`}>
+      <main className={`mx-auto max-w-[1360px] px-4 sm:px-6 lg:px-8 ${compareItems.length ? 'pb-24' : 'pb-4'}`}>
+        <Picks
+          picks={pickList}
+          context={context}
+          categories={categories}
+          onOpen={openPhone}
+          onQuiz={() => setQuizOpen(true)}
+          onHover={setHoveredId}
+        />
+
         <div
           id="rankings"
-          className="mt-5 grid scroll-mt-32 items-start gap-5 lg:mt-6 lg:gap-6 xl:grid-cols-[minmax(0,0.9fr)_minmax(0,1.2fr)]"
+          className="mt-5 grid scroll-mt-[calc(var(--controls-h,120px)+16px)] items-start gap-5 lg:mt-6 lg:gap-6 xl:grid-cols-[minmax(0,0.9fr)_minmax(0,1.2fr)]"
         >
           <section aria-labelledby="chart-title" className="card chart-sticky p-4 sm:p-5">
             <h2 id="chart-title" className="text-base font-semibold text-ink">
-              Price vs spec score
+              Price vs score
             </h2>
             <p className="mt-0.5 text-[0.8125rem] text-ink-2">
-              Spec score (0–10) for a <strong className="font-semibold text-ink">{presetLabel}</strong> priority. The
-              line is the typical score at each price; dots above it give more phone for the money.
+              Score (0–10) for {priority.phrase}, priced for {needLabel}. The staircase is the best score you can get at
+              each price: phones on it are best buys.
             </p>
             <ChartKey />
             <div className="mt-2">
               <ValueChart
-                phones={phones}
+                rows={analysis.rows}
+                model={analysis.model}
                 matchIds={matchIds}
-                preset={presetKey}
-                presetLabel={presetLabel}
-                model={valueModels[presetKey]}
+                presetLabel={priority.label}
                 tiers={tiers}
+                max={view.max}
                 selectedId={view.phone}
                 hoveredId={hoveredId}
                 onHover={setHoveredId}
@@ -228,13 +279,13 @@ function Explorer({ data }) {
           </section>
 
           <ResultsList
-            phones={sorted}
-            total={phones.length}
-            categories={categories}
-            preset={presetKey}
-            presetLabel={presetLabel}
+            rows={shown}
             sort={sortKey}
-            sortLabel={sortLabel}
+            onSort={(sort) => update({ sort })}
+            context={context}
+            categories={categories}
+            counts={analysis.counts}
+            searching={!!view.q.trim()}
             compare={view.compare}
             onToggleCompare={toggleCompare}
             onOpen={openPhone}
@@ -249,12 +300,12 @@ function Explorer({ data }) {
             phones={awaitingMatched}
             totalAwaiting={awaiting.length}
             categories={categories}
-            preset={presetKey}
-            presetLabel={presetLabel}
+            weights={priority.weights}
+            presetLabel={priority.label}
             crawl={data.crawl}
             priceDate={data.priceDate}
             onOpen={openPhone}
-            hasFilters={view.brands.length > 0 || !!view.q.trim()}
+            hasFilters={view.brands.length > 0 || view.must.length > 0 || view.size !== 'any' || !!view.q.trim()}
           />
           <HowItWorks categories={categories} />
         </div>
@@ -263,7 +314,7 @@ function Explorer({ data }) {
       <Footer generatedAt={data.generatedAt} priceDate={data.priceDate} />
 
       <CompareTray
-        phones={comparePhones}
+        items={compareItems}
         onRemove={toggleCompare}
         onClear={() => update({ compare: [] })}
         onOpen={() => setCompareOpen(true)}
@@ -271,22 +322,24 @@ function Explorer({ data }) {
       <CompareDialog
         open={compareOpen}
         onClose={() => setCompareOpen(false)}
-        phones={comparePhones}
+        items={compareItems}
         categories={categories}
-        preset={presetKey}
-        presetLabel={presetLabel}
+        context={context}
         onOpenPhone={openPhone}
       />
       <PhoneDetail
-        phone={detailPhone || lastPhone}
+        phone={drawerPhone}
+        row={drawerPhone ? analysis.byId.get(drawerPhone.id) || null : null}
         open={!!detailPhone}
         onClose={closePhone}
         data={data}
-        preset={presetKey}
+        context={context}
         inCompare={!!detailPhone && view.compare.includes(detailPhone.id)}
         compareFull={view.compare.length >= 3}
         onToggleCompare={toggleCompare}
+        onOpen={openPhone}
       />
+      <Quiz open={quizOpen} onClose={() => setQuizOpen(false)} onSubmit={submitQuiz} />
     </>
   );
 }
@@ -295,10 +348,16 @@ function ChartKey() {
   return (
     <ul className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-ink-2" aria-label="Chart key">
       <li className="inline-flex items-center gap-1.5">
-        <svg width="10" height="10" aria-hidden="true">
-          <circle cx="5" cy="5" r="4.5" fill="var(--accent)" />
+        <svg width="12" height="12" aria-hidden="true">
+          <circle cx="6" cy="6" r="5" fill="var(--accent)" />
         </svg>
-        Matches your filters
+        Best buy
+      </li>
+      <li className="inline-flex items-center gap-1.5">
+        <svg width="12" height="12" aria-hidden="true">
+          <circle cx="6" cy="6" r="4" fill="var(--surface)" stroke="var(--accent)" strokeWidth="1.75" />
+        </svg>
+        A cheaper phone scores higher
       </li>
       <li className="inline-flex items-center gap-1.5">
         <svg width="10" height="10" aria-hidden="true">
@@ -308,10 +367,15 @@ function ChartKey() {
       </li>
       <li className="inline-flex items-center gap-1.5">
         <svg width="18" height="10" aria-hidden="true">
-          <rect x="0" y="1" width="18" height="8" fill="var(--band)" />
-          <line x1="0" x2="18" y1="5" y2="5" stroke="var(--curve)" strokeWidth="2" />
+          <path d="M0,8 H7 V2 H18" fill="none" stroke="var(--accent-ink)" strokeWidth="2" />
         </svg>
-        Typical for the price (±1 SD)
+        Best score for the price
+      </li>
+      <li className="inline-flex items-center gap-1.5">
+        <svg width="18" height="10" aria-hidden="true">
+          <line x1="0" x2="18" y1="5" y2="5" stroke="var(--curve)" strokeWidth="1.5" strokeDasharray="3 3" />
+        </svg>
+        Typical for the price
       </li>
     </ul>
   );

@@ -10,7 +10,7 @@ CATEGORIES = [
     ("display", "Display"),
     ("charging", "Charging"),
     ("build", "Build & durability"),
-    ("memory", "Memory & storage"),
+    ("memory", "RAM & storage speed"),
     ("software", "Software support"),
     ("extras", "Features"),
 ]
@@ -49,7 +49,7 @@ PRESETS = {
     },
 }
 
-# Price brackets are now only a filter in the UI; value is judged on one curve
+# Price brackets only label the chart; value is judged on one curve
 TIERS = [("budget", 0, 400), ("midrange", 400, 800), ("flagship", 800, 10**9)]
 
 # ---------------------------------------------------------------- performance
@@ -137,13 +137,24 @@ CYCLES_MAX, CYCLES_LO, CYCLES_HI = 1.5, 800, 2000
 CYCLES_UNKNOWN = 1000          # the most common label value
 
 # ---------------------------------------------------------------- memory
-RAM_POINTS = [(16, 5.0), (12, 4.2), (8, 3.0), (6, 1.5), (4, 0.5), (0, 0.0)]
-STORAGE_POINTS = [(1024, 5.0), (512, 4.5), (256, 3.5), (128, 2.0), (64, 0.5), (0, 0.0)]
-CARD_SLOT = 0.5
-# Storage speed. Memory = 85% capacity points above + up to 1.5 for speed
-MEMORY_CAPACITY_SHARE = 0.85
-STORAGE_SPEED = [("NVMe", 1.5), ("UFS 4", 1.5), ("UFS 3", 1.0), ("UFS 2", 0.4), ("eMMC", 0.0)]
-STORAGE_SPEED_UNKNOWN = 0.4    # sheets that don't say are almost all budget phones
+# Storage size isn't scored: it's a need the buyer picks (STORAGE_NEEDS below) and every
+# phone is priced at its cheapest variant with at least that much. This category is the
+# RAM and storage speed of that variant (0-1 each, interpolated).
+RAM_POINTS = [(16, 1.0), (12, 0.84), (8, 0.6), (6, 0.3), (4, 0.1), (0, 0.0)]
+MEMORY_RAM_SHARE = 0.7         # the rest is storage speed
+STORAGE_SPEED = [("NVMe", 1.0), ("UFS 4", 1.0), ("UFS 3", 0.67), ("UFS 2", 0.27), ("eMMC", 0.0)]
+STORAGE_SPEED_UNKNOWN = 0.27   # sheets that don't say are almost all budget phones
+
+# ---------------------------------------------------------------- storage needs
+# The site's storage choice: phones are priced at their cheapest variant with at least
+# this much (0 = any size, the cheapest listing). Ranked phones in data/ use the default.
+STORAGE_NEEDS = [0, 128, 256, 512]
+STORAGE_NEED_DEFAULT = 128
+# A size the phone comes in (per GSMArena) that no store lists is priced from the next
+# size down: each doubling adds STORAGE_STEP_SHARE of the price, at least STORAGE_STEP_MIN.
+# Store prices seen: Apple +S$300 a step (14-32%), Samsung ~13%, Xiaomi +10% and +S$80.
+STORAGE_STEP_SHARE = 0.15
+STORAGE_STEP_MIN = 50
 
 # ---------------------------------------------------------------- software
 # Years of major OS upgrades still to come: promised years minus time since
@@ -162,18 +173,24 @@ EXTRAS = {"has_5g": 2.0, "nfc": 2.0, "stereo": 1.5, "esim": 1.0, "jack": 1.0, "u
 # share a 10 in one category: its top anchor needs raising.
 SATURATION_WARN = 3
 
-# ---------------------------------------------------------------- value
-VALUE_SPREAD = 2.0  # value = 5 + VALUE_SPREAD * (residual / residual std), clamped 0-10
-SMARTBUY_BLEND = 0.5  # smartbuy = blend * spec + (1 - blend) * value
+# ---------------------------------------------------------------- best buys
+# A phone is a best buy when nothing that costs the same or less scores higher (it sits
+# on the price ladder). Specs, prices and priorities are uncertain, so the site redraws
+# the ladder UNCERTAINTY_DRAWS times (below) and calls a phone a "Best buy" if it's on
+# it in at least BEST_BUY_SURE of the draws, a "Close call" from BEST_BUY_CLOSE.
+BEST_BUY_SURE = 0.5
+BEST_BUY_CLOSE = 0.2
 
 # ---------------------------------------------------------------- uncertainty
-# Likely rank ranges: the ranking is recomputed UNCERTAINTY_DRAWS times with
-# every preset weight scaled by up to +-WEIGHT_WOBBLE, every price by up to
-# +-PRICE_WOBBLE (the median sale discount seen) and each estimated category
-# score nudged by a normal error with these standard deviations (score points):
+# Each draw scales every category weight by up to +-WEIGHT_WOBBLE, every price by up to
+# +-PRICE_WOBBLE (the median sale discount seen; plus EST_PRICE_WOBBLE per estimated
+# storage step) and nudges each estimated category score by a normal error with these
+# standard deviations (score points). The site runs the draws in the browser
+# (smartbuy-frontend/src/lib/engine.js) from these values, exported in phones.json.
 UNCERTAINTY_DRAWS = 400
 WEIGHT_WOBBLE = 0.3
 PRICE_WOBBLE = 0.08
+EST_PRICE_WOBBLE = 0.08
 ESTIMATE_NOISE = {
     "performance": 0.6,   # borrowed / estimated benchmarks
     "battery": 1.0,       # EU-label or capacity estimate: median miss ~1.5h = ~1 point mid-range

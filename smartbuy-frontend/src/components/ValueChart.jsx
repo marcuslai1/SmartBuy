@@ -1,31 +1,24 @@
 import { useMemo, useState } from 'react';
-import {
-  expectedAt,
-  fmtSGD,
-  fmtScore,
-  isNum,
-  scoreOf,
-  scoringPrice,
-  shortName,
-  shortVariant,
-  storeLabel,
-} from '../lib/data';
+import { expectedAt } from '../lib/engine';
+import { fmtDiff, fmtSGD, fmtScore, fmtVariantPrice, isNum, shortName, shortVariant, storeLabel } from '../lib/data';
 import { useElementSize } from '../lib/hooks';
 
 const X_TICKS = [100, 150, 200, 300, 400, 500, 600, 800, 1000, 1200, 1500, 2000, 2500, 3000, 4000, 5000];
 const HIT_RADIUS = 24;
+const STATUS_TEXT = { best: 'Best buy', close: 'Close call', beaten: 'A cheaper phone scores higher' };
 
 /**
- * Price (log x) vs spec score (y) for the current priority, with the fitted
- * "typical for the price" curve. Filtered-out phones stay, dimmed.
+ * Price (log x) vs score (y) for the current priorities and storage need. The staircase
+ * is the best-buy ladder of the phones being considered; the dashed curve is the typical
+ * score at each price. Filtered-out phones stay, dimmed.
  */
 export default function ValueChart({
-  phones,
-  matchIds,
-  preset,
-  presetLabel,
+  rows,
   model,
+  matchIds,
+  presetLabel,
   tiers,
+  max,
   selectedId,
   hoveredId,
   onHover,
@@ -42,10 +35,10 @@ export default function ValueChart({
 
   const pts = useMemo(
     () =>
-      phones
-        .map((p) => ({ p, price: scoringPrice(p), spec: scoreOf(p, preset).spec }))
-        .filter((d) => isNum(d.price) && d.price > 0 && isNum(d.spec)),
-    [phones, preset],
+      rows
+        .filter((r) => r.fits && isNum(r.price) && r.price > 0 && isNum(r.spec))
+        .map((r) => ({ r, p: r.phone, price: r.price, spec: r.spec })),
+    [rows],
   );
 
   const geo = useMemo(() => {
@@ -86,6 +79,15 @@ export default function ValueChart({
       }
     }
 
+    // The ladder as a staircase: the best score available at or below each price.
+    const rungs = pts.filter((d) => d.r.ladder).sort((a, b) => a.price - b.price);
+    let stairs = null;
+    if (rungs.length) {
+      stairs = `M${sx(rungs[0].price).toFixed(1)},${sy(rungs[0].spec).toFixed(1)}`;
+      for (const d of rungs.slice(1)) stairs += `H${sx(d.price).toFixed(1)}V${sy(d.spec).toFixed(1)}`;
+      stairs += `H${(m.l + iw).toFixed(1)}`;
+    }
+
     // Tier regions along the top edge.
     const regions = (tiers || [])
       .map((t) => {
@@ -96,8 +98,9 @@ export default function ValueChart({
       })
       .filter(Boolean);
 
-    return { sx, sy, xt, yt, curve, band, regions, ylo, yhi, lo, hi };
-  }, [pts, width, model, tiers, iw, ih, m.l, m.t, small]);
+    const budgetX = max && max > lo && max < hi ? sx(max) : null;
+    return { sx, sy, xt, yt, curve, band, stairs, regions, budgetX, ylo, yhi, lo, hi };
+  }, [pts, width, model, tiers, max, iw, ih, m.l, m.t, small]);
 
   const placed = useMemo(() => {
     if (!geo) return [];
@@ -127,7 +130,7 @@ export default function ValueChart({
       let fallback = null;
       for (const t of tries) {
         const box = { x0: t.bx, x1: t.bx + w, y0: t.y - 11, y1: t.y + 3 };
-        if (box.x0 < m.l || box.x1 > m.l + iw || box.y0 < m.t + 18 || box.y1 > m.t + ih) continue;
+        if (box.x0 < m.l || box.x1 > m.l + iw || box.y0 < m.t + 4 || box.y1 > m.t + ih) continue;
         if (boxes.some((b) => !(box.x1 < b.x0 || box.x0 > b.x1 || box.y1 < b.y0 || box.y0 > b.y1))) continue;
         if (hitsDot(box)) {
           fallback = fallback || { t, box };
@@ -203,9 +206,10 @@ export default function ValueChart({
   const hovered = pts.find((d) => d.p.id === hoveredId) || null;
   const drawOrder = [...pts].sort((a, b) => rankOf(a) - rankOf(b));
   function rankOf(d) {
-    if (d.p.id === hoveredId) return 4;
-    if (d.p.id === selectedId) return 3;
-    return matchIds.has(d.p.id) ? 2 : 1;
+    if (d.p.id === hoveredId) return 5;
+    if (d.p.id === selectedId) return 4;
+    if (!matchIds.has(d.p.id)) return 1;
+    return d.r.status === 'beaten' ? 2 : 3;
   }
 
   return (
@@ -218,7 +222,7 @@ export default function ValueChart({
           className="block cursor-crosshair touch-pan-y rounded-md focus-visible:outline-offset-4"
           tabIndex={0}
           role="img"
-          aria-label={`Scatter chart: price against ${presetLabel} spec score for ${pts.length} phones, with the typical score for each price drawn as a curve. Use arrow keys to step through matching phones by price, Enter to open one. The ranked list below has the same data.`}
+          aria-label={`Scatter chart: price against ${presetLabel} score for ${pts.length} phones. A staircase joins the best buys (nothing cheaper scores higher) and a dashed curve shows the typical score at each price. Use arrow keys to step through matching phones by price, Enter to open one. The list has the same data.`}
           onPointerMove={(e) => {
             setKbd(false);
             const id = nearest(e);
@@ -240,6 +244,11 @@ export default function ValueChart({
               <rect x={m.l} y={m.t} width={iw} height={ih} />
             </clipPath>
           </defs>
+
+          {/* over-budget shade */}
+          {geo.budgetX != null && (
+            <rect x={geo.budgetX} y={m.t} width={m.l + iw - geo.budgetX} height={ih} fill="var(--band)" />
+          )}
 
           {/* tier regions */}
           {geo.regions.map((r) => (
@@ -302,7 +311,33 @@ export default function ValueChart({
             Price, S$ (log scale) →
           </text>
 
-          {/* typical-for-price curve */}
+          {/* budget line */}
+          {geo.budgetX != null && (
+            <g>
+              <line
+                x1={geo.budgetX}
+                x2={geo.budgetX}
+                y1={m.t}
+                y2={m.t + ih}
+                stroke="var(--ink-2)"
+                strokeWidth="1.25"
+                strokeDasharray="4 3"
+              />
+              <text
+                x={geo.budgetX - 5}
+                y={m.t + ih - 6}
+                textAnchor="end"
+                fontSize="11"
+                fill="var(--ink-2)"
+                fontWeight="500"
+                className="chart-label"
+              >
+                Your budget
+              </text>
+            </g>
+          )}
+
+          {/* typical-for-price curve and the best-buy staircase */}
           <g clipPath="url(#plot-clip)">
             {geo.band && <path d={geo.band} fill="var(--band)" />}
             {geo.curve && (
@@ -310,15 +345,25 @@ export default function ValueChart({
                 d={geo.curve}
                 fill="none"
                 stroke="var(--curve)"
-                strokeWidth="2"
+                strokeWidth="1.5"
+                strokeDasharray="4 4"
                 strokeLinecap="round"
+              />
+            )}
+            {geo.stairs && (
+              <path
+                d={geo.stairs}
+                fill="none"
+                stroke="var(--accent-ink)"
+                strokeWidth="2"
                 strokeLinejoin="round"
+                opacity="0.85"
               />
             )}
           </g>
 
           <text x={m.l + 8} y={m.t + 14} fontSize="11" fill="var(--ink-2)" fontWeight="500" className="chart-label">
-            ↑ Above the line: more phone for the money
+            ↖ Up and to the left: more phone for less
           </text>
 
           {/* points */}
@@ -329,7 +374,9 @@ export default function ValueChart({
             const isHov = id === hoveredId;
             const x = geo.sx(d.price);
             const y = geo.sy(d.spec);
-            const r = isSel || isHov ? 6.5 : on ? (small ? 4.5 : 5) : 4;
+            const beaten = d.r.status === 'beaten' || !d.r.status;
+            const r = isSel || isHov ? 6.5 : !on ? 3.5 : beaten ? 3.75 : small ? 4.75 : 5.25;
+            const hollow = on && beaten && !isSel && !isHov;
             return (
               <g key={id}>
                 {(isSel || isHov) && (
@@ -342,14 +389,18 @@ export default function ValueChart({
                     strokeWidth="1.5"
                   />
                 )}
-                <circle
-                  cx={x}
-                  cy={y}
-                  r={r}
-                  fill={on || isSel || isHov ? 'var(--accent)' : 'var(--dim-point)'}
-                  stroke="var(--surface)"
-                  strokeWidth="2"
-                />
+                {hollow ? (
+                  <circle cx={x} cy={y} r={r} fill="var(--surface)" stroke="var(--accent)" strokeWidth="1.75" />
+                ) : (
+                  <circle
+                    cx={x}
+                    cy={y}
+                    r={r}
+                    fill={on || isSel || isHov ? 'var(--accent)' : 'var(--dim-point)'}
+                    stroke="var(--surface)"
+                    strokeWidth="2"
+                  />
+                )}
               </g>
             );
           })}
@@ -373,57 +424,61 @@ export default function ValueChart({
         </svg>
       )}
 
-      {hovered && geo && (
-        <Tooltip
-          d={hovered}
-          geo={geo}
-          width={width}
-          H={H}
-          preset={preset}
-          model={model}
-          matched={matchIds.has(hovered.p.id)}
-        />
-      )}
+      {hovered && geo && <Tooltip d={hovered} geo={geo} width={width} H={H} matched={matchIds.has(hovered.p.id)} />}
 
       <div className="sr-only" aria-live="polite">
         {kbd && hovered
-          ? `${hovered.p.name}, ${fmtSGD(hovered.price)}, spec ${fmtScore(hovered.spec)}, value ${fmtScore(scoreOf(hovered.p, preset).value)}, SmartBuy ${fmtScore(scoreOf(hovered.p, preset).smartbuy)}`
+          ? `${hovered.p.name}, ${fmtVariantPrice(hovered.r.variant)}, score ${fmtScore(hovered.spec)}, ${fmtDiff(hovered.r.value)} versus typical${hovered.r.status ? `, ${STATUS_TEXT[hovered.r.status]}` : ''}`
           : ''}
       </div>
     </div>
   );
 }
 
-function Tooltip({ d, geo, width, H, preset, model, matched }) {
-  const s = scoreOf(d.p, preset);
+function Tooltip({ d, geo, width, H, matched }) {
+  const { r } = d;
   const x = geo.sx(d.price);
   const y = geo.sy(d.spec);
   const flip = x > width - 250;
-  const top = Math.max(4, Math.min(H - 196, y - 40));
-  const expected = isNum(s.expected) ? s.expected : expectedAt(model, d.price);
+  const top = Math.max(4, Math.min(H - 200, y - 40));
+  const v = r.variant;
   return (
     <div
-      className="pointer-events-none absolute z-10 w-[230px] rounded-lg border border-line bg-surface p-3 text-xs shadow-[var(--shadow)]"
+      className="pointer-events-none absolute z-10 w-[236px] rounded-lg border border-line bg-surface p-3 text-xs shadow-[var(--shadow)]"
       style={{ left: flip ? x - 16 : x + 16, top, transform: flip ? 'translateX(-100%)' : undefined }}
       role="presentation"
     >
       <div className="text-[0.8125rem] font-semibold leading-snug text-ink">{d.p.name}</div>
       <div className="mt-0.5 text-muted">
-        {[shortVariant(d.p.variant), storeLabel(d.p.price?.store)].filter(Boolean).join(' · ')}
+        {[shortVariant(v), v.est_from ? 'price estimated' : storeLabel(v.store)].filter(Boolean).join(' · ')}
       </div>
       <dl className="tnum mt-2 grid grid-cols-[1fr_auto] gap-x-3 gap-y-0.5">
         <dt className="text-ink-2">Price</dt>
-        <dd className="text-right font-semibold text-ink">{fmtSGD(d.price)}</dd>
-        <dt className="text-ink-2">Spec score</dt>
-        <dd className="text-right font-semibold text-ink">{fmtScore(s.spec)}</dd>
+        <dd className="text-right font-semibold text-ink">{fmtVariantPrice(v)}</dd>
+        {Math.abs(r.price - r.now) >= 1 && (
+          <>
+            <dt className="text-ink-2">Usually</dt>
+            <dd className="text-right text-ink-2">{fmtSGD(r.price)}</dd>
+          </>
+        )}
+        <dt className="text-ink-2">Score</dt>
+        <dd className="text-right font-semibold text-ink">{fmtScore(r.spec)}</dd>
         <dt className="text-ink-2">Typical at this price</dt>
-        <dd className="text-right text-ink-2">{fmtScore(expected)}</dd>
-        <dt className="text-ink-2">Value</dt>
-        <dd className="text-right font-semibold text-ink">{fmtScore(s.value)}</dd>
-        <dt className="text-ink-2">SmartBuy</dt>
-        <dd className="text-right font-semibold text-ink">{fmtScore(s.smartbuy)}</dd>
+        <dd className="text-right text-ink-2">{fmtScore(r.expected)}</dd>
       </dl>
-      <div className="mt-2 border-t border-line pt-1.5 text-muted">
+      {r.status && (
+        <div className="mt-2 border-t border-line pt-1.5 text-ink-2">
+          <span className="font-semibold text-ink">{STATUS_TEXT[r.status]}</span>
+          {r.beatenBy && r.status !== 'best' && (
+            <>
+              {': '}
+              {shortName(r.beatenBy.phone)} is {fmtSGD(Math.max(0, r.price - r.beatenBy.price))} less and{' '}
+              {fmtScore(r.beatenBy.spec - r.spec)} higher
+            </>
+          )}
+        </div>
+      )}
+      <div className="mt-1.5 text-muted">
         {matched ? 'Click for details' : 'Outside your filters · click for details'}
       </div>
     </div>

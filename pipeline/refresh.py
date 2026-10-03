@@ -21,6 +21,7 @@ from __future__ import annotations
 
 import datetime as dt
 import json
+import shutil
 import subprocess
 import sys
 import traceback
@@ -80,7 +81,7 @@ def dxomark() -> None:
 
 
 def changes(before: dict, after: dict) -> list[str]:
-    """What a reader of the site would notice: phones in/out, price moves, the top 5."""
+    """What a reader of the site would notice: phones in/out, price moves, the best buys."""
     old = {p["id"]: p for p in before.get("phones", [])}
     new = {p["id"]: p for p in after["phones"]}
     lines = [f"{len(new)} phones ranked (was {len(old)}), {len(after['awaiting'])} awaiting prices"]
@@ -98,8 +99,9 @@ def changes(before: dict, after: dict) -> list[str]:
                 moves.append((abs(b - a) / a, f"{p['short_name']} S${a:.0f} -> S${b:.0f}"))
     if moves:
         lines.append(f"Price changes of {PRICE_MOVE:.0%}+: " + "; ".join(m for _, m in sorted(moves, reverse=True)))
-    top = sorted(after["phones"], key=lambda p: p["scores"]["balanced"]["rank"])[:5]
-    lines.append("Top 5: " + ", ".join(f"{p['scores']['balanced']['rank']}. {p['short_name']}" for p in top))
+    from .build import best_buy_ladder
+    lines.append("Best buys (Balanced, any storage): " + ", ".join(
+        f"{p['short_name']} S${p['price']['typical_sgd']:.0f}" for p in best_buy_ladder(after)))
     if after["crawl"]["note"]:
         lines.append(after["crawl"]["note"])
     return lines
@@ -130,6 +132,10 @@ def refresh(argv: list[str]) -> int:
     data = build.write()
     print("\n== Tests", flush=True)
     tests_ok = subprocess.run([sys.executable, "-m", "pytest", "-q", "tests"], cwd=ROOT).returncode == 0
+    if shutil.which("node"):  # the site's ranking engine, checked against the new data
+        tests_ok &= subprocess.run(["node", "--test"], cwd=ROOT / "smartbuy-frontend").returncode == 0
+    else:
+        print("node not found: skipped the site's engine tests")
 
     summary = changes(before, data)
     if found:

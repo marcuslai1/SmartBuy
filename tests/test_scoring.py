@@ -84,14 +84,20 @@ def test_apple_charging_estimated_from_time_claim():
 
 
 def test_value_is_relative_to_price_curve():
-    prices = [100, 150, 200, 300, 400, 600, 800, 1200, 1600]
-    specs = [3.0 + 1.0 * math.log(p / 100) for p in prices]
-    specs[4] += 0.5  # one phone above the curve
+    prices = [100, 200, 400, 800, 1600]
+    specs = [3.0, 4.0, 5.0, 6.0, 7.0]
+    specs[2] += 1.0
     model = value.fit(prices, specs)
-    assert value.value_score(model, 400, specs[4]) > 5.0
-    # a cheap phone exactly on the curve is NOT automatically the best value
-    on_curve = value.expected(model, 100)
-    assert math.isclose(value.value_score(model, 100, on_curve), 5.0, abs_tol=1e-9)
+    assert specs[2] > value.expected(model, 400)
+    assert specs[1] < value.expected(model, 200)
+
+
+def test_best_buys_are_the_price_ladder():
+    prices = [200, 300, 300, 450, 500, 900, 900]
+    specs = [4.0, 5.0, 4.5, 4.9, 6.0, 6.0, 7.0]
+    # 300/4.5 loses to 300/5.0, 450/4.9 to the cheaper 5.0, 900/6.0 to the 500 phone
+    assert value.best_buys(prices, specs) == {0, 1, 4, 6}
+    assert value.best_buys([300, 300], [5.0, 5.0]) == {0, 1}   # exact twins both stay
 
 
 def test_value_curve_bends_with_diminishing_returns():
@@ -115,12 +121,6 @@ def test_old_linear_models_still_work():
     assert math.isclose(value.expected(model, 1000), -11.0 + 2.6 * math.log(1000))
 
 
-def test_value_is_clamped():
-    model = {"a": 0.0, "b": 1.0, "sd": 0.1}
-    assert value.value_score(model, 100, 100.0) == 10.0
-    assert value.value_score(model, 100, -100.0) == 0.0
-
-
 def test_gpu_estimate_follows_nearest_geekbench_scores():
     from pipeline.enrich import enrich
     sheets = [{"name": f"Xiaomi Test {i}", "chipset": f"Chip {i}", "geekbench6": gb, "wildlife_extreme": wle}
@@ -141,6 +141,12 @@ def test_storage_speed_follows_the_priced_variant():
     small = scoring.memory(p, {"storage_gb": 128, "ram_gb": 8})
     big_slow = scoring.memory({"storage_types": {"default": "eMMC 5.1"}}, {"storage_gb": 128, "ram_gb": 8})
     assert small > big_slow
+
+
+def test_storage_size_is_a_need_not_a_score():
+    p = {"storage_types": {"default": "UFS 4.0"}}
+    assert scoring.memory(p, {"storage_gb": 128, "ram_gb": 12}) == scoring.memory(p, {"storage_gb": 1024, "ram_gb": 12})
+    assert scoring.memory(p, {"storage_gb": 128, "ram_gb": 16}) > scoring.memory(p, {"storage_gb": 128, "ram_gb": 8})
     assert scoring.storage_type({"storage_type_est": "UFS 2.2"}, {"storage_gb": 128}) == "UFS 2.2"
 
 

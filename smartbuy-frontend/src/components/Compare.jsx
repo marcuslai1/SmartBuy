@@ -1,20 +1,22 @@
 import { Check, X } from 'lucide-react';
 import {
+  fmtDiff,
   fmtNum,
-  fmtSGD,
   fmtScore,
+  fmtVariantPrice,
   isNum,
-  scoreOf,
   sensorFormat,
   shortName,
   shortVariant,
   storeLabel,
 } from '../lib/data';
+import { specScore } from '../lib/engine';
 import Dialog from './Dialog';
 
 /** Fixed bar listing the phones picked for comparison. */
-export function CompareTray({ phones, onRemove, onClear, onOpen }) {
-  if (!phones.length) return null;
+export function CompareTray({ items, onRemove, onClear, onOpen }) {
+  if (!items.length) return null;
+  const phones = items.map((it) => it.phone);
   return (
     <div className="fixed inset-x-0 bottom-0 z-40 border-t border-line bg-surface shadow-[0_-4px_16px_rgba(0,0,0,0.08)]">
       <div className="mx-auto flex max-w-[1360px] items-center gap-2 px-4 py-2.5 sm:gap-3 sm:px-6 lg:px-8">
@@ -49,25 +51,50 @@ export function CompareTray({ phones, onRemove, onClear, onOpen }) {
   );
 }
 
-// Rows: [label, getter, better ('high' | 'low' | null), formatter]
-function rows(categories, preset) {
-  const sp = (k) => (p) => p.specs?.[k];
+const STATUS = { best: 'Best buy', close: 'Close call', beaten: 'Cheaper phone scores higher' };
+
+// Rows: getters take {phone, row} (row: the engine's result, null for phones awaiting prices)
+function rows(categories, weights) {
+  const sp = (k) => (it) => it.phone.specs?.[k];
+  const cats = (it) => it.row?.cats || it.phone.categories;
   return [
     { group: 'Scores' },
-    { label: 'SmartBuy', get: (p) => scoreOf(p, preset).smartbuy, better: 'high', fmt: fmtScore, strong: true },
-    { label: 'Value', get: (p) => scoreOf(p, preset).value, better: 'high', fmt: fmtScore },
-    { label: 'Spec score', get: (p) => scoreOf(p, preset).spec, better: 'high', fmt: fmtScore },
-    { label: 'Price', get: (p) => p.price?.sgd, better: 'low', fmt: fmtSGD, strong: true },
+    {
+      label: 'Score',
+      get: (it) => (it.row ? it.row.spec : specScore(cats(it), weights)),
+      better: 'high',
+      fmt: (v) => fmtScore(v),
+      strong: true,
+    },
+    { label: 'Vs typical for the price', get: (it) => it.row?.value, better: 'high', fmt: (v) => fmtDiff(v) },
+    {
+      label: 'Best buy?',
+      get: (it) => (it.row?.considered ? STATUS[it.row.status] : it.row ? 'Outside your filters' : 'No price yet'),
+      better: null,
+      fmt: (v) => v,
+    },
+    {
+      label: 'Price',
+      get: (it) => it.row?.now,
+      better: 'low',
+      fmt: (v, it) => (it.row ? `${fmtVariantPrice(it.row.variant)}${it.row.variant.est_from ? ' (est.)' : ''}` : '—'),
+      strong: true,
+    },
     { group: 'Categories (out of 10)' },
     ...categories.map((c) => ({
       label: c.label,
-      get: (p) => p.categories?.[c.key],
+      get: (it) => cats(it)[c.key],
       better: 'high',
-      fmt: fmtScore,
-      est: (p) => p.estimated?.includes(c.key),
+      fmt: (v) => fmtScore(v),
+      est: (it) => it.phone.estimated?.includes(c.key),
     })),
     { group: 'Key specs' },
-    { label: 'Variant', get: (p) => shortVariant(p.variant), better: null, fmt: (v) => v || '—' },
+    {
+      label: 'Variant',
+      get: (it) => shortVariant(it.row?.variant || it.phone.variant),
+      better: null,
+      fmt: (v) => v || '—',
+    },
     { label: 'Chipset', get: sp('chipset'), better: null, fmt: (v) => v || '—' },
     { label: 'Geekbench 6', get: sp('gb6'), better: 'high', fmt: (v) => fmtNum(v) },
     { label: '3DMark WLE', get: sp('gpu'), better: 'high', fmt: (v) => fmtNum(v) },
@@ -86,7 +113,7 @@ function rows(categories, preset) {
     { label: 'Main camera sensor', get: sp('main_sensor_in'), better: 'high', fmt: (v) => sensorFormat(v) || '—' },
     {
       label: 'DXOMARK camera',
-      get: (p) => (p.specs?.dxomark_from ? null : p.specs?.dxomark),
+      get: (it) => (it.phone.specs?.dxomark_from ? null : it.phone.specs?.dxomark),
       better: 'high',
       fmt: (v) => (isNum(v) ? String(v) : 'Not tested'),
     },
@@ -99,7 +126,7 @@ function rows(categories, preset) {
     { label: 'Brightness', get: sp('nits'), better: 'high', fmt: (v) => (isNum(v) ? `${fmtNum(v)} nits` : '—') },
     {
       label: 'Wired charging',
-      get: (p) => (isNum(p.specs?.wired_w) ? p.specs.wired_w : p.specs?.wired_w_est),
+      get: (it) => (isNum(it.phone.specs?.wired_w) ? it.phone.specs.wired_w : it.phone.specs?.wired_w_est),
       better: 'high',
       fmt: (v) => (isNum(v) ? `${fmtNum(v)}W` : '—'),
     },
@@ -116,7 +143,12 @@ function rows(categories, preset) {
       better: 'high',
       fmt: (v) => (isNum(v) ? `~${fmtNum(v, 1)}` : '—'),
     },
-    { label: 'Storage type', get: sp('storage_type'), better: null, fmt: (v) => v || '—' },
+    {
+      label: 'Storage type',
+      get: (it) => it.row?.variant.storage_type || it.phone.specs?.storage_type,
+      better: null,
+      fmt: (v) => v || '—',
+    },
     {
       label: 'Battery cycles',
       get: sp('battery_cycles'),
@@ -125,7 +157,12 @@ function rows(categories, preset) {
     },
     { label: 'Water resistance', get: sp('ip_rating'), better: null, fmt: (v) => v || 'None' },
     { label: 'Weight', get: sp('weight_g'), better: 'low', fmt: (v) => (isNum(v) ? `${fmtNum(v)} g` : '—') },
-    { label: 'Store', get: (p) => storeLabel(p.price?.store), better: null, fmt: (v) => v },
+    {
+      label: 'Store',
+      get: (it) => (it.row ? (it.row.variant.est_from ? 'Estimate' : storeLabel(it.row.variant.store)) : '—'),
+      better: null,
+      fmt: (v) => v,
+    },
   ];
 }
 
@@ -138,15 +175,16 @@ function bestIndexes(values, better) {
   return winners.length === nums.length ? new Set() : new Set(winners);
 }
 
-export function CompareDialog({ open, onClose, phones, categories, preset, presetLabel, onOpenPhone }) {
-  const list = rows(categories, preset);
-  const cols = phones.length;
+export function CompareDialog({ open, onClose, items, categories, context, onOpenPhone }) {
+  const list = rows(categories, context.priority.weights);
+  const phones = items.map((it) => it.phone);
+  const cols = items.length;
   return (
     <Dialog
       open={open && cols >= 2}
       onClose={onClose}
       title="Side by side"
-      subtitle={`${presetLabel} priority`}
+      subtitle={`${context.priority.title} · ${context.needLabel}`}
       variant="center"
       labelId="compare-title"
     >
@@ -191,7 +229,7 @@ export function CompareDialog({ open, onClose, phones, categories, preset, prese
                   </tr>
                 );
               }
-              const values = phones.map((p) => r.get(p));
+              const values = items.map((it) => r.get(it));
               const best = bestIndexes(values, r.better);
               return (
                 <tr key={r.label} className="border-t border-line">
@@ -216,9 +254,9 @@ export function CompareDialog({ open, onClose, phones, categories, preset, prese
                               aria-hidden="true"
                             />
                           )}
-                          {r.fmt(values[i])}
+                          {r.fmt(values[i], items[i])}
                           {isBest && <span className="sr-only"> (best)</span>}
-                          {r.est?.(p) && (
+                          {r.est?.(items[i]) && (
                             <abbr className="est ml-0.5" title="Estimated rather than lab-tested">
                               est.
                             </abbr>

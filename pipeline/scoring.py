@@ -158,13 +158,11 @@ def storage_type(p: dict, variant: dict) -> str | None:
 
 
 def memory(p: dict, variant: dict) -> float:
-    score = _interp(variant.get("ram_gb") or 0, C.RAM_POINTS)
-    storage = _interp(variant.get("storage_gb") or 0, C.STORAGE_POINTS)
-    if p.get("card_slot"):
-        storage = min(5.0, storage + C.CARD_SLOT)
+    """RAM and storage speed of the variant. Storage size is the buyer's need, not a score."""
+    ram = _interp(variant.get("ram_gb") or 0, C.RAM_POINTS)
     kind = storage_type(p, variant)
     speed = next((pts for prefix, pts in C.STORAGE_SPEED if kind and kind.startswith(prefix)), C.STORAGE_SPEED_UNKNOWN)
-    return _clamp(C.MEMORY_CAPACITY_SHARE * (score + storage) + speed)
+    return _clamp(10 * (C.MEMORY_RAM_SHARE * ram + (1 - C.MEMORY_RAM_SHARE) * speed))
 
 
 def os_updates(p: dict) -> int:

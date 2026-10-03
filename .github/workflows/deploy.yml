@@ -47,6 +47,11 @@ jobs:
         working-directory: smartbuy-frontend
         run: npm ci
 
+      # The site's ranking engine, checked against the pipeline's reference scores
+      - name: Test ranking engine
+        working-directory: smartbuy-frontend
+        run: npm test
+
       - name: Build frontend
         working-directory: smartbuy-frontend
         env:

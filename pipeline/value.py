@@ -1,4 +1,4 @@
-"""Value: how much more (or less) phone you get than is typical at the price.
+"""Value and the price ladder.
 
 The old engine used spec_score / price, min-max scaled inside $400/$800
 brackets. Price varies ~20x while spec scores vary ~3x, so that formula ranked
@@ -11,16 +11,20 @@ ln(price) ignored that and under-rated every phone above ~S$1500 (mean
 residual -0.6) while flattering S$600-1000 ones (+0.4). Past the curve's peak
 the expected score is held flat, so paying more never lowers the bar.
 
-A phone's value is its residual (actual - expected) in units of the residual
-spread, centred on 5:
-  value = 5 + VALUE_SPREAD * residual / sd   (clamped 0-10)
-so a phone exactly on the curve scores 5, one sd above scores 7.
+A phone's value is its residual: how many spec points above (or below) the
+typical phone at its price it scores.
+
+The ranking itself doesn't blend spec and value. A phone is a best buy when no
+phone that costs the same or less scores higher; those phones form a price
+ladder (best_buys), and a budget picks the rung. The site recomputes all of
+this in the browser for any priorities and storage need
+(smartbuy-frontend/src/lib/engine.js); this module is the reference the
+site's tests check it against.
 """
 from __future__ import annotations
 
 import math
 
-from . import config as C
 
 
 def _solve3(m: list[list[float]], v: list[float]) -> list[float]:
@@ -64,10 +68,14 @@ def expected(model: dict, price: float) -> float:
     return a + b * x + c * x * x
 
 
-def value_score(model: dict, price: float, spec: float) -> float:
-    resid = spec - expected(model, price)
-    return max(0.0, min(10.0, 5.0 + C.VALUE_SPREAD * resid / model["sd"]))
-
-
-def smartbuy(spec: float, value: float) -> float:
-    return C.SMARTBUY_BLEND * spec + (1 - C.SMARTBUY_BLEND) * value
+def best_buys(prices: list[float], specs: list[float]) -> set[int]:
+    """Indexes of the phones nothing cheaper (or the same price) outscores: the price ladder.
+    At equal prices the higher score wins; an exact tie (same price and score) keeps both."""
+    best, best_price, on = -math.inf, None, set()
+    for i in sorted(range(len(prices)), key=lambda i: (prices[i], -specs[i])):
+        if specs[i] > best + 1e-9:
+            best, best_price = specs[i], prices[i]
+            on.add(i)
+        elif abs(specs[i] - best) <= 1e-9 and prices[i] == best_price:
+            on.add(i)
+    return on

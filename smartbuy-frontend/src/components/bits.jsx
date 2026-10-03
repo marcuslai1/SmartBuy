@@ -19,11 +19,11 @@ export function Meter({ value, max = 10, className = '', height = 6 }) {
 }
 
 /** Nine tiny columns, one per category, in the fixed category order. */
-export function MiniBars({ phone, categories, height = 22 }) {
+export function MiniBars({ phone, cats = phone.categories, categories, height = 22 }) {
   const bw = 7;
   const gap = 2;
   const width = categories.length * (bw + gap) - gap;
-  const label = categories.map((c) => `${c.label} ${fmtScore(phone.categories?.[c.key])}`).join(', ');
+  const label = categories.map((c) => `${c.label} ${fmtScore(cats?.[c.key])}`).join(', ');
   return (
     <svg
       width={width}
@@ -34,7 +34,7 @@ export function MiniBars({ phone, categories, height = 22 }) {
       className="shrink-0"
     >
       {categories.map((c, i) => {
-        const v = phone.categories?.[c.key];
+        const v = cats?.[c.key];
         const h = isNum(v) ? Math.max(1.5, (Math.min(10, Math.max(0, v)) / 10) * height) : 0;
         const x = i * (bw + gap);
         const est = phone.estimated?.includes(c.key);
@@ -98,3 +98,23 @@ export function Traits({ strengths, weakness, compact = false }) {
   );
 }
 
+const STATUS = {
+  best: { label: 'Best buy', cls: 'badge badge-best' },
+  close: { label: 'Close call', cls: 'badge badge-close' },
+};
+
+/** "Best buy" / "Close call" from the engine's ladder odds. */
+export function StatusBadge({ row }) {
+  const s = STATUS[row?.status];
+  if (!s) return null;
+  const pct = isNum(row.prob) ? Math.round(row.prob * 100) : null;
+  const title =
+    row.status === 'best'
+      ? `Nothing that costs the same or less scores higher${pct != null && pct < 100 ? ` (in ${pct}% of what-ifs with the specs, prices and priorities nudged)` : ''}`
+      : `Close call: a cheaper phone edges it on paper, but it stays a best buy in ${pct ?? '?'}% of what-ifs`;
+  return (
+    <span className={s.cls} title={title}>
+      {s.label}
+    </span>
+  );
+}

@@ -1,105 +1,141 @@
-import { memo } from 'react';
+import { memo, useState } from 'react';
 import { Check, Plus } from 'lucide-react';
-import { fmtSGD, fmtScore, isNum, scoreOf, shortVariant, storeLabel, traits } from '../lib/data';
-import { EstBadge, MiniBars, Traits } from './bits';
+import {
+  SORTS,
+  categoryLabel,
+  fmtDiff,
+  fmtNum,
+  fmtSGD,
+  fmtScore,
+  fmtVariantPrice,
+  isNum,
+  shortName,
+  shortVariant,
+  sortRows,
+  storeLabel,
+} from '../lib/data';
+import { EstBadge, MiniBars, StatusBadge } from './bits';
 
 export default function ResultsList({
-  phones,
-  categories,
-  preset,
+  rows,
   sort,
-  sortLabel,
-  presetLabel,
+  onSort,
+  context,
+  categories,
+  counts,
+  searching,
   compare,
   onToggleCompare,
   onOpen,
   onHover,
   selectedId,
-  total,
   onReset,
 }) {
+  const [showBeaten, setShowBeaten] = useState(false);
+  const ladderMode = sort === 'best';
+  const sorted = sortRows(rows, ladderMode ? 'spec' : sort);
+  const top = ladderMode ? sorted.filter((r) => r.status !== 'beaten') : sorted;
+  const beaten = ladderMode ? sorted.filter((r) => r.status === 'beaten') : [];
+  const openBeaten = showBeaten || searching || !top.length;
+  const budget = context.max ? ` under S$${fmtNum(context.max)}` : '';
+  const left = counts.priced - counts.fit;
+
+  const rowProps = (r) => ({
+    row: r,
+    categories,
+    ladderMode,
+    inCompare: compare.includes(r.id),
+    compareFull: compare.length >= 3,
+    onToggleCompare,
+    onOpen,
+    onHover,
+    selected: r.id === selectedId,
+  });
+
   return (
     <section aria-labelledby="rankings-title" className="card overflow-hidden">
-      <div className="flex flex-wrap items-end justify-between gap-x-4 gap-y-1 border-b border-line px-4 py-3 sm:px-5">
-        <div>
+      <div className="flex flex-wrap items-end justify-between gap-x-4 gap-y-2 border-b border-line px-4 py-3 sm:px-5">
+        <div className="min-w-0">
           <h2 id="rankings-title" className="text-base font-semibold text-ink">
-            Ranked by {sortLabel}
+            {ladderMode ? `Best buys${budget}` : `All phones${budget}`}
           </h2>
           <p className="text-xs text-muted">
-            {phones.length} of {total} phones · {presetLabel} priority
+            {ladderMode ? `${top.length} of ${rows.length} phones` : `${rows.length} phones`} · {context.priority.title}{' '}
+            · {context.needLabel}
+            {left > 0 && (
+              <span title={`Not sold with ${context.needLabel}`}>
+                {' '}
+                ({left} not sold with {context.needLabel})
+              </span>
+            )}
           </p>
         </div>
-        <CategoryKey categories={categories} />
+        <label className="flex items-center gap-2">
+          <span className="eyebrow">Sort</span>
+          <select value={sort} onChange={(e) => onSort(e.target.value)} className="field pl-2 pr-7">
+            {SORTS.map((s) => (
+              <option key={s.key} value={s.key}>
+                {s.label}
+              </option>
+            ))}
+          </select>
+        </label>
       </div>
 
-      {phones.length > 0 && <ListHeader />}
-      {phones.length > 1 && SCORE_SORTS.has(sort) && (
-        <p className="border-b border-line px-4 py-1.5 text-2xs text-muted sm:px-5">
-          “=” marks phones tied on the rounded score. Neighbours a few tenths apart can swap places with small
-          changes in price or priorities, so read the order as a guide.
-        </p>
-      )}
-      {phones.length === 0 ? (
+      {rows.length > 0 && <ListHeader />}
+      {rows.length === 0 ? (
         <div className="px-5 py-12 text-center">
           <p className="font-medium text-ink">No phones match these filters.</p>
-          <p className="mt-1 text-sm text-muted">Try a higher budget or fewer brands.</p>
+          <p className="mt-1 text-sm text-muted">Try a higher budget, less storage or fewer must-haves.</p>
           <button type="button" className="btn mt-4" onClick={onReset}>
             Clear filters
           </button>
         </div>
       ) : (
-        <ol className="divide-y divide-line">
-          {tiedRanks(phones, sort, preset).map(({ phone: p, rank, tied }) => (
-            <PhoneRow
-              key={p.id}
-              phone={p}
-              rank={rank}
-              tied={tied}
-              categories={categories}
-              preset={preset}
-              inCompare={compare.includes(p.id)}
-              compareFull={compare.length >= 3}
-              onToggleCompare={onToggleCompare}
-              onOpen={onOpen}
-              onHover={onHover}
-              selected={p.id === selectedId}
-            />
-          ))}
-        </ol>
+        <>
+          <ol className="divide-y divide-line">
+            {top.map((r, i) => (
+              <PhoneRow key={r.id} rank={i + 1} {...rowProps(r)} />
+            ))}
+          </ol>
+          {beaten.length > 0 && (
+            <>
+              <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 border-y border-line bg-surface-2/60 px-4 py-2.5 sm:px-5">
+                <div>
+                  <h3 className="text-sm font-semibold text-ink">
+                    Beaten by a cheaper phone <span className="font-normal text-muted">· {beaten.length}</span>
+                  </h3>
+                  <p className="text-xs text-muted">
+                    Each has a phone that costs the same or less and scores higher for your priorities.
+                  </p>
+                </div>
+                {!searching && top.length > 0 && (
+                  <button
+                    type="button"
+                    className="text-sm font-medium text-accent-ink hover:underline"
+                    aria-expanded={openBeaten}
+                    onClick={() => setShowBeaten((v) => !v)}
+                  >
+                    {openBeaten ? 'Hide' : `Show ${beaten.length}`}
+                  </button>
+                )}
+              </div>
+              {openBeaten && (
+                <ol className="divide-y divide-line">
+                  {beaten.map((r) => (
+                    <PhoneRow key={r.id} {...rowProps(r)} />
+                  ))}
+                </ol>
+              )}
+            </>
+          )}
+        </>
       )}
     </section>
   );
 }
 
-const SCORE_SORTS = new Set(['smartbuy', 'value', 'spec']);
-
-/** Competition ranks ("=3") for phones whose displayed score is the same. */
-function tiedRanks(phones, sort, preset) {
-  const shown = (p) => (SCORE_SORTS.has(sort) ? fmtScore(scoreOf(p, preset)[sort]) : null);
-  const keys = phones.map(shown);
-  let rank = 0;
-  return phones.map((phone, i) => {
-    if (i === 0 || keys[i] == null || keys[i] !== keys[i - 1]) rank = i + 1;
-    const tied = keys[i] != null && (keys[i] === keys[i - 1] || keys[i] === keys[i + 1]);
-    return { phone, rank, tied };
-  });
-}
-
-function CategoryKey({ categories }) {
-  if (!categories.length) return null;
-  return (
-    <details className="group text-xs text-muted">
-      <summary className="cursor-pointer list-none rounded px-1 hover:text-ink [&::-webkit-details-marker]:hidden">
-        <span className="underline decoration-dotted underline-offset-2">What are the little bars?</span>
-      </summary>
-      <p className="mt-1 max-w-sm text-ink-2">
-        Category scores out of 10, left to right: {categories.map((c) => c.label).join(', ')}.
-      </p>
-    </details>
-  );
-}
-
-const ROW_GRID = 'sm:grid sm:grid-cols-[minmax(0,1fr)_auto_7.25rem_6.25rem_1.75rem] sm:items-center sm:gap-x-4';
+const ROW_GRID = 'sm:grid sm:grid-cols-[minmax(0,1fr)_auto_7.25rem_5.5rem_1.75rem] sm:items-center sm:gap-x-4';
 
 function ListHeader() {
   return (
@@ -109,19 +145,56 @@ function ListHeader() {
         <span>Phone</span>
         <span className="w-[79px]">Categories</span>
         <span className="text-right">Price</span>
-        <span className="text-right">SmartBuy</span>
+        <span className="text-right">Score</span>
         <span className="sr-only">Compare</span>
       </div>
     </div>
   );
 }
 
+/** One line on where the phone sits on the price ladder. */
+export function LadderNote({ row, categories, onOpen }) {
+  const name = (r) =>
+    onOpen ? (
+      <button
+        type="button"
+        className="relative z-[1] font-medium text-ink underline decoration-line-strong underline-offset-2 hover:decoration-current"
+        onClick={() => onOpen(r.id)}
+      >
+        {shortName(r.phone)}
+      </button>
+    ) : (
+      <span className="font-medium text-ink">{shortName(r.phone)}</span>
+    );
+  if (row.beatenBy) {
+    const by = row.beatenBy;
+    const save = row.price - by.price;
+    const lead = row.status === 'best' ? 'Neck and neck with' : 'Beaten by';
+    return (
+      <span>
+        {lead} {name(by)}: {save >= 1 ? `${fmtSGD(save)} less` : 'same price'}, {fmtScore(by.spec - row.spec)} higher
+        {row.betterAt.length > 0 &&
+          ` · still better at ${row.betterAt.map((b) => categoryLabel(categories, b.key).toLowerCase()).join(' and ')}`}
+      </span>
+    );
+  }
+  if (row.stepDown) {
+    const d = row.stepDown;
+    return (
+      <span>
+        Next one down: {name(d)}, {fmtSGD(row.price - d.price)} less, {fmtScore(row.spec - d.spec)} lower
+      </span>
+    );
+  }
+  if (row.ladder) return <span>The cheapest phone that scores this well</span>;
+  return null;
+}
+
 const PhoneRow = memo(function PhoneRow({
-  phone,
+  row,
   rank,
-  tied,
   categories,
-  preset,
+  ladderMode,
   inCompare,
   compareFull,
   onToggleCompare,
@@ -129,20 +202,23 @@ const PhoneRow = memo(function PhoneRow({
   onHover,
   selected,
 }) {
-  const s = scoreOf(phone, preset);
-  const price = phone.price || {};
-  const { strengths, weakness } = traits(phone, categories);
-  const discounted = isNum(price.list_sgd) && isNum(price.sgd) && price.list_sgd > price.sgd;
-  const meta = [shortVariant(phone.variant), storeLabel(price.store)].filter(Boolean).join(' · ');
+  const { phone, variant } = row;
+  const discounted = isNum(variant.list_sgd) && variant.list_sgd > variant.sgd;
+  const meta = [shortVariant(variant), variant.est_from ? 'price estimated' : storeLabel(variant.store)]
+    .filter(Boolean)
+    .join(' · ');
   const blockedCompare = !inCompare && compareFull;
+  const note = row.considered ? <LadderNote row={row} categories={categories} /> : null;
 
   const priceLine = (
     <div className="flex flex-wrap items-baseline gap-x-1.5 sm:justify-end">
-      <span className="text-[0.95rem] font-semibold text-ink">{fmtSGD(price.sgd)}</span>
+      <span className="text-[0.95rem] font-semibold text-ink" title={variant.est_from ? 'Estimated price' : undefined}>
+        {fmtVariantPrice(variant)}
+      </span>
       {discounted && (
         <s className="text-xs text-muted">
           <span className="sr-only">was </span>
-          {fmtSGD(price.list_sgd)}
+          {fmtSGD(variant.list_sgd)}
         </s>
       )}
     </div>
@@ -160,18 +236,12 @@ const PhoneRow = memo(function PhoneRow({
     <li
       className={`relative flex gap-3 px-4 py-3 transition-colors hover:bg-surface-2/70 sm:gap-4 sm:px-5 ${
         selected ? 'bg-accent-soft' : ''
-      }`}
+      } ${ladderMode && row.status === 'beaten' ? 'opacity-90' : ''}`}
       onMouseEnter={() => onHover(phone.id)}
       onMouseLeave={() => onHover(null)}
     >
-      <div
-        className="tnum w-6 shrink-0 pt-0.5 text-right text-sm font-semibold text-muted sm:w-7"
-        title={tied ? 'Tied with a neighbour on the rounded score' : undefined}
-      >
-        {tied ? `=${rank}` : rank}
-      </div>
+      <div className="tnum w-6 shrink-0 pt-0.5 text-right text-sm font-semibold text-muted sm:w-7">{rank ?? ''}</div>
       <div className={`min-w-0 flex-1 ${ROW_GRID}`}>
-        {/* Name, meta, traits */}
         <div className="flex min-w-0 items-start gap-3 sm:block">
           <div className="min-w-0 flex-1">
             <h3 className="text-[0.95rem] font-semibold leading-snug text-ink">
@@ -184,33 +254,26 @@ const PhoneRow = memo(function PhoneRow({
               >
                 {phone.name}
               </button>{' '}
-              <EstBadge phone={phone} />
+              <StatusBadge row={row} /> <EstBadge phone={phone} />
             </h3>
-            <div className="mt-0.5 flex flex-wrap items-center gap-x-2 text-xs text-muted">
-              <span>{meta}</span>
-            </div>
-            <div className="mt-1 sm:hidden">
-              {priceLine}
-            </div>
-            <div className="mt-1.5">
-              <Traits strengths={strengths} weakness={weakness} compact />
-            </div>
+            <div className="mt-0.5 text-xs text-muted">{meta}</div>
+            <div className="mt-1 sm:hidden">{priceLine}</div>
+            {note && <div className="mt-1 text-xs text-ink-2">{note}</div>}
           </div>
-          {/* Scores (mobile position) */}
           <div className="shrink-0 text-right sm:hidden">
-            <div className="text-2xs font-medium uppercase tracking-wide text-muted">SmartBuy</div>
-            <ScoreBlock s={s} />
+            <div className="text-2xs font-medium uppercase tracking-wide text-muted">Score</div>
+            <ScoreBlock row={row} />
           </div>
         </div>
 
         <div className="relative z-[1] hidden sm:flex">
-          <MiniBars phone={phone} categories={categories} />
+          <MiniBars phone={phone} cats={row.cats} categories={categories} />
         </div>
 
         <div className="tnum hidden text-right sm:block">{priceLine}</div>
 
         <div className="hidden text-right sm:block">
-          <ScoreBlock s={s} />
+          <ScoreBlock row={row} />
         </div>
 
         <div className="hidden sm:block">
@@ -223,10 +286,9 @@ const PhoneRow = memo(function PhoneRow({
           </button>
         </div>
 
-        {/* Bottom strip (mobile) */}
         <div className="mt-2 flex items-center gap-3 sm:hidden">
           <div className="relative z-[1] flex">
-            <MiniBars phone={phone} categories={categories} height={20} />
+            <MiniBars phone={phone} cats={row.cats} categories={categories} height={20} />
           </div>
           <button {...compareProps} className="chip relative z-[1] ml-auto h-7 shrink-0 px-2.5 text-xs">
             {inCompare ? <Check size={13} aria-hidden="true" /> : <Plus size={13} aria-hidden="true" />}
@@ -238,13 +300,15 @@ const PhoneRow = memo(function PhoneRow({
   );
 });
 
-function ScoreBlock({ s }) {
+function ScoreBlock({ row }) {
   return (
     <>
-      <div className="text-[1.375rem] font-semibold leading-tight text-ink">{fmtScore(s.smartbuy)}</div>
-      <div className="tnum whitespace-nowrap text-2xs text-ink-2">
-        Value <span className="font-semibold text-ink">{fmtScore(s.value)}</span> · Spec{' '}
-        <span className="font-semibold text-ink">{fmtScore(s.spec)}</span>
+      <div className="tnum text-[1.375rem] font-semibold leading-tight text-ink">{fmtScore(row.spec)}</div>
+      <div
+        className="tnum whitespace-nowrap text-2xs text-ink-2"
+        title="Score minus the typical score of phones at this price"
+      >
+        <span className="font-semibold text-ink">{fmtDiff(row.value)}</span> vs typical
       </div>
     </>
   );

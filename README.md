@@ -2,7 +2,8 @@
 
 Which phone gives you the most for your money in Singapore? SmartBuy scores
 phones on lab-tested specs, prices them from **official brand stores**, and
-judges value against what's typical at that price.
+finds the **best buys**: the phones nothing cheaper beats, for your priorities,
+budget and storage.
 
 **Live:** https://marcuslai1.github.io/SmartBuy/
 
@@ -46,8 +47,14 @@ are left out: they're priced for the form factor, not the specs.
 * **Sources:** each brand's official Lazada store (fakes and grey imports are
   ignored), Apple Store SG and Google Store SG.
 * **Exact variant:** every price is tied to the storage size it buys (from the
-  store, the listing's SKU options, or the title), and the phone is scored on
-  that variant. The old version paired 1TB specs with 256GB prices.
+  store, the listing's SKU options, or the title). The old version paired 1TB
+  specs with 256GB prices.
+* **Storage need:** the buyer picks a minimum (any / 128GB+ / 256GB+ / 512GB+;
+  128GB+ by default) and each phone is priced at its cheapest variant with at
+  least that much. Sizes a phone comes in (per GSMArena) that no store lists are
+  priced up from the next listed size down: +15% per doubling, at least S$50
+  (Apple's store charges S$300 a step, 14-32%; Samsung ~13%; Xiaomi +10% and
+  +S$80). These are flagged as estimates.
 * **History:** `data/prices.csv` is append-only; each crawl adds rows.
 * **Typical price:** value is judged at the median of the cheapest offer per
   crawl over the last 90 days, so a one-day flash sale doesn't reorder the
@@ -66,7 +73,7 @@ Nine categories, each 0–10 (`pipeline/config.py` holds every threshold):
 | Display | Panel, refresh rate, LTPO, HDR, measured brightness, sharpness |
 | Charging | Wired watts (log scale, 120 W = full marks), wireless watts, reverse wireless |
 | Build & durability | IP rating, glass, frame, EU drop test class, battery lifespan (EU-label charge cycles) |
-| Memory & storage | RAM, storage size and storage speed (UFS/eMMC) of the priced variant |
+| RAM & storage speed | RAM (70%) and storage speed, UFS/eMMC (30%), of the variant priced. Storage *size* isn't scored: it's the buyer's need (above) |
 | Software support | Years of OS upgrades *still to come*: the promise minus time since release. If a phone's sheet states no promise, it's borrowed from the closest same-series phone, else a brand default |
 | Features | 5G, NFC, stereo speakers, eSIM, headphone jack, UWB, IR, ultrasonic fingerprint or 3D face unlock |
 
@@ -78,19 +85,36 @@ Every input that's estimated, borrowed or assumed is flagged on the site with
 the reason. Lab results that disagree wildly (>25%) with other phones on the
 same chip are treated as bad runs and replaced by the chip median.
 
-* **Spec score** – weighted average of the categories. Presets (Balanced,
-  Camera, Battery, Performance, Keep-it-for-years) change the weights.
-* **Value score** – a curve *expected score = a + b·x + c·x²* (x = ln price)
-  is fitted across all phones. It bends because each extra dollar buys less at
-  the top end (a straight line under-rated every phone above ~S$1500), and it is
-  held flat past its peak. Value is how far a phone sits above or below it
-  (5 = typical, ~7 = one standard deviation better). Cheap phones don't win just
-  for being cheap.
-* **SmartBuy score** – 50% spec, 50% value. Default ranking. Phones with the
-  same rounded score share a rank (“=3”).
-* **Likely rank** – the ranking is recomputed 400 times with the preset weights
-  (±30%), prices (±8%) and every estimated input nudged by its plausible error;
-  each phone's page shows the middle 90% of ranks it lands at.
+* **Score** – weighted average of the categories. Presets (Balanced, Camera,
+  Battery, Performance, Keep-it-for-years) change the weights, or *Find my
+  phone* sets them from six questions (iPhone or Android, budget, storage, size,
+  what matters most, how long you'll keep it, plus optional must-haves).
+* **Best buys** – a phone is a best buy when nothing that costs the same or
+  less scores higher. Together they form a price ladder (the staircase on the
+  chart); the budget picks the rung and each phone says what the next rung down
+  saves and gives up, or which cheaper phone beats it and what it's still better
+  at. Spec and value aren't blended: there's no arbitrary 50/50 weight.
+  The ladder only counts the phones being considered (brand, size and
+  must-have filters), so filtering out a brand promotes the phones it was
+  beating.
+* **Best buy / Close call** – the ladder is redrawn 400 times with the weights
+  (±30%), prices (±8%, more for estimated storage prices) and every estimated
+  input nudged by its plausible error. *Best buy* = on it in ≥50% of draws,
+  *Close call* ≥20%.
+* **Vs typical** – a curve *expected score = a + b·x + c·x²* (x = ln price) is
+  fitted across all phones that meet the storage need. It bends because each
+  extra dollar buys less at the top end, and it is held flat past its peak.
+  “+1.4 vs typical” = 1.4 points above the typical phone at that price.
+* **Picks** – the highest score within budget; the cheapest phone within 0.4 of
+  it (inside the margin of error) or, failing that, the next rung down if it's
+  within a point; then a phone up to 20% over budget that's clearly better, or
+  the best from another brand.
+
+Prices for all of this are each phone's typical price. Because the ranking
+depends on the buyer's choices, the site computes it in the browser
+(`smartbuy-frontend/src/lib/engine.js`). `pipeline/build.py` writes reference
+scores and best buys for each preset at any storage, and `npm test` checks the
+engine reproduces them exactly.
 
 ## Development
 
@@ -99,7 +123,9 @@ pip install -r requirements.txt
 python -m pytest tests          # parsing, matching, scoring, value, prices
 python -m pipeline.build        # regenerate phones.json from committed data
 
-cd smartbuy-frontend && npm install && npm run dev
+cd smartbuy-frontend && npm install
+npm test                        # ranking engine vs the pipeline's reference scores
+npm run dev
 ```
 
-Pushing to `main` runs the tests, rebuilds `phones.json` and deploys to GitHub Pages.
+Pushing to `main` runs both test suites, rebuilds `phones.json` and deploys to GitHub Pages.

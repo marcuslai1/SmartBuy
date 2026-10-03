@@ -1,13 +1,14 @@
 import { useMemo, useState } from 'react';
 import { ArrowDown, ArrowUp } from 'lucide-react';
-import { fmtDate, fmtMonth, fmtScore, isNum, scoreOf, shortVariant } from '../lib/data';
+import { fmtDate, fmtMonth, fmtScore, isNum, shortVariant } from '../lib/data';
+import { specScore } from '../lib/engine';
 import { EstBadge, MiniBars } from './bits';
 
 const PREVIEW = 10;
 
 const COLUMNS = [
   { key: 'name', label: 'Phone', dir: 1 },
-  { key: 'spec', label: 'Spec score', dir: -1 },
+  { key: 'spec', label: 'Score', dir: -1 },
 ];
 
 /**
@@ -18,7 +19,7 @@ export default function AwaitingSection({
   phones,
   totalAwaiting,
   categories,
-  preset,
+  weights,
   presetLabel,
   crawl,
   priceDate,
@@ -31,7 +32,7 @@ export default function AwaitingSection({
   const sorted = useMemo(() => {
     const get = {
       name: (p) => p.name,
-      spec: (p) => scoreOf(p, preset).spec,
+      spec: (p) => specScore(p.categories, weights),
     }[sort.key];
     return [...phones].sort((a, b) => {
       const va = get(a);
@@ -41,9 +42,9 @@ export default function AwaitingSection({
       if (na || nb) return na === nb ? 0 : na ? 1 : -1;
       if (typeof va === 'string') return va.localeCompare(vb) * sort.dir;
       if (va !== vb) return (va - vb) * sort.dir;
-      return (scoreOf(b, preset).spec ?? 0) - (scoreOf(a, preset).spec ?? 0);
+      return (specScore(b.categories, weights) ?? 0) - (specScore(a.categories, weights) ?? 0);
     });
-  }, [phones, sort, preset]);
+  }, [phones, sort, weights]);
 
   if (!totalAwaiting) return null;
   const shown = expanded ? sorted : sorted.slice(0, PREVIEW);
@@ -61,8 +62,8 @@ export default function AwaitingSection({
         {crawl.note
           ? `${crawl.note.trim().replace(/\.?$/, '.')} `
           : `Prices for ${brands.length ? listBrands(brands) : 'some brands'} weren’t fully collected on ${fmtDate(priceDate)}. `}
-        These phones have spec scores but no current price, so they aren’t ranked or plotted on the chart. Some may not
-        be sold officially in Singapore.
+        These phones have scores but no current price, so they aren’t compared on price or plotted on the chart. Some
+        may not be sold officially in Singapore.
       </p>
 
       <div className="card mt-4 overflow-hidden">
@@ -73,7 +74,7 @@ export default function AwaitingSection({
         ) : (
           <table className="tnum w-full text-sm">
             <caption className="sr-only">
-              Phones awaiting prices, {presetLabel} spec score. Column headers sort the table.
+              Phones awaiting prices, {presetLabel} score. Column headers sort the table.
             </caption>
             <thead>
               <tr className="border-b border-line bg-surface-2/50 text-left text-2xs uppercase tracking-wide text-muted">
@@ -97,7 +98,7 @@ export default function AwaitingSection({
                       >
                         {col.key === 'spec' ? (
                           <>
-                            Spec<span className="hidden sm:inline"> · {presetLabel}</span>
+                            Score<span className="hidden sm:inline"> · {presetLabel}</span>
                           </>
                         ) : (
                           col.label
@@ -149,7 +150,7 @@ export default function AwaitingSection({
                       </div>
                     </td>
                     <td className="py-2.5 pl-2 pr-4 text-right text-base font-semibold text-ink sm:pr-5">
-                      {fmtScore(scoreOf(p, preset).spec)}
+                      {fmtScore(specScore(p.categories, weights))}
                     </td>
                   </tr>
                 );

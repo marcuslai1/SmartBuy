@@ -12,7 +12,8 @@ export function HowItWorks({ categories }) {
     display: 'Panel type, refresh rate, LTPO, HDR, measured brightness and sharpness.',
     charging: 'Wired watts (120 W gets full marks), wireless watts, plus reverse wireless.',
     build: 'IP rating, glass, frame, EU drop-test class and battery lifespan (EU-label charge cycles).',
-    memory: 'RAM, storage size and storage speed (UFS/eMMC) of the exact variant priced.',
+    memory:
+      'RAM and storage speed (UFS/eMMC) of the version priced. Storage size isn’t scored: it’s the minimum you pick.',
     software: 'Years of OS upgrades still to come: the promise minus the time since release.',
     extras:
       '5G, NFC, stereo speakers, eSIM, headphone jack, UWB, IR blaster, and ultrasonic fingerprint or 3D face unlock.',
@@ -33,23 +34,34 @@ export function HowItWorks({ categories }) {
             </abbr>
           </li>
           <li>
-            <h3 className="font-semibold text-ink">2 · Spec score</h3>A weighted average of the categories. The weights
-            depend on the priority you pick, so “Camera first” counts the camera far more than “Balanced” does.
+            <h3 className="font-semibold text-ink">2 · Score</h3>A weighted average of the categories. Pick a priority,
+            or answer “Find my phone” to set your own weights: “Camera first” counts the camera far more than “Balanced”
+            does.
           </li>
           <li>
-            <h3 className="font-semibold text-ink">3 · Value score</h3>
-            We fit a curve of the typical spec score at every price across all phones (the line on the chart). It
-            bends: past a point, extra money buys less extra phone, so flagships aren’t judged against an impossible
-            bar. Value
-            measures how far a phone sits above or below that line: 5 is on the curve, about 7 is one standard deviation
-            better than typical, 10 is exceptional. It is not “cheapest wins”.
+            <h3 className="font-semibold text-ink">3 · Your storage</h3>
+            Storage size isn’t scored; you choose the minimum. Each phone is priced at its cheapest version with at
+            least that much. When no store lists that size, the price is estimated from the next size down (about 15%
+            more per step, at least S$50) and marked est.
           </li>
           <li>
-            <h3 className="font-semibold text-ink">4 · SmartBuy score</h3>
-            Half spec score, half value score. It’s the default ranking: good phones that are also fairly priced rise to
-            the top. Value is judged at a phone’s usual price over recent price checks, so a one-day sale doesn’t
-            reshuffle the list. Phones a few tenths apart are close calls; each phone’s page shows the range of ranks it
-            would likely land at if the priorities, prices and estimated specs were a little different.
+            <h3 className="font-semibold text-ink">4 · Best buys</h3>A phone is a best buy when nothing that costs the
+            same or less scores higher. Together they form a price ladder, the staircase on the chart: your budget picks
+            the rung, and each step down shows what you’d save and give up. Specs, prices and priorities are uncertain,
+            so the ladder is redrawn 400 times with them nudged by their likely error. A “Best buy” stays on it in at
+            least half of those what-ifs, a “Close call” in at least a fifth. Prices are each phone’s usual price over
+            recent checks, so a one-day sale doesn’t reshuffle anything.
+          </li>
+          <li>
+            <h3 className="font-semibold text-ink">5 · Vs typical</h3>
+            The dashed curve is the typical score at each price, fitted across every phone. It bends: past a point,
+            extra money buys less extra phone. “+1.4 vs typical” means a phone scores 1.4 more than most phones at its
+            price.
+          </li>
+          <li>
+            <h3 className="font-semibold text-ink">6 · Picks</h3>
+            The highest score within your budget; the cheapest phone within 0.4 of it (closer than the margin of error);
+            then one worth stretching for (up to 20% over budget and clearly better) or the best from another brand.
           </li>
         </ol>
         <div className="card p-5">

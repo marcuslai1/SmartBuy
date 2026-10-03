@@ -4,15 +4,19 @@ import { useCallback, useEffect, useLayoutEffect, useRef, useState, useSyncExter
 
 export const DEFAULT_VIEW = {
   preset: 'balanced',
-  sort: 'smartbuy',
-  budget: 'any',
+  w: null, // the buyer's own weights from the quiz, one per category
+  sort: 'best',
+  storage: 128,
   size: 'any',
   max: null,
   brands: [],
+  must: [],
   q: '',
   phone: null,
   compare: [],
 };
+
+const STORAGE_NEEDS = [0, 128, 256, 512];
 
 const list = (s) =>
   s
@@ -25,13 +29,18 @@ const list = (s) =>
 function readView() {
   const p = new URLSearchParams(window.location.search);
   const max = Number(p.get('max'));
+  const storageRaw = p.get('storage');
+  const storage = storageRaw === 'any' ? 0 : Number(storageRaw);
+  const w = list(p.get('w')).map(Number);
   return {
     preset: p.get('preset') || DEFAULT_VIEW.preset,
+    w: w.length && w.every((x) => Number.isFinite(x) && x >= 0) ? w : null,
     sort: p.get('sort') || DEFAULT_VIEW.sort,
-    budget: p.get('budget') || DEFAULT_VIEW.budget,
+    storage: storageRaw != null && STORAGE_NEEDS.includes(storage) ? storage : DEFAULT_VIEW.storage,
     size: p.get('size') || DEFAULT_VIEW.size,
     max: Number.isFinite(max) && max > 0 ? max : null,
     brands: list(p.get('brands')),
+    must: list(p.get('must')),
     q: p.get('q') || '',
     phone: p.get('phone') || null,
     compare: list(p.get('compare')).slice(0, 3),
@@ -41,11 +50,13 @@ function readView() {
 function writeView(v, push) {
   const p = new URLSearchParams();
   if (v.preset !== DEFAULT_VIEW.preset) p.set('preset', v.preset);
+  if (v.w?.length) p.set('w', v.w.join(','));
   if (v.sort !== DEFAULT_VIEW.sort) p.set('sort', v.sort);
-  if (v.budget !== DEFAULT_VIEW.budget) p.set('budget', v.budget);
+  if (v.storage !== DEFAULT_VIEW.storage) p.set('storage', v.storage ? String(v.storage) : 'any');
   if (v.size !== DEFAULT_VIEW.size) p.set('size', v.size);
   if (v.max) p.set('max', String(v.max));
   if (v.brands.length) p.set('brands', v.brands.join(','));
+  if (v.must.length) p.set('must', v.must.join(','));
   if (v.q) p.set('q', v.q);
   if (v.compare.length) p.set('compare', v.compare.join(','));
   if (v.phone) p.set('phone', v.phone);

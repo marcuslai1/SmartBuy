@@ -2,22 +2,24 @@
 
     python -m pipeline.build      # -> smartbuy-frontend/public/phones.json
 
-Only phones with a current official-store price are ranked. Each phone is
-scored on the exact storage variant its headline price buys, at its *typical*
-price (median of the cheapest offer per crawl over the last 90 days) so one
-day's flash sale doesn't reorder the ranking. Foldables are left out (they're
-priced for the form factor, not the specs); their benchmarks still feed the
-per-chipset tables.
+Only phones with a current official-store price are ranked. Each phone gets a
+priced variant per storage size: the cheapest current offer for each size a
+store lists, and estimated prices (flagged) for the bigger sizes the phone comes
+in that no store lists. The site prices every phone at its cheapest variant that
+meets the buyer's storage need, judged at its *typical* price (median of the
+cheapest offer per crawl over the last 90 days) so one day's flash sale doesn't
+reorder anything. Foldables are left out (they're priced for the form factor,
+not the specs); their benchmarks still feed the per-chipset tables.
 
-Each ranked phone also gets a likely rank range: the ranking is recomputed many
-times with the category weights, prices and every estimated input nudged by
-their plausible error, and the middle 90% of the ranks it lands at is kept.
+The site does the ranking itself (smartbuy-frontend/src/lib/engine.js) because it
+depends on the buyer's priorities, storage need and filters. The `scores` written
+here (any storage, each preset, all phones) are the reference its tests check.
 """
 from __future__ import annotations
 
 import datetime as dt
 import json
-import random
+import math
 import statistics
 from collections import defaultdict
 from pathlib import Path
@@ -96,28 +98,60 @@ def typical_price(rows: list[dict], storage_gb: int | None, latest: str, current
     return round(statistics.median(per_date.values()), 2), len(per_date)
 
 
-def rank_ranges(phones: list[dict], preset: str, seed: int) -> list[tuple[int, int]]:
-    """5th-95th percentile SmartBuy rank of each phone when the weights, prices and
-    estimated inputs are nudged by their plausible error (see config)."""
-    rng = random.Random(seed)
-    base = C.PRESETS[preset]["weights"]
-    ranks: list[list[int]] = [[] for _ in phones]
-    for _ in range(C.UNCERTAINTY_DRAWS):
-        w = {k: v * rng.uniform(1 - C.WEIGHT_WOBBLE, 1 + C.WEIGHT_WOBBLE) for k, v in base.items()}
-        total = sum(w.values())
-        prices = [ph["_price"] * rng.uniform(1 - C.PRICE_WOBBLE, 1 + C.PRICE_WOBBLE) for ph in phones]
-        specs = []
-        for ph in phones:
-            cats = dict(ph["_cats"])
-            for k in ph["estimated"]:
-                cats[k] = min(10.0, max(0.0, cats[k] + rng.gauss(0, C.ESTIMATE_NOISE.get(k, 0.5))))
-            specs.append(sum(cats[k] * w[k] for k in w) / total)
-        model = value.fit(prices, specs)
-        sb = [value.smartbuy(s, value.value_score(model, pr, s)) for s, pr in zip(specs, prices)]
-        for r, i in enumerate(sorted(range(len(phones)), key=lambda i: -sb[i]), 1):
-            ranks[i].append(r)
-    n = C.UNCERTAINTY_DRAWS
-    return [(sorted(r)[int(0.05 * n)], sorted(r)[int(0.95 * n) - 1]) for r in ranks]
+def _gsm_ram(p: dict, storage_gb: int) -> float | None:
+    """Smallest RAM the phone comes with at this storage size (GSMArena)."""
+    rams = [v["ram_gb"] for v in p.get("variants") or [] if v["storage_gb"] == storage_gb and v.get("ram_gb")]
+    return min(rams) if rams else None
+
+
+def _step_up(price: float, steps: int) -> float:
+    for _ in range(steps):
+        price += max(C.STORAGE_STEP_MIN, C.STORAGE_STEP_SHARE * price)
+    return price
+
+
+def priced_variants(p: dict, offs: list[dict], rows: list[dict], latest: str) -> list[dict]:
+    """One entry per storage size: the cheapest current offer for each size a store lists,
+    then the bigger sizes the phone comes in (GSMArena) that no store lists, priced up from
+    the next listed size down by STORAGE_STEP_* and marked estimated."""
+    listed: dict[int, dict] = {}
+    for o in sorted(offs, key=lambda o: o["sgd"]):
+        listed.setdefault(o["storage_gb"], o)
+    out = []
+    for size, o in sorted(listed.items()):
+        typical, n = typical_price(rows, size, latest, o["sgd"])
+        out.append({**o, "ram_gb": o["ram_gb"] or _gsm_ram(p, size), "typical_sgd": typical,
+                    "typical_crawls": n, "est_from": None})
+    if listed:
+        smallest = min(listed)
+        for size in sorted({v["storage_gb"] for v in p.get("variants") or []}):
+            if size in listed or size < smallest:
+                continue
+            base = max((v for v in out if v["est_from"] is None and v["storage_gb"] < size),
+                       key=lambda v: v["storage_gb"])
+            steps = max(1, round(math.log2(size / base["storage_gb"])))
+            out.append({
+                "sgd": round(_step_up(base["sgd"], steps), -1), "list_sgd": None,
+                "storage_gb": size, "ram_gb": _gsm_ram(p, size) or base["ram_gb"],
+                "store": base["store"], "seller": base["seller"], "url": base["url"], "date": base["date"],
+                "variant_basis": "estimated",
+                "typical_sgd": round(_step_up(base["typical_sgd"], steps), -1),
+                "typical_crawls": base["typical_crawls"],
+                "est_from": {"storage_gb": base["storage_gb"], "sgd": base["sgd"], "steps": steps},
+            })
+    for v in out:
+        v["memory"] = round(scoring.memory(p, v), 2)
+        v["storage_type"] = scoring.storage_type(p, v)
+    return sorted(out, key=lambda v: v["storage_gb"])
+
+
+def choose_variant(variants: list[dict], need: int) -> dict | None:
+    """Cheapest variant (at its typical price) with at least `need` GB; ties go to more
+    storage, then more RAM."""
+    ok = [v for v in variants if v["storage_gb"] >= need]
+    if not ok:
+        return None
+    return min(ok, key=lambda v: (v["typical_sgd"], -v["storage_gb"], -(v["ram_gb"] or 0), v["sgd"]))
 
 
 def summary(p: dict, variant: dict) -> dict:
@@ -290,19 +324,23 @@ def build() -> dict:
         p = by_id.get(pid)
         if not p:
             continue
-        head = offs[0]
+        variants = priced_variants(p, offs, [r for r in rows if r["phone_id"] == pid], latest)
+        # The reference scores below use any storage: the cheapest variant
+        head = choose_variant(variants, 0)
         variant = {"storage_gb": head["storage_gb"], "ram_gb": head["ram_gb"]}
-        typical, n_crawls = typical_price([r for r in rows if r["phone_id"] == pid], head["storage_gb"],
-                                          latest, head["sgd"])
-        head = {**head, "typical_sgd": typical, "typical_crawls": n_crawls}
-        cats = scoring.category_scores(p, variant)
+        typical = head["typical_sgd"]
+        head = {k: head[k] for k in ("sgd", "list_sgd", "storage_gb", "ram_gb", "store", "seller", "url", "date",
+                                      "variant_basis", "typical_sgd", "typical_crawls")}
+        # Scored from the rounded values the site sees, so its engine reproduces these exactly
+        cats = {k: round(v, 2) for k, v in scoring.category_scores(p, variant).items()}
         phones.append({
             "id": pid, "name": p["name"], "brand": p["brand"], "model": p["model"],
             "short_name": short_name(p),
             "announced": p.get("announced"), "released": p.get("released"), "gsm_url": p["gsm_url"],
-            "variant": variant, "price": head, "offers": offs, "history": hist.get(pid, []),
+            "variant": variant, "price": head, "variants": variants, "offers": offs,
+            "history": hist.get(pid, []),
             "tier": tier_for(head["sgd"]),
-            "categories": {k: round(v, 2) for k, v in cats.items()},
+            "categories": cats,
             "estimated": p["estimated"],
             "estimated_reasons": estimated_reasons(p, variant),
             "notes": lab_notes(p),
@@ -310,26 +348,23 @@ def build() -> dict:
             "_cats": cats, "_price": typical,
         })
 
+    # Reference scores: any storage, every phone, each preset (the site recomputes these
+    # for the buyer's own choices; its tests check it agrees with these)
     models = {}
-    for seed, preset in enumerate(C.PRESETS):
+    prices_ = [ph["_price"] for ph in phones]
+    for preset in C.PRESETS:
         specs_ = [scoring.spec_score(ph["_cats"], preset) for ph in phones]
-        model = value.fit([ph["_price"] for ph in phones], specs_)
+        model = value.fit(prices_, specs_)
         models[preset] = {k: round(v, 4) if isinstance(v, float) else v for k, v in model.items()}
-        for ph, s in zip(phones, specs_):
-            v = value.value_score(model, ph["_price"], s)
+        ladder = value.best_buys(prices_, specs_)
+        for i, (ph, s) in enumerate(zip(phones, specs_)):
+            e = value.expected(model, ph["_price"])
             ph.setdefault("scores", {})[preset] = {
-                "spec": round(s, 2), "value": round(v, 2), "smartbuy": round(value.smartbuy(s, v), 2),
-                "expected": round(value.expected(model, ph["_price"]), 2),
+                "spec": round(s, 4), "expected": round(e, 4), "value": round(s - e, 4), "best_buy": i in ladder,
             }
-        order = sorted(phones, key=lambda ph: -ph["scores"][preset]["smartbuy"])
-        for r, ph in enumerate(order, 1):
-            ph["scores"][preset]["rank"] = r
-        for ph, (lo, hi) in zip(phones, rank_ranges(phones, preset, seed)):
-            ph["scores"][preset]["rank_range"] = [min(lo, ph["scores"][preset]["rank"]),
-                                                  max(hi, ph["scores"][preset]["rank"])]
     for ph in phones:
         del ph["_cats"], ph["_price"]
-    phones.sort(key=lambda ph: -ph["scores"]["balanced"]["smartbuy"])
+    phones.sort(key=lambda ph: -ph["scores"]["balanced"]["spec"])
 
     # Unpriced phones. Brands whose crawl finished: 2025 phones with no listing are
     # retired. Brands whose crawl was cut short: recent phones (and 2025 ones) are
@@ -350,12 +385,12 @@ def build() -> dict:
                                 "short_name": short_name(p), "last_price": h[-1], "gsm_url": p["gsm_url"]})
         elif legacy or (p.get("announced") or "") >= recent:
             variant = _base_variant(p)
-            cats = scoring.category_scores(p, variant)
+            cats = {k: round(v, 2) for k, v in scoring.category_scores(p, variant).items()}
             awaiting.append({
                 "id": p["id"], "name": p["name"], "brand": p["brand"], "model": p["model"],
                 "short_name": short_name(p), "announced": p.get("announced"), "gsm_url": p["gsm_url"],
                 "variant": variant, "last_price": h[-1] if h else None,
-                "categories": {k: round(v, 2) for k, v in cats.items()},
+                "categories": cats,
                 "estimated": p["estimated"], "estimated_reasons": estimated_reasons(p, variant),
                 "notes": lab_notes(p),
                 "scores": {pr: {"spec": round(scoring.spec_score(cats, pr), 2)} for pr in C.PRESETS},
@@ -371,6 +406,11 @@ def build() -> dict:
         "presets": {k: {"label": v["label"], "blurb": v["blurb"], "weights": v["weights"]}
                     for k, v in C.PRESETS.items()},
         "tiers": [{"key": k, "min": lo, "max": hi if hi < 10**8 else None} for k, lo, hi in C.TIERS],
+        "storage": {"needs": C.STORAGE_NEEDS, "default": C.STORAGE_NEED_DEFAULT},
+        "best_buy": {"sure": C.BEST_BUY_SURE, "close": C.BEST_BUY_CLOSE},
+        "uncertainty": {"draws": C.UNCERTAINTY_DRAWS, "weight_wobble": C.WEIGHT_WOBBLE,
+                        "price_wobble": C.PRICE_WOBBLE, "est_price_wobble": C.EST_PRICE_WOBBLE,
+                        "estimate_noise": C.ESTIMATE_NOISE},
         "value_models": models,
         "labs": lab_info,
         "enrichment": {"chips_with_benchmarks": stats["chips_with_benchmarks"],
@@ -382,6 +422,12 @@ def build() -> dict:
         "awaiting": awaiting,
         "retired": sorted(retired, key=lambda r: r["name"]),
     }
+
+
+def best_buy_ladder(data: dict, preset: str = "balanced") -> list[dict]:
+    """The reference price ladder, cheapest first."""
+    return sorted((p for p in data["phones"] if p["scores"][preset]["best_buy"]),
+                  key=lambda p: p["price"]["typical_sgd"])
 
 
 def write() -> dict:
@@ -399,6 +445,8 @@ def write() -> dict:
           f"{len(data['retired'])} retired; prices as of {data['price_date']}")
     print(f"balanced value curve: expected = {m['a']:.2f} + {m['b']:.2f}*x + {m['c']:.3f}*x^2 (x = ln price), "
           f"sd {m['sd']:.2f}, R^2 {m['r2']:.2f}")
+    print("best buys (balanced, any storage): " + ", ".join(
+        f"{p['short_name']} S${p['price']['typical_sgd']:.0f}" for p in best_buy_ladder(data)))
     for key, names in saturated(data["phones"]).items():
         print(f"WARNING: {len(names)} phones score 10 for {key} ({', '.join(names)}); "
               f"raise its top anchor in config.py so 10 stays 'best on sale'")
