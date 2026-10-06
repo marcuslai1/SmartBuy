@@ -143,6 +143,9 @@ def refresh(argv: list[str]) -> int:
     if crawl and crawl["no_specs"]:
         summary.append(f"{crawl['no_specs']} official listings have no spec sheet yet "
                        f"(data/listings_without_specs.json)")
+    if crawl and crawl.get("under_reference"):
+        summary.append("Well under GSMArena's price, check they're the right phone: "
+                       + "; ".join(crawl["under_reference"]))
     print("\n== Summary\n" + "\n".join("  " + s for s in summary))
 
     problems = []

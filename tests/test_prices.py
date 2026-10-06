@@ -39,12 +39,20 @@ def test_title_storage_and_assumed_base():
 def test_rejects_bundles_fakes_and_unknown_models():
     rows, rejected = run(
         listing("[Bundle] Samsung Galaxy S26 + Buds4", 1300),
-        listing("Samsung Galaxy S26 5G 256GB", 350),            # far below the reference price
+        listing("Samsung Galaxy S26 5G 256GB", 199),            # under a quarter of the reference: not the phone
         listing("Samsung Galaxy Z Fold9", 2500),                 # not in catalog
         listing("Samsung Galaxy S26 Ultra", 1478, in_stock=False),
     )
     assert rows == []
     assert sorted(r["why"].split(" ")[0] for r in rejected) == ["bundle/demo/refurb", "no", "out", "price"]
+
+
+def test_official_price_under_reference_is_kept_and_listed():
+    from pipeline.prices import under_reference
+
+    rows, rejected = run(listing("Samsung Galaxy S26 5G 256GB", 499), listing("Samsung Galaxy S26 512GB", 1100))
+    assert len(rows) == 2 and rejected == []
+    assert under_reference(rows, PHONES) == ["Samsung Galaxy S26 S$499 (GSMArena ~S$1170)"]
 
 
 def test_most_specific_model_wins():

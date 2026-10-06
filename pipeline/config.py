@@ -206,5 +206,11 @@ ESTIMATE_NOISE = {
 TYPICAL_WINDOW_DAYS = 90
 # Rough FX for sanity-checking store prices against GSMArena's USD/EUR street price
 FX_TO_SGD = {"$": 1.30, "€": 1.50, "£": 1.72}
-PRICE_SANITY = (0.45, 4.0)   # accept if reference*lo <= price <= reference*hi (fakes are cheap; big storage tiers aren't)
+# Every listing is from an official seller (brand stores on Lazada, apple.com/sg,
+# store.google.com/sg), so its price is trusted over GSMArena's, which is a rough
+# USD street price that runs high for Chinese brands in SG and for clearance stock
+# (official prices span ~0.55-2.8x of it). The reference only catches listings that
+# can't be the phone, like an accessory or misread price matched to it.
+PRICE_SANITY = (0.25, 4.0)   # accept if reference*lo <= price <= reference*hi (big storage tiers cost more)
+PRICE_CHECK_BELOW = 0.45     # kept, but listed in the refresh summary to check it's the right phone
 LISTING_REJECT = r"\b(bundle|demo|display set|refurb|pre-?owned|used|care\+|\+ ?buds|\+ ?watch|\+ ?case|trade-?in)\b"

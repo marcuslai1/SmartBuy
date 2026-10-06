@@ -135,6 +135,19 @@ def observations(listings: list[dict], phones: list[dict], date: str) -> tuple[l
     return rows, rejected
 
 
+def under_reference(rows: list[dict], phones: list[dict]) -> list[str]:
+    """Kept prices well under GSMArena's reference, worth a glance in case the
+    listing was matched to the wrong phone (usually it's SG pricing or old stock)."""
+    by_id = {p["id"]: p for p in phones}
+    out = []
+    for r in rows:
+        phone = by_id[r["phone_id"]]
+        ref = reference_sgd(phone.get("price_text"))
+        if ref and r["price_sgd"] < C.PRICE_CHECK_BELOW * ref:
+            out.append(f"{phone['name']} S${r['price_sgd']:.0f} (GSMArena ~S${ref:.0f})")
+    return out
+
+
 def crawl(date: str | None = None, fresh: bool = False, lazada_mode: str = "auto", wait_minutes: float = 45) -> dict:
     """Fetch today's listings, then turn them into price rows. Returns a summary.
 
@@ -192,12 +205,16 @@ def crawl(date: str | None = None, fresh: bool = False, lazada_mode: str = "auto
     (ROOT / "data" / "listings_without_specs.json").write_text(
         json.dumps({"date": date, "listings": no_specs}, indent=1, ensure_ascii=False), encoding="utf-8")
     missing = sorted(lazada_brands - done - {"Apple", "Google"}, key=str.lower)
+    cheap = under_reference(rows, phones)
     print(f"{len(listings)} listings -> {len(rows)} price rows ({added} new), {len(rejected)} rejected "
           f"(see {UNMATCHED.relative_to(ROOT)})")
+    if cheap:
+        print("Well under GSMArena's price (check the match): " + "; ".join(cheap))
     if missing:
         print(f"Lazada not finished for: {', '.join(missing)} (run again to finish; earlier listings are kept)")
     return {"date": date, "listings": len(listings), "rows": len(rows), "added": added,
-            "rejected": len(rejected), "incomplete_brands": missing, "no_specs": len(no_specs)}
+            "rejected": len(rejected), "incomplete_brands": missing, "no_specs": len(no_specs),
+            "under_reference": cheap}
 
 
 def lazada_via_snippet(date: str, wait_minutes: float) -> tuple[list[dict], set[str]]:
