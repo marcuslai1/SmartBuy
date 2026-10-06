@@ -77,6 +77,17 @@ def test_snippet_download_becomes_listings():
     assert brands == {"Apple", "Samsung"}
 
 
+def test_storage_read_from_any_sku_property():
+    from pipeline.sources.lazada import storage_sizes
+
+    assert storage_sizes([{"name": "Spec", "values": [{"name": "12+256GB Black"}, {"name": "12+512GB Black"}]},
+                          {"name": "Model", "values": [{"name": "CPH2771"}]}]) == [256, 512]
+    assert storage_sizes([{"name": "Colour", "values": [{"name": "Aurora Blue 512GB"},
+                                                         {"name": "Aurora Blue 256GB"}]}]) == [256, 512]
+    assert storage_sizes([{"name": "Color Family", "values": [{"name": "Navy"}]},
+                          {"name": "Add Ons", "values": [{"name": "Free 128GB microSD"}]}]) == []
+
+
 def test_crawl_status_merges_brands(tmp_path, monkeypatch):
     from pipeline import prices
 

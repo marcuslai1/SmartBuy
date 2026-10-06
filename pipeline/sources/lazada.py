@@ -158,10 +158,12 @@ def official_listings_browser(queries: list[str] | None = None, max_pages: int =
 
 def storage_sizes(properties: list[dict] | None) -> list[int]:
     """Storage sizes in a product page's SKU properties
-    (e.g. 'Storage Capacity': ['12GB_256GB', '12GB_512GB'] -> [256, 512])."""
+    (e.g. 'Storage Capacity': ['12GB_256GB', '12GB_512GB'] -> [256, 512]). Any
+    property counts, since stores fold storage into others ('Spec': 'Black 12+256GB',
+    'Colour': 'Aurora Blue 512GB'); add-ons don't (a free memory card isn't storage)."""
     sizes = set()
     for prop in properties or []:
-        if not re.search(r"storage|capacity|rom|memory|variant|model", prop.get("name") or "", re.I):
+        if re.search(r"add.?on|bundle|gift|freebie|accessor", prop.get("name") or "", re.I):
             continue
         for v in prop.get("values") or []:
             sizes.update(storages_in((v.get("name") or "").replace("_", " ")))
