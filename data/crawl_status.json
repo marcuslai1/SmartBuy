@@ -11,5 +11,32 @@
    "Google",
    "Samsung"
   ]
+ },
+ "2026-10-06": {
+  "complete_brands": [
+   "Apple",
+   "Google",
+   "Honor",
+   "Nothing",
+   "OnePlus",
+   "OPPO",
+   "realme",
+   "Samsung",
+   "vivo",
+   "Xiaomi"
+  ],
+  "lazada_brands": [
+   "Apple",
+   "Google",
+   "Honor",
+   "Nothing",
+   "OnePlus",
+   "OPPO",
+   "realme",
+   "Samsung",
+   "vivo",
+   "Xiaomi"
+  ],
+  "note": ""
  }
 }

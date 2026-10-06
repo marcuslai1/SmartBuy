@@ -1,6 +1,13 @@
 {
- "date": "2026-10-02",
+ "date": "2026-10-06",
  "listings": [
+  {
+   "brand": "Honor",
+   "title": "HONOR X9d 5G Smartphone 24(12+12)GB+256/512GB 108MP OIS+EIS | OLED | 8300 mAh Reverse Charge | IP69K | SGS Standard",
+   "price": 569.0,
+   "store": "lazada",
+   "url": "https://www.lazada.sg/products/pdp-i2775952282.html"
+  },
   {
    "brand": "Apple",
    "title": "Apple iPhone 15 Pro Max",
@@ -16,13 +23,6 @@
    "url": "https://www.lazada.sg/products/pdp-i13899868474.html"
   },
   {
-   "brand": "Honor",
-   "title": "HONOR X9d 5G Smartphone 24(12+12)GB+256/512GB 108MP OIS+EIS | OLED | 8300 mAh Reverse Charge | IP69K | SGS Standard",
-   "price": 569.0,
-   "store": "lazada",
-   "url": "https://www.lazada.sg/products/pdp-i2775952282.html"
-  },
-  {
    "brand": "vivo",
    "title": "vivo Y31s 5G 6GB+6GB + 256GB | Snapdragon 4 Gen 2 | 50MP Camera | 6500 mAh | 44W FlashCharge | 2 Years Warranty",
    "price": 399.0,
@@ -35,6 +35,20 @@
    "price": 1199.0,
    "store": "lazada",
    "url": "https://www.lazada.sg/products/pdp-i13736979239.html"
+  },
+  {
+   "brand": "Honor",
+   "title": "[NEW] HONOR 600S 5G Android Smartphone 12(4+8)GB+256GB | 8100mAh Ultra-long Lasting Battery | IP69K Water Resistance",
+   "price": 439.0,
+   "store": "lazada",
+   "url": "https://www.lazada.sg/products/pdp-i13963078274.html"
+  },
+  {
+   "brand": "realme",
+   "title": "realme P3 5G 26GB(12+14)+512GB | Dual 50MP AI Camera | Full-scene 4K recording | 6000mAh + 45W Ultra Charge Local",
+   "price": 478.46,
+   "store": "lazada",
+   "url": "https://www.lazada.sg/products/pdp-i13867838474.html"
   }
  ]
 }
