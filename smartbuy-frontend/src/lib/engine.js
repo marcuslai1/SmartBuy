@@ -43,6 +43,11 @@ const STEP_MAX = 1.0;
 const STRETCH = 0.2;
 // "Still better at": categories where a beaten phone leads the phone beating it by this much
 const BETTER_BY = 1.0;
+// No budget in mind: the sweet spot is the cheapest phone within SWEET_GAP of the best
+// score on offer (compared as displayed, to a tenth, so 0.0001 can't cost S$100), and
+// "spend less" is the best phone at no more than SWEET_LESS of its price.
+const SWEET_GAP = 1.0;
+const SWEET_LESS = 2 / 3;
 
 const isNum = (n) => typeof n === 'number' && Number.isFinite(n);
 const clamp10 = (v) => Math.max(0, Math.min(10, v));
@@ -382,4 +387,26 @@ export function picks(analysis, max) {
     if (other) out.push({ kind: 'brand', row: other });
   }
   return out.slice(0, 3);
+}
+
+/**
+ * Picks for a buyer with no budget in mind: price levels instead of a budget.
+ *  sweet  the cheapest phone within SWEET_GAP of the best score among those considered
+ *  less   the best phone at no more than SWEET_LESS of the sweet spot's price
+ *  best   the highest score of all, unless that's the sweet spot
+ * Each alternative has `trade`: up to two categories it differs most in from the sweet
+ * spot (what spending less gives up, or what spending more buys).
+ */
+export function sweetSpotPicks(analysis) {
+  const pool = analysis.rows.filter((r) => r.considered);
+  if (!pool.length) return [];
+  const best = pool.reduce((b, r) => better(r, b), null);
+  const sweet = pool
+    .filter((r) => r.spec >= best.spec - SWEET_GAP - 0.05)
+    .reduce((b, r) => (!b || r.now < b.now || (r.now === b.now && r.spec > b.spec) ? r : b), null);
+  const out = [{ kind: 'sweet', row: sweet }];
+  const less = pool.filter((r) => r.now <= sweet.now * SWEET_LESS).reduce((b, r) => better(r, b), null);
+  if (less) out.push({ kind: 'less', row: less, trade: betterAt(sweet, less) });
+  if (best !== sweet) out.push({ kind: 'best', row: best, trade: betterAt(best, sweet) });
+  return out;
 }

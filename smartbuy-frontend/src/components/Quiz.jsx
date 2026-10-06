@@ -63,6 +63,12 @@ function QuizForm({ onSubmit }) {
     if (list.includes(value)) set({ [key]: list.filter((x) => x !== value) });
     else if (!limit || list.length < limit) set({ [key]: [...list, value] });
   };
+  // "Not sure" stands alone: picking it clears the others, picking another clears it
+  const toggleFocus = (value) => {
+    if (value === 'unsure') set({ focus: a.focus.includes('unsure') ? [] : ['unsure'] });
+    else if (a.focus.includes('unsure')) set({ focus: [value] });
+    else toggle('focus', value, MAX_FOCUS);
+  };
 
   return (
     <form
@@ -75,12 +81,17 @@ function QuizForm({ onSubmit }) {
         <Radios name="q-os" options={OS_CHOICES} value={a.os} onChange={(os) => set({ os })} />
       </Question>
 
-      <Question n="2" title="What’s the most you’d spend?">
+      <Question
+        n="2"
+        title="What’s the most you’d spend?"
+        hint="Not sure? You’ll see the sweet spot, plus what spending less or more gets you."
+      >
         <Radios
           name="q-budget"
           options={[
             ...BUDGET_CHOICES.map((b) => ({ key: b, label: `S$${fmtNum(b)}` })),
             { key: null, label: 'No limit' },
+            { key: 'unsure', label: 'Not sure' },
           ]}
           value={a.budget}
           onChange={(budget) => set({ budget })}
@@ -90,9 +101,9 @@ function QuizForm({ onSubmit }) {
       <Question
         n="3"
         title="How much storage do you need?"
-        hint="Not sure? Check Settings › Storage on your current phone and pick the next size up from what you use."
+        hint="Check Settings › Storage on your current phone and pick the next size up from what you use."
       >
-        <div className="grid gap-2 sm:grid-cols-3">
+        <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
           {STORAGE_CHOICES.map((o) => (
             <label
               key={o.key}
@@ -128,9 +139,13 @@ function QuizForm({ onSubmit }) {
         <p className="mt-1.5 text-xs text-muted">Compact is under 6.4″ (easier one-handed); large is 6.8″ and up.</p>
       </Question>
 
-      <Question n="5" title={`What matters most? Pick up to ${MAX_FOCUS}`} hint="Leave it empty for a balanced mix.">
+      <Question
+        n="5"
+        title={`What matters most? Pick up to ${MAX_FOCUS}`}
+        hint="Not sure (or none picked) means a balanced mix."
+      >
         <div className="flex flex-wrap gap-1.5">
-          {FOCUS.map((f) => {
+          {[...FOCUS, { key: 'unsure', label: 'Not sure' }].map((f) => {
             const on = a.focus.includes(f.key);
             return (
               <button
@@ -138,8 +153,8 @@ function QuizForm({ onSubmit }) {
                 type="button"
                 className="chip"
                 aria-pressed={on}
-                disabled={!on && a.focus.length >= MAX_FOCUS}
-                onClick={() => toggle('focus', f.key, MAX_FOCUS)}
+                disabled={!on && f.key !== 'unsure' && a.focus.length >= MAX_FOCUS}
+                onClick={() => toggleFocus(f.key)}
               >
                 {f.label}
               </button>

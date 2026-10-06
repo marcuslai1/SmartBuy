@@ -1,6 +1,8 @@
 // "Find my phone": turns a few answers into priorities (category weights) and filters.
 // Weights start from the Balanced preset; each thing that matters most multiplies its
 // categories, and how long the phone will be kept scales software support and build.
+// Most questions can be answered "not sure" (key 'unsure'): it maps to a sensible
+// default, and the view remembers it so the picks can say what was assumed.
 
 export const OS_CHOICES = [
   { key: 'any', label: 'Either' },
@@ -10,10 +12,13 @@ export const OS_CHOICES = [
 
 export const BUDGET_CHOICES = [300, 500, 800, 1200, 1800];
 
+export const UNSURE_STORAGE = 128;
+
 export const STORAGE_CHOICES = [
   { key: 128, label: '128GB', hint: 'Fine for most people' },
   { key: 256, label: '256GB', hint: 'Lots of photos, videos or games' },
   { key: 512, label: '512GB+', hint: 'You never delete anything' },
+  { key: 'unsure', label: 'Not sure', hint: `We’ll go with ${UNSURE_STORAGE}GB, enough for most` },
 ];
 
 export const FOCUS = [
@@ -31,11 +36,12 @@ export const KEEP = [
   { key: 'short', label: 'About 2 years', boost: { software: 0.5, build: 0.8 } },
   { key: 'mid', label: '3–4 years', boost: {} },
   { key: 'long', label: '5 years or more', boost: { software: 2, build: 1.5 } },
+  { key: 'unsure', label: 'Not sure', boost: {} },
 ];
 
 export const DEFAULT_ANSWERS = {
   os: 'any',
-  budget: null,
+  budget: 'unsure',
   storage: 128,
   size: 'any',
   focus: [],
@@ -51,14 +57,35 @@ export function quizWeights(answers, baseWeights) {
   return w;
 }
 
+/** Questions answered "not sure", in the order the picks mention them. */
+export function unsureOf(answers) {
+  return [
+    answers.budget === 'unsure' && 'budget',
+    answers.storage === 'unsure' && 'storage',
+    answers.keep === 'unsure' && 'keep',
+    (answers.focus || []).includes('unsure') && 'focus',
+  ].filter(Boolean);
+}
+
+// The view fields each "not sure" answer became: once one is changed by hand, that
+// answer is no longer a guess and its note goes.
+const UNSURE_FIELDS = { budget: ['max'], storage: ['storage'], keep: ['preset', 'w'], focus: ['preset', 'w'] };
+
+/** The "not sure" notes that still apply after a view update. */
+export function keepUnsure(unsure, patch) {
+  if ('unsure' in patch) return patch.unsure;
+  return unsure.filter((k) => !UNSURE_FIELDS[k]?.some((f) => f in patch));
+}
+
 /** The view (URL state) the answers lead to. `brands` is every brand on the site. */
 export function quizToView(answers, { baseWeights, categories, brands }) {
   const w = quizWeights(answers, baseWeights);
   return {
     preset: 'custom',
     w: categories.map((c) => Math.round((w[c.key] ?? 0) * 100) / 100),
-    max: answers.budget || null,
-    storage: answers.storage,
+    max: typeof answers.budget === 'number' ? answers.budget : null,
+    storage: answers.storage === 'unsure' ? UNSURE_STORAGE : answers.storage,
+    unsure: unsureOf(answers),
     size: answers.size,
     brands:
       answers.os === 'ios'

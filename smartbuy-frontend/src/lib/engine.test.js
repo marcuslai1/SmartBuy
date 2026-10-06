@@ -3,9 +3,9 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { analyse, bestBuys, chooseVariant, picks, NEAR } from './engine.js';
+import { analyse, bestBuys, chooseVariant, picks, sweetSpotPicks, NEAR } from './engine.js';
 import { normalizeData } from './data.js';
-import { quizToView, quizWeights, DEFAULT_ANSWERS } from './quiz.js';
+import { keepUnsure, quizToView, quizWeights, DEFAULT_ANSWERS } from './quiz.js';
 
 const data = normalizeData(JSON.parse(readFileSync(new URL('../../public/phones.json', import.meta.url), 'utf8')));
 const balanced = data.presets.balanced.weights;
@@ -135,4 +135,39 @@ test('the quiz turns answers into priorities and filters', () => {
     { baseWeights: balanced, categories: data.categories, brands: data.brands },
   );
   assert.ok(!android.brands.includes('Apple') && android.brands.length === data.brands.length - 1);
+});
+
+test('no budget in mind: a sweet spot within a point of the best, then less or the best', () => {
+  for (const opts of [{}, { brands: ['Apple'] }, { size: 'compact' }]) {
+    const an = analyse(data, { weights: balanced, storage: 128, ...opts });
+    const pool = an.rows.filter((r) => r.considered);
+    const ps = sweetSpotPicks(an);
+    const kind = (k) => ps.find((p) => p.kind === k)?.row;
+    const sweet = kind('sweet');
+    const best = pool.reduce((b, r) => (r.spec > b.spec ? r : b));
+    assert.equal(ps[0].kind, 'sweet');
+    assert.ok(sweet.spec >= best.spec - 1.05, JSON.stringify(opts));
+    assert.ok(pool.every((r) => r.now >= sweet.now || r.spec < best.spec - 1.05)); // nothing cheaper qualifies
+    if (kind('less')) {
+      assert.ok(kind('less').now <= (sweet.now * 2) / 3);
+      assert.ok(pool.every((r) => r.now > (sweet.now * 2) / 3 || r.spec <= kind('less').spec + 1e-9));
+    }
+    assert.equal(kind('best')?.spec ?? sweet.spec, best.spec);
+  }
+});
+
+test('"not sure" answers become defaults, and are forgotten once changed by hand', () => {
+  const ctx = { baseWeights: balanced, categories: data.categories, brands: data.brands };
+  const view = quizToView(
+    { ...DEFAULT_ANSWERS, budget: 'unsure', storage: 'unsure', keep: 'unsure', focus: ['unsure'] },
+    ctx,
+  );
+  assert.equal(view.max, null);
+  assert.equal(view.storage, 128);
+  assert.deepEqual(view.unsure, ['budget', 'storage', 'keep', 'focus']);
+  assert.deepEqual(view.w, quizToView({ ...DEFAULT_ANSWERS, budget: null }, ctx).w); // same as a balanced 3-4 years
+  assert.deepEqual(keepUnsure(view.unsure, { max: 800 }), ['storage', 'keep', 'focus']);
+  assert.deepEqual(keepUnsure(view.unsure, { preset: 'camera' }), ['budget', 'storage']);
+  assert.deepEqual(keepUnsure(view.unsure, { phone: 'x' }), view.unsure);
+  assert.deepEqual(keepUnsure(view.unsure, { unsure: [] }), []);
 });

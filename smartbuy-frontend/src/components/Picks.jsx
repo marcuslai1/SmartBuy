@@ -1,6 +1,7 @@
 import { Sparkles } from 'lucide-react';
 import { fmtDiff, fmtNum, fmtSGD, fmtScore, fmtVariantPrice, shortName, shortVariant, traits } from '../lib/data';
 import { NEAR } from '../lib/engine';
+import { UNSURE_STORAGE } from '../lib/quiz';
 import { StatusBadge, Traits } from './bits';
 
 const LABELS = {
@@ -8,9 +9,23 @@ const LABELS = {
   step: 'Spend less',
   stretch: 'Worth stretching?',
   brand: 'Best from another brand',
+  sweet: 'Sweet spot',
+  less: 'Spend less',
+  best: 'The best you can get',
 };
 
-function reason(kind, row, top, max) {
+// What the picks assume for each quiz question answered "not sure"
+const ASSUMED = {
+  budget: 'price levels instead of a budget',
+  storage: `${UNSURE_STORAGE}GB of storage`,
+  keep: 'keeping it 3–4 years',
+  focus: 'a balanced mix of priorities',
+};
+
+const listOf = (items) => (items.length < 2 ? items.join('') : `${items.slice(0, -1).join(', ')} and ${items.at(-1)}`);
+
+/** `best`: the best-of-all pick next to a sweet spot; `trade`: categories an alternative differs in. */
+function reason(kind, row, top, max, { best, trade }) {
   const name = shortName(top.phone);
   const lower = fmtScore(top.spec - row.spec);
   const cheaper = top.now - row.now;
@@ -29,16 +44,35 @@ function reason(kind, row, top, max) {
       return `If you’d rather not buy ${top.phone.brand}: ${lower} lower than the ${name}${
         cheaper >= 1 ? `, ${fmtSGD(cheaper)} less` : ''
       }.`;
+    case 'sweet':
+      return best
+        ? `Within ${fmtScore(best.spec - row.spec)} of the best here, the ${shortName(best.phone)}, for ${fmtSGD(
+            best.now - row.now,
+          )} less.`
+        : 'The highest score here, and nothing cheaper comes within a point.';
+    case 'less':
+      return `${fmtSGD(cheaper)} less than the ${name}, for a score ${lower} lower${trade ? `: mostly weaker ${trade}` : ''}.`;
+    case 'best':
+      return `${fmtSGD(row.now - top.now)} more than the ${name}, for ${fmtScore(row.spec - top.spec)} higher${
+        trade ? `: mainly better ${trade}` : ''
+      }.`;
     default:
       return '';
   }
 }
 
 export default function Picks({ picks, context, categories, onOpen, onQuiz, onHover }) {
-  const { priority, needLabel, max } = context;
+  const { priority, needLabel, max, unsure = [] } = context;
   const top = picks[0]?.row;
   const custom = priority.key === 'custom';
-  const nothingClose = top && !picks.some((p) => p.kind === 'save');
+  const levels = picks[0]?.kind === 'sweet';
+  const nothingClose = top && !levels && !picks.some((p) => p.kind === 'save');
+  const best = picks.find((p) => p.kind === 'best')?.row;
+  // Mid-sentence category names: 'Battery life' -> 'battery life', 'RAM & storage speed' stays
+  const label = (key) => {
+    const l = categories.find((c) => c.key === key)?.label || key;
+    return /^[A-Z][a-z]/.test(l) ? l[0].toLowerCase() + l.slice(1) : l;
+  };
 
   return (
     <section
@@ -56,6 +90,11 @@ export default function Picks({ picks, context, categories, onOpen, onQuiz, onHo
             {priority.title} · {needLabel}
             {nothingClose && picks.length > 0 && ` · nothing cheaper comes within ${NEAR} of the top pick`}
           </p>
+          {unsure.length > 0 && (
+            <p className="mt-0.5 text-xs text-muted">
+              Where you weren’t sure, we went with {listOf(unsure.map((k) => ASSUMED[k]).filter(Boolean))}.
+            </p>
+          )}
         </div>
         <button type="button" className={`btn ${custom ? '' : 'btn-primary'}`} onClick={onQuiz}>
           <Sparkles size={14} aria-hidden="true" />
@@ -69,13 +108,14 @@ export default function Picks({ picks, context, categories, onOpen, onQuiz, onHo
         </p>
       ) : (
         <ol className="mt-3 grid gap-3 md:grid-cols-3">
-          {picks.map(({ kind, row }) => (
+          {picks.map(({ kind, row, trade }) => (
             <PickCard
               key={`${kind}-${row.id}`}
               kind={kind}
               row={row}
               top={top}
               max={max}
+              extra={{ best, trade: trade?.length ? trade.map((t) => label(t.key)).join(' and ') : '' }}
               categories={categories}
               onOpen={onOpen}
               onHover={onHover}
@@ -87,14 +127,14 @@ export default function Picks({ picks, context, categories, onOpen, onQuiz, onHo
   );
 }
 
-function PickCard({ kind, row, top, max, categories, onOpen, onHover }) {
+function PickCard({ kind, row, top, max, extra, categories, onOpen, onHover }) {
   const { phone, variant } = row;
   const { strengths, weakness } = traits(row.cats, categories);
   const label = kind === 'top' ? (max ? `Best under S$${fmtNum(max)}` : 'Best overall') : LABELS[kind];
   return (
     <li
       className={`card relative flex flex-col p-4 transition-shadow hover:shadow-[var(--shadow)] ${
-        kind === 'top' ? 'border-accent-ink' : ''
+        kind === 'top' || kind === 'sweet' ? 'border-accent-ink' : ''
       }`}
       onMouseEnter={() => onHover(phone.id)}
       onMouseLeave={() => onHover(null)}
@@ -121,7 +161,7 @@ function PickCard({ kind, row, top, max, categories, onOpen, onHover }) {
           <div className="tnum mt-1 text-2xs text-ink-2">{fmtDiff(row.value)} vs typical</div>
         </div>
       </div>
-      <p className="mt-2 text-[0.8125rem] text-ink-2">{reason(kind, row, top, max)}</p>
+      <p className="mt-2 text-[0.8125rem] text-ink-2">{reason(kind, row, top, max, extra)}</p>
       <div className="mt-auto flex flex-wrap items-center gap-x-3 gap-y-1 pt-2.5">
         <StatusBadge row={row} />
         <Traits strengths={strengths} weakness={weakness} compact />

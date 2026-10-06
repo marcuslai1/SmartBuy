@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState, useSyncExternalStore } from 'react';
+import { keepUnsure } from './quiz';
 
 /* ---------- URL-backed view state ---------- */
 
@@ -14,9 +15,11 @@ export const DEFAULT_VIEW = {
   q: '',
   phone: null,
   compare: [],
+  unsure: [], // quiz questions answered "not sure" (lib/quiz.js)
 };
 
 const STORAGE_NEEDS = [0, 128, 256, 512];
+const UNSURE_KEYS = ['budget', 'storage', 'keep', 'focus'];
 
 const list = (s) =>
   s
@@ -44,6 +47,7 @@ function readView() {
     q: p.get('q') || '',
     phone: p.get('phone') || null,
     compare: list(p.get('compare')).slice(0, 3),
+    unsure: list(p.get('unsure')).filter((k) => UNSURE_KEYS.includes(k)),
   };
 }
 
@@ -59,6 +63,7 @@ function writeView(v, push) {
   if (v.must.length) p.set('must', v.must.join(','));
   if (v.q) p.set('q', v.q);
   if (v.compare.length) p.set('compare', v.compare.join(','));
+  if (v.unsure.length) p.set('unsure', v.unsure.join(','));
   if (v.phone) p.set('phone', v.phone);
   const qs = p.toString().replace(/%2C/g, ',');
   const url = `${window.location.pathname}${qs ? `?${qs}` : ''}${window.location.hash}`;
@@ -85,7 +90,7 @@ export function useUrlState() {
   }, []);
 
   const update = useCallback((patch, opts = {}) => {
-    const next = { ...ref.current, ...patch };
+    const next = { ...ref.current, ...patch, unsure: keepUnsure(ref.current.unsure, patch) };
     ref.current = next;
     writeView(next, !!opts.push);
     setView(next);

@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { MotionConfig } from 'framer-motion';
 import { normalizeData, resolvePriority, SORTS, storageLabel } from './lib/data';
-import { analyse, considers, picks, textMatch } from './lib/engine';
+import { analyse, considers, picks, sweetSpotPicks, textMatch } from './lib/engine';
 import { quizToView, saveAnswers } from './lib/quiz';
 import { useTheme, useUrlState } from './lib/hooks';
 import Header from './components/Header';
@@ -114,7 +114,12 @@ function Explorer({ data }) {
     [analysis, view.max, view.q],
   );
   const matchIds = useMemo(() => new Set(shown.map((r) => r.id)), [shown]);
-  const pickList = useMemo(() => picks(analysis, view.max), [analysis, view.max]);
+  // Not sure of a budget (quiz): price levels around a sweet spot instead of a budget
+  const noBudget = view.unsure.includes('budget') && !view.max;
+  const pickList = useMemo(
+    () => (noBudget ? sweetSpotPicks(analysis) : picks(analysis, view.max)),
+    [analysis, view.max, noBudget],
+  );
 
   const incomplete = useMemo(() => new Set(data.crawl.incompleteBrands), [data.crawl.incompleteBrands]);
   const phoneById = useMemo(() => new Map([...phones, ...awaiting].map((p) => [p.id, p])), [phones, awaiting]);
@@ -216,8 +221,8 @@ function Explorer({ data }) {
   }, []);
 
   const context = useMemo(
-    () => ({ priority, needLabel, storage: view.storage, max: view.max }),
-    [priority, needLabel, view.storage, view.max],
+    () => ({ priority, needLabel, storage: view.storage, max: view.max, unsure: view.unsure }),
+    [priority, needLabel, view.storage, view.max, view.unsure],
   );
 
   return (
