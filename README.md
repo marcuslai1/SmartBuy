@@ -114,7 +114,8 @@ Prices for all of this are each phone's typical price. Because the ranking
 depends on the buyer's choices, the site computes it in the browser
 (`smartbuy-frontend/src/lib/engine.js`). `pipeline/build.py` writes reference
 scores and best buys for each preset at any storage, and `npm test` checks the
-engine reproduces them exactly.
+engine reproduces them exactly. `smartbuy-java/` is the same value curve and
+price ladder in Java, held to the same reference scores by its JUnit tests.
 
 ## Development
 
@@ -126,6 +127,10 @@ python -m pipeline.build        # regenerate phones.json from committed data
 cd smartbuy-frontend && npm install
 npm test                        # ranking engine vs the pipeline's reference scores
 npm run dev
+
+cd smartbuy-java                # needs JDK 17; the wrapper fetches Maven
+./mvnw verify                   # Java ranking vs the same reference scores
+./mvnw -q compile exec:java -Dexec.args="camera"   # print a preset's best buys
 ```
 
-Pushing to `main` runs both test suites, rebuilds `phones.json` and deploys to GitHub Pages.
+Pushing to `main` runs the Python, JavaScript and Java tests, rebuilds `phones.json` and deploys to GitHub Pages.

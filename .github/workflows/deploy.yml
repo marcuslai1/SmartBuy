@@ -52,6 +52,19 @@ jobs:
         working-directory: smartbuy-frontend
         run: npm test
 
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+          cache: maven
+          cache-dependency-path: smartbuy-java/pom.xml
+
+      # The Java port of the ranking, held to the same reference scores
+      - name: Test Java ranking
+        working-directory: smartbuy-java
+        run: ./mvnw -B verify
+
       - name: Build frontend
         working-directory: smartbuy-frontend
         env:

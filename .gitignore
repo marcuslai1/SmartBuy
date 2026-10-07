@@ -17,3 +17,6 @@ scripts/
 
 # pipeline caches (raw HTML, browser profile)
 .cache/
+
+# Java build output (smartbuy-java)
+target/
