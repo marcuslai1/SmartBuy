@@ -117,6 +117,12 @@ scores and best buys for each preset at any storage, and `npm test` checks the
 engine reproduces them exactly. `smartbuy-java/` is the same value curve and
 price ladder in Java, held to the same reference scores by its JUnit tests.
 
+`smartbuy-api/` serves the Java rankings as a read-only REST API (Spring Boot):
+`GET /api/presets`, `GET /api/presets/{key}/best-buys?maxPrice=`, `GET /api/phones`
+and `GET /api/phones/{id}`. An unknown preset or phone gets a 404, and a `maxPrice`
+that isn't a number above zero gets a 400, both as standard `application/problem+json`
+errors. An empty or infinite `maxPrice` means no limit.
+
 ## Development
 
 ```bash
@@ -131,6 +137,16 @@ npm run dev
 cd smartbuy-java                # needs JDK 17; the wrapper fetches Maven
 ./mvnw verify                   # Java ranking vs the same reference scores
 ./mvnw -q compile exec:java -Dexec.args="camera"   # print a preset's best buys
+./mvnw install                  # the API needs the ranking installed first
+
+cd ../smartbuy-api
+./mvnw verify                   # service, HTTP and whole-app tests
+./mvnw spring-boot:run          # then open http://localhost:8080/api/presets
+
+cd ..                           # Docker builds from the repo root
+docker build -f smartbuy-api/Dockerfile -t smartbuy-api .   # from the repo root
+docker run -p 8080:8080 smartbuy-api
 ```
 
 Pushing to `main` runs the Python, JavaScript and Java tests, rebuilds `phones.json` and deploys to GitHub Pages.
+A change to the API, the Java ranking or the data also runs the API's tests, builds its Docker image and checks the container answers.

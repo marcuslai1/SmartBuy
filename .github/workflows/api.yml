@@ -1,0 +1,62 @@
+# Tests the REST API (smartbuy-api), then builds its Docker image and checks the container
+# starts and answers. Runs when the API, the Java ranking it's built on, or the data changes.
+name: API
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "smartbuy-api/**"
+      - "smartbuy-java/**"
+      - "smartbuy-frontend/public/phones.json"
+      - ".github/workflows/api.yml"
+  pull_request:
+    paths:
+      - "smartbuy-api/**"
+      - "smartbuy-java/**"
+      - "smartbuy-frontend/public/phones.json"
+      - ".github/workflows/api.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test-and-package:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+          cache: maven
+          cache-dependency-path: |
+            smartbuy-java/pom.xml
+            smartbuy-api/pom.xml
+
+      # The API is built on the ranking library, so that goes into the local Maven repository first
+      - name: Install the Java ranking
+        working-directory: smartbuy-java
+        run: ./mvnw -B install
+
+      - name: Test the API
+        working-directory: smartbuy-api
+        run: ./mvnw -B verify
+
+      - name: Build the Docker image
+        run: docker build -f smartbuy-api/Dockerfile -t smartbuy-api .
+
+      - name: Check the container starts and answers
+        run: |
+          docker run -d --name api -p 8080:8080 smartbuy-api
+          for i in $(seq 1 30); do curl -fs localhost:8080/actuator/health && break; sleep 2; done
+          curl -fs localhost:8080/api/presets/balanced/best-buys > /dev/null
+          docker rm -f api
+
+      - name: Show the container's log if anything failed
+        if: failure()
+        run: docker logs api || true

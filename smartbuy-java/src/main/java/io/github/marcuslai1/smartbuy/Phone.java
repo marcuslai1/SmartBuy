@@ -1,5 +1,7 @@
 package io.github.marcuslai1.smartbuy;
 
+import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -13,6 +15,7 @@ public record Phone(String id, String shortName, double typicalPrice, Map<String
         if (!(typicalPrice > 0)) {
             throw new IllegalArgumentException(id + ": typical price must be positive, got " + typicalPrice);
         }
-        categories = Map.copyOf(categories);
+        // Kept in file order and read-only (Map.copyOf's order changes from run to run)
+        categories = Collections.unmodifiableMap(new LinkedHashMap<>(categories));
     }
 }

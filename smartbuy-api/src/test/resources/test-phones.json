@@ -1,0 +1,13 @@
+{
+  "presets": {
+    "balanced": {"label": "Balanced", "weights": {"camera": 1.0, "battery": 1.0}},
+    "camera": {"label": "Camera first", "weights": {"camera": 3.0, "battery": 1.0}}
+  },
+  "phones": [
+    {"id": "a", "short_name": "Phone A", "price": {"typical_sgd": 300}, "categories": {"camera": 4, "battery": 6}},
+    {"id": "b", "short_name": "Phone B", "price": {"typical_sgd": 500}, "categories": {"camera": 6, "battery": 6}},
+    {"id": "c", "short_name": "Phone C", "price": {"typical_sgd": 600}, "categories": {"camera": 5, "battery": 5}},
+    {"id": "d", "short_name": "Phone D", "price": {"typical_sgd": 900}, "categories": {"camera": 9, "battery": 5}},
+    {"id": "e", "short_name": "Phone E", "price": {"typical_sgd": 1200}, "categories": {"camera": 8, "battery": 7}}
+  ]
+}
