@@ -1,0 +1,7 @@
+# Only what the image needs goes into the build; the rest of the repository stays out
+*
+!smartbuy-java/pom.xml
+!smartbuy-java/src/main/**
+!smartbuy-api/pom.xml
+!smartbuy-api/src/main/**
+!smartbuy-frontend/public/phones.json
